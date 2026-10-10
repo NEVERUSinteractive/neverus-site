@@ -10,36 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
   <style>
-    :Regarding whether to include your company logo in the Press Kit: **yes, absolutely include it.** Standard media packages always bundle high-resolution vector and transparent PNG versions of the studio mark alongside game assets so journalists, content creators, and storefronts can represent both the publisher/dev and the game cleanly.
-
-Here is the updated complete document incorporating:
-* **True monochrome palette:** Stripped of colors down to four pure grayscale values (`#000000`, `#141414`, `#262626`, `#555555`, `#a0a0a0`, `#ffffff`).
-* **Continuous scrolling marquee ticker:** Implemented via seamless CSS `@keyframes` with `<em>Off the Shelf!</em>` in italics.
-* **Paragraph spacing in the hero description:** Converted into clean, distinct blocks with paragraph separation rather than cramped line breaks.
-* **Linked logo & Wishlist CTA:** Both direct to the *Off the Shelf!* Steam page (`app/3584250/Off_the_Shelf/`).
-* **Revamped footer:** Direct contact via email, download links for `NEVERUS_Manifesto.txt` and `OffTheShelf_PressKit.zip`, plus full monochrome social links (TikTok, Instagram, YouTube, Twitch, Steam).
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEVERUS Interactive</title>
-
-  <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-  <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-  <link href="[https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap](https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap)" rel="stylesheet">
-
-  <style>
     :root {
       --black: #000000;
       --gray-dark: #121212;
       --gray-card: #1c1c1c;
       --gray-border: #333333;
       --gray-subtle: #444444;
-      --gray-mid: #777777;
-      --gray-light: #b5b5b5;
+      --gray-mid: #888888;
+      --gray-light: #cccccc;
       --white: #ffffff;
     }
 
@@ -54,7 +32,7 @@ Here is the updated complete document incorporating:
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Seamless Infinite Marquee */
+    /* Infinite Marquee Ticker */
     .ticker-container {
       background: var(--black);
       border-bottom: 2px solid var(--gray-border);
@@ -66,7 +44,7 @@ Here is the updated complete document incorporating:
 
     .ticker-track {
       display: inline-flex;
-      animation: ticker-scroll 28s linear infinite;
+      animation: ticker-scroll 24s linear infinite;
     }
 
     .ticker-item {
@@ -80,7 +58,6 @@ Here is the updated complete document incorporating:
 
     .ticker-item em {
       font-style: italic;
-      text-decoration: underline;
     }
 
     @keyframes ticker-scroll {
@@ -127,14 +104,13 @@ Here is the updated complete document incorporating:
     nav a {
       color: var(--white);
       text-decoration: none;
-      background: #1e1e1e;
+      background: var(--gray-card);
       border: 2px outset var(--gray-subtle);
       padding: 6px 16px;
       font-weight: 700;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      transition: background 0.15s, border-style 0.1s;
     }
 
     nav a:hover {
@@ -196,7 +172,7 @@ Here is the updated complete document incorporating:
       height: 100%;
       object-fit: cover;
       object-position: center;
-      filter: grayscale(100%) brightness(0.4);
+      filter: grayscale(100%) brightness(0.35);
     }
 
     .hero-content {
@@ -213,14 +189,14 @@ Here is the updated complete document incorporating:
     .hero-logo-link {
       display: inline-block;
       line-height: 0;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .hero-logo {
       max-width: 440px;
       width: 82%;
       height: auto;
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.9));
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.95));
       transition: transform 0.2s ease;
     }
 
@@ -229,8 +205,8 @@ Here is the updated complete document incorporating:
     }
 
     .hero-tagline-group {
-      margin: 18px 0 24px;
-      max-width: 600px;
+      margin: 16px 0 24px;
+      max-width: 580px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -248,12 +224,6 @@ Here is the updated complete document incorporating:
       font-style: italic;
     }
 
-    .hero-tagline-group .price-note {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--gray-light);
-    }
-
     .btn {
       display: inline-block;
       background: var(--white);
@@ -262,16 +232,15 @@ Here is the updated complete document incorporating:
       text-transform: uppercase;
       text-decoration: none;
       padding: 10px 24px;
-      border: 2px outset #dedede;
+      border: 2px outset #dddddd;
       font-size: 0.9rem;
       letter-spacing: 0.5px;
       cursor: pointer;
-      transition: filter 0.15s, background 0.15s;
     }
 
     .btn:hover {
       border-style: inset;
-      background: #cccccc;
+      background: #bbbbbb;
     }
 
     .mascot-peeker {
@@ -306,7 +275,7 @@ Here is the updated complete document incorporating:
     }
 
     .footer-actions .btn-secondary {
-      background: #1c1c1c;
+      background: var(--gray-card);
       color: var(--white);
       border: 2px outset var(--gray-subtle);
       font-size: 0.8rem;
@@ -360,7 +329,7 @@ Here is the updated complete document incorporating:
   </div>
 
   <header>
-    <svg id="neverusLogo" class="brand-logo" viewBox="0 0 1640 1424" version="1.1" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <svg id="neverusLogo" class="brand-logo" viewBox="0 0 1640 1424" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
       <g>
         <path d="M262.12,986.54L307.55,986.54L316.44,990.31L317.65,1012.68L333.42,1068.74C331.17,1091.47 337.28,1106.47 351.75,1113.75L350.13,1080.06L365.9,1001.49C367.34,995.74 370.66,990.75 375.87,986.53L414.41,987.07L418.18,998.26C409.29,1019.55 401.47,1043.23 394.73,1069.28L395.27,1080.6L389.34,1106.21L375.73,1177.23L326,1181L306.86,1124.94L296.21,1061.33C290.73,1064.83 285.2,1069.82 279.63,1076.29L279.5,1117.39L266.56,1184.77L257.67,1181L215.62,1181L217.37,1173.59L214.14,1173.59L222.9,1151.08L229.1,1124.94L241.5,1109.85L234.76,1102.44L241.23,1087.48C247.16,1082.36 247.52,1078.63 242.31,1076.29L243.39,1065.1L255.65,1027.64L262.12,986.54ZM269.01,1080.06L270.76,1072.51L267.53,1072.51L269.01,1080.06ZM279.38,1050.15C280.1,1054.64 282.79,1057.11 287.47,1057.56L279.38,1050.15ZM283.83,1031.41C282.84,1036.44 284.14,1040.17 287.74,1042.6C288.19,1037.66 286.89,1033.93 283.83,1031.41ZM325.47,952.85C327.9,953.3 329.47,955.81 330.19,960.4L325.47,952.85ZM344.74,1143.67C345.01,1140.35 343.44,1137.83 340.02,1136.12C340.2,1138.64 341.77,1141.15 344.74,1143.67ZM383.56,1091.79C379.16,1079.3 371.3,1070.05 359.98,1064.03L383.56,1091.79Z" style="fill-rule:nonzero;"/>
         <path d="M468.38,998.4L521.88,1002.44L537.51,998.4L550.04,1006.49L546.4,1040.59L496.13,1036.55C489.03,1038.53 480.68,1039.88 471.06,1040.59L464.32,1037.63L461.76,1079.81C470.65,1086.46 485.43,1090.05 506.1,1090.59L531.3,1086.68L540.6,1090.59L541.27,1120.78L494.1,1128.87L484.67,1124.83L462.3,1125.91L463.78,1178.47L486.15,1173.35L495.58,1177.39L517.55,1173.35L539.52,1173.35L545.85,1177.39L550.03,1210.95L540.6,1214.99L512.43,1210.95L503,1214.99L477.8,1210.95L430.77,1214.99L424.44,1154.88L427.54,1114.72L427.54,1026.45L424.44,1010.41L427.54,1002.46L468.37,1002.46L468.37,998.42L468.38,998.4ZM550.04,1088.15L553.27,1115.51L545.18,1112.14L550.03,1088.15L550.04,1088.15Z" style="fill-rule:nonzero;"/>
@@ -393,7 +362,7 @@ Here is the updated complete document incorporating:
           <img src="OTS_Web_Hero.png" alt="Off the Shelf Arena Background">
         </div>
         <div class="hero-content">
-          <a href="[https://store.steampowered.com/app/3584250/Off_the_Shelf/](https://store.steampowered.com/app/3584250/Off_the_Shelf/)" target="_blank" rel="noopener noreferrer" class="hero-logo-link" title="View Off the Shelf! on Steam">
+          <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="hero-logo-link" title="View Off the Shelf! on Steam">
             <img src="OTS_Web_Logo.png" alt="Off the Shelf! Logo" class="hero-logo">
           </a>
           
@@ -401,10 +370,10 @@ Here is the updated complete document incorporating:
             <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.</p>
             <p>Bring some pals, because <em>Off the Shelf</em> is better together!</p>
-            <p class="price-note">Did we mention it's $3?</p>
+            <p>Did we mention it's $3?</p>
           </div>
 
-          <a href="[https://store.steampowered.com/app/3584250/Off_the_Shelf/](https://store.steampowered.com/app/3584250/Off_the_Shelf/)" target="_blank" rel="noopener noreferrer" class="btn">
+          <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="btn">
             Wishlist on Steam
           </a>
         </div>
@@ -427,11 +396,11 @@ Here is the updated complete document incorporating:
     </div>
 
     <div class="footer-socials">
-      <a href="[https://www.tiktok.com/@neverusinteractive](https://www.tiktok.com/@neverusinteractive)" target="_blank" rel="noopener noreferrer">TikTok</a>
-      <a href="[https://www.instagram.com/neverus.interactive/](https://www.instagram.com/neverus.interactive/)" target="_blank" rel="noopener noreferrer">Instagram</a>
-      <a href="[https://www.youtube.com/@NEVERUS_interactive](https://www.youtube.com/@NEVERUS_interactive)" target="_blank" rel="noopener noreferrer">YouTube</a>
-      <a href="[https://www.twitch.tv/neverusinteractive](https://www.twitch.tv/neverusinteractive)" target="_blank" rel="noopener noreferrer">Twitch</a>
-      <a href="[https://store.steampowered.com/search/?developer=NEVERUS](https://store.steampowered.com/search/?developer=NEVERUS)" target="_blank" rel="noopener noreferrer">Steam</a>
+      <a href="https://www.tiktok.com/@neverusinteractive" target="_blank" rel="noopener noreferrer">TikTok</a>
+      <a href="https://www.instagram.com/neverus.interactive/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://www.youtube.com/@NEVERUS_interactive" target="_blank" rel="noopener noreferrer">YouTube</a>
+      <a href="https://www.twitch.tv/neverusinteractive" target="_blank" rel="noopener noreferrer">Twitch</a>
+      <a href="https://store.steampowered.com/search/?developer=NEVERUS" target="_blank" rel="noopener noreferrer">Steam</a>
     </div>
 
     <p>&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
