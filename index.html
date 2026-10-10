@@ -294,7 +294,7 @@
     /* Mascot Peeker */
     .mascot-peeker {
       position: absolute;
-      top: -75px;
+      top: -96px;
       right: 20px;
       width: 140px;
       height: auto;
@@ -303,11 +303,10 @@
       cursor: pointer;
       user-select: none;
       filter: drop-shadow(2px 2px 0px var(--black));
-      transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+      transition: opacity 0.15s ease-out;
     }
 
     .mascot-peeker.fallen {
-      transform: translateY(60px);
       opacity: 0;
       pointer-events: none;
     }
@@ -393,8 +392,8 @@
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
       .mascot-peeker {
-        width: 76px;
-        top: -46px;
+        width: 95px;
+        top: -64px;
         right: 12px;
       }
     }
@@ -434,7 +433,7 @@
   <main class="container">
     <!-- Featured Section -->
     <section id="games" class="card">
-      <img id="mascotGuy" src="mascot-1.png" alt="NEVERUS Mascot" class="mascot-peeker" title="Tumble!">
+      <img id="mascotGuy" src="mascot-1.png" alt="NEVERUS Mascot" class="mascot-peeker">
       <div class="section-title">FEATURED</div>
 
       <div class="hero-card">
@@ -671,7 +670,7 @@
             mascot.classList.add('fallen');
             setTimeout(() => {
               mascot.style.display = 'none';
-            }, 200);
+            }, 100);
           }
         }, 110);
       });
