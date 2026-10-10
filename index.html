@@ -64,6 +64,7 @@
       user-select: none;
       cursor: pointer;
       transform-origin: center center;
+      transform: scale(1.5);
     }
 
     .header-sub {
@@ -122,6 +123,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 12px;
+      text-align: center; /* Centers "Featured Release", "About NEVERUS", etc. */
     }
 
     .hero-card {
@@ -283,7 +285,7 @@
 <body>
 
   <div class="ticker-bar">
-    *** NEVERUS INTERACTIVE LLC /// OFF THE SHELF! COMING SOON TO STEAM /// MYSTERY BOX ONLINE ***
+    OFF THE SHELF! COMING SOON TO STEAM AND ICH.IO 10/21! WISHLIST NOW! SEE YOU IN THE SHELVES!
   </div>
 
   <header>
@@ -301,7 +303,7 @@
       <path d="M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z" style="fill-rule:nonzero;"/>
       <path d="M1319.04,743.54C1289.06,962.83 996.87,1021.45 885.82,829.06L695.6,491.07C684.65,471.62 692.02,446.97 711.84,436.71C730.75,426.93 754.01,433.92 764.39,452.51L860.97,625.93C863.81,631.03 870.37,632.67 875.27,629.49C879.73,626.6 881.19,620.75 878.6,616.1L729.53,348.56C719.15,329.93 725.89,306.41 744.57,296.11C763.13,285.87 786.48,292.56 796.79,311.08L943.99,576.59C946.52,581.15 952.26,582.83 956.84,580.34C961.49,577.82 963.19,571.98 960.61,567.35L798.36,275.99C787.57,256.7 794.71,232.31 814.2,221.88C833.18,211.72 856.8,218.64 867.31,237.43L1033.5,534.61C1035.71,538.57 1040.54,540.24 1044.73,538.5C1049.66,536.45 1051.71,530.55 1049.1,525.89L897.69,254.93C887.25,236.26 893.92,212.65 912.59,202.21C921.03,197.49 949.98,189.67 965.31,217.11L1172.96,588.26C1175.61,592.99 1181.59,594.68 1186.32,592.03C1191.07,589.37 1192.75,583.35 1190.06,578.61L1101.21,422.55C1090.25,403.3 1097.29,378.81 1116.79,368.31C1135.68,358.14 1159.24,364.94 1169.81,383.61L1289.86,595.76C1294.1,603.12 1330.06,662.84 1319.03,743.52L1319.04,743.54Z" style="fill-rule:nonzero;"/>
     </svg>
-    <div class="header-sub">Interactive Entertainment & Mystery Box</div>
+    <div class="header-sub">Interactive Entertainment</div>
 
     <nav>
       <a href="#games">Games</a>
@@ -313,7 +315,7 @@
   <main class="container">
     <section id="games" class="card">
       <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
-      <div class="section-title">Featured Release</div>
+      <div class="section-title">FEATURED</div>
 
       <div class="hero-card">
         <div class="hero-bg-layer">
@@ -322,7 +324,10 @@
         <div class="hero-content">
           <img src="OTS_Web_Logo.png" alt="Off the Shelf! Logo" class="hero-logo">
           <p class="hero-tagline">
-            Genre-defying, grocery-aisle mayhem. Built for scream-out-loud convention fun.
+              Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.<br>
+              Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.<br>
+              Bring some pals, because <em>Off the Shelf</em> is better together!<br>
+              Did we mention it's $3?
           </p>
           <a href="https://store.steampowered.com" target="_blank" rel="noopener noreferrer" class="btn">
             Wishlist on Steam
@@ -331,37 +336,10 @@
       </div>
     </section>
 
-    <div class="grid-two">
-      <section class="card feature-box">
-        <div>
-          <div class="section-title">NEVERUS Mystery Box</div>
-          <p style="color: #bbb; font-size: 0.95rem; margin-bottom: 12px;">
-            Our in-house 4-shade dithering, palette swapping, and nearest-neighbor scaling engine. Run it directly in your browser.
-          </p>
-        </div>
-        <div>
-          <a href="mystery-box/" class="btn" style="width: 100%; text-align: center;">Enter Mystery Box</a>
-        </div>
-      </section>
-
-      <section class="card feature-box">
-        <div>
-          <span class="construction-badge">&#9888; Under Construction</span>
-          <div class="section-title">Project: Untitled 02</div>
-          <p style="color: #bbb; font-size: 0.95rem;">
-            Currently in active pre-production. A light, simple, and chaotic follow-up to Off the Shelf! Details dropping soon.
-          </p>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">
-          Status: Prototyping
-        </div>
-      </section>
-    </div>
-
     <section id="about" class="card">
       <div class="section-title">About NEVERUS</div>
       <p style="color: #bbb; line-height: 1.6; margin-bottom: 12px;">
-        NEVERUS Interactive LLC is an independent game development studio and interactive toy workshop.
+        NEVERUS Interactive LLC is an independent game development studio staffed by digital jolly toymakers in an attempt to simulate good things.
       </p>
       <p style="color: var(--text-muted); font-size: 0.85rem;">
         Press inquiries, bugs, and hellos: contact [at] neverus.net
@@ -375,7 +353,7 @@
       <a href="mystery-box/">Mystery Box</a>
       <a href="https://store.steampowered.com" target="_blank" rel="noopener noreferrer">Steam</a>
     </div>
-    <p>&copy; 2026 NEVERUS Interactive LLC. All rights reserved.</p>
+    <p>&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
   </footer>
 
   <script>
@@ -389,7 +367,8 @@
         snapGrid: 11.0,
         driftAmp: 10,
         localWobbleAmp: 5,
-        hoverScale: 1.08,
+        baseScale: 1.5,
+        hoverScale: 1.62,
         scaleTransition: 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)',
         theme: 'dark',
         colors: { dark: '#ffffff', light: '#181818' }
@@ -398,6 +377,7 @@
       logoSvg.style.fill = CONFIG.colors[CONFIG.theme] || CONFIG.colors.dark;
       logoSvg.style.transition = CONFIG.scaleTransition;
       logoSvg.style.transformOrigin = 'center center';
+      logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
 
       const pathElements = Array.from(logoSvg.querySelectorAll('path'));
       const parsedPathData = pathElements.map(el => {
@@ -485,7 +465,7 @@
 
       logoSvg.addEventListener('mouseleave', () => {
         isWobbling = false;
-        logoSvg.style.transform = 'scale(1)';
+        logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
         cancelAnimationFrame(animFrameId);
         restoreOriginalPaths();
       });
