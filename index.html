@@ -27,7 +27,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Seamless Non-Stop Marquee Ticker */
+    /* Seamless Infinite Marquee Ticker */
     .ticker-container {
       background: var(--yellow);
       color: var(--black);
@@ -45,8 +45,9 @@
     }
 
     .ticker-segment {
-      display: flex;
+      display: inline-flex;
       flex-shrink: 0;
+      align-items: center;
     }
 
     .ticker-item {
@@ -55,13 +56,17 @@
       font-size: 0.85rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 8px 18px;
+      padding: 8px 0;
       white-space: nowrap;
     }
 
     .ticker-item em {
       font-style: italic;
       text-decoration: underline;
+    }
+
+    .ticker-item span.sep {
+      padding: 0 16px;
     }
 
     @keyframes ticker-seamless {
@@ -281,7 +286,7 @@
       animation: none;
     }
 
-    /* Scaled and repositioned mascot */
+    /* Scaled and raised mascot */
     .mascot-peeker {
       position: absolute;
       top: -88px;
@@ -344,7 +349,6 @@
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
-      /* Tight margin to overlap slightly with the top section on mobile */
       .mascot-peeker {
         width: 76px;
         top: -46px;
@@ -355,16 +359,16 @@
 </head>
 <body>
 
-  <!-- Non-Stop Marquee Ticker -->
+  <!-- Non-Stop Marquee Ticker with Identical Segments -->
   <div class="ticker-container" aria-label="Announcements">
     <div class="ticker-track">
       <div class="ticker-segment">
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
       </div>
       <div class="ticker-segment" aria-hidden="true">
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
       </div>
     </div>
   </div>
@@ -387,22 +391,14 @@
     <div class="header-sub">Interactive Arts</div>
 
     <nav>
-      <a href="#about" class="btn-major">About</a>
       <a href="#games" class="btn-major">Games</a>
       <a href="mystery-box/" class="btn-major">Mystery Box</a>
+      <a href="#about" class="btn-major">About</a>
     </nav>
   </header>
 
   <main class="container">
-    <!-- Swapped: About Section -->
-    <section id="about" class="card">
-      <div class="section-title">About NEVERUS</div>
-      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
-        NEVERUS Interactive LLC is an independent game development studio staffed by digital jolly toymakers in an attempt to simulate the good in things.
-      </p>
-    </section>
-
-    <!-- Swapped: Featured Section -->
+    <!-- Featured Section -->
     <section id="games" class="card">
       <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
       <div class="section-title">FEATURED</div>
@@ -428,6 +424,14 @@
           </a>
         </div>
       </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="card">
+      <div class="section-title">About NEVERUS</div>
+      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
+        NEVERUS Interactive LLC is an independent game development studio staffed by jolly digital toymakers endevouring in earnest to simulate the good in things.
+      </p>
     </section>
   </main>
 
