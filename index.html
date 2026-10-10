@@ -302,40 +302,17 @@
       filter: drop-shadow(2px 2px 0px var(--black));
     }
 
-    /* Web 1.0 External Hit Counter Housing */
-    .hit-counter-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin: 8px 0 16px;
+/* Hit counter */
+    .raw-counter {
+      margin-top: 4px;
+      line-height: 0;
+      user-select: none;
     }
 
-    .hit-counter-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--yellow);
-    }
-
-    .hit-counter-box {
-      background: #000000;
-      border: 2px solid var(--white);
-      box-shadow: 4px 4px 0px var(--white);
-      padding: 6px 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 38px;
-    }
-
-    /* Ensure external counter images/iframes stay crisp */
-    .hit-counter-box img,
-    .hit-counter-box iframe {
+    .raw-counter img {
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      display: block;
+      display: inline-block;
     }
 
     /* Plaintext Footer */
@@ -444,9 +421,9 @@
           </a>
           
           <div class="hero-tagline-group">
-            <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.</p>
-            <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.</p>
-            <p>Round up some pals, because <em>Off the Shelf!</em> is better together.</p>
+            <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos</p>
+            <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing</p>
+            <p>Round up some pals, because <em>Off the Shelf!</em> is better together</p>
             <p>Did we mention it's $3?</p>
           </div>
 
@@ -466,15 +443,7 @@
     </section>
   </main>
 
-  <footer>
-    <!-- Center Authentic Web 1.0 Hit Counter -->
-    <div class="hit-counter-container" title="Visitors Logged">
-      <div class="hit-counter-label">Visitors Logged</div>
-      <div class="hit-counter-box">
-        <script type="text/javascript" src="https://counter.websiteout.com/js/7/6/0/0"></script>
-      </div>
-    </div>
-
+<footer>
     <div class="footer-links">
       <a href="mailto:NEVERUSinteractive@gmail.com">Contact</a>
       <a href="OffTheShelf_PressKit.zip" download>Press Kit</a>
@@ -487,6 +456,11 @@
     </div>
 
     <p class="footer-copy">&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
+
+    <!-- Raw Web 1.0 counter script -->
+    <div class="raw-counter">
+      <script type="text/javascript" src="https://counter.websiteout.com/js/7/6/0/0"></script>
+    </div>
   </footer>
 
   <script>
