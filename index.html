@@ -362,17 +362,20 @@
     }
 
 @media (max-width: 600px) {
-      /* Keep all 3 buttons locked on a single line */
       nav {
-        gap: 8px;
+        display: flex;
         width: 100%;
-        max-width: 360px;
+        gap: 10px;
+        padding: 0 4px;
       }
       .btn-major {
-        padding: 6px 10px;
-        font-size: 0.72rem;
-        letter-spacing: 0px;
+        flex: 1;
+        text-align: center;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
         box-shadow: 3px 3px 0px var(--white);
+        white-space: nowrap;
       }
 
       .hero-card { min-height: 320px; }
