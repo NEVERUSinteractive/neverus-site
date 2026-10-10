@@ -106,25 +106,47 @@
 
     nav {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
-    /* Major Interactive Buttons with PS1 Vertex Wobble */
+    /* Askew Neo-Brutalist Major Buttons */
     .btn-major {
+      position: relative;
       color: var(--white);
       text-decoration: none;
       background: var(--black);
       border: 2px solid var(--white);
-      padding: 8px 20px;
+      padding: 8px 22px;
       font-weight: 700;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      box-shadow: 4px 4px 0px var(--white);
       display: inline-block;
       cursor: pointer;
+      z-index: 1;
+      transform-origin: center center;
+    }
+
+    /* Asymmetrical Backplates */
+    .btn-major::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: var(--white);
+      z-index: -1;
+      transform: translate(5px, 5px) rotate(-1.5deg) skewX(1.5deg);
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    nav a:nth-child(2)::before {
+      transform: translate(4px, 6px) rotate(2deg) skewY(-1.2deg);
+    }
+
+    nav a:nth-child(3)::before {
+      transform: translate(6px, 4px) rotate(-2.2deg) skewX(-2deg);
     }
 
     .btn-major:hover {
@@ -136,8 +158,11 @@
 
     .btn-major:active {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--white);
       animation: none;
+    }
+
+    .btn-major:active::before {
+      transform: translate(2px, 2px) rotate(0deg);
     }
 
     @keyframes ps1-btn-jitter {
@@ -257,36 +282,56 @@
       color: var(--yellow);
     }
 
+    /* Expressionist Askew Hero CTA Button */
     .btn-cta {
+      position: relative;
       display: inline-block;
       background: var(--yellow);
       color: var(--black);
       font-weight: 700;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 14px 32px;
+      padding: 14px 34px;
       border: 2px solid var(--white);
       font-size: 1.05rem;
       letter-spacing: 1.5px;
       cursor: pointer;
-      box-shadow: 5px 5px 0px var(--white);
+      z-index: 1;
+      transform-origin: center center;
+    }
+
+    .btn-cta::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: var(--white);
+      z-index: -1;
+      transform: translate(6px, 6px) rotate(2.4deg) skewX(-2deg);
+      pointer-events: none;
+      transform-origin: center center;
     }
 
     .btn-cta:hover {
       background: var(--white);
       color: var(--black);
       border-color: var(--yellow);
-      box-shadow: 5px 5px 0px var(--yellow);
       animation: ps1-btn-jitter 0.14s steps(2) infinite;
+    }
+
+    .btn-cta:hover::before {
+      background: var(--yellow);
     }
 
     .btn-cta:active {
       transform: translate(3px, 3px);
-      box-shadow: 2px 2px 0px var(--yellow);
       animation: none;
     }
 
-    /* Restored full desktop scale */
+    .btn-cta:active::before {
+      transform: translate(2px, 2px) rotate(0deg);
+    }
+
+    /* Restored desktop mascot size */
     .mascot-peeker {
       position: absolute;
       top: -75px;
@@ -444,7 +489,6 @@
 
   <script>
     // --- 1. DYNAMIC SEAMLESS TICKER CONFIGURATION ---
-    // Edit this list to update ticker announcements without modifying HTML
     const TICKER_MESSAGES = [
       "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
       "WISHLIST NOW!",
@@ -458,7 +502,6 @@
       const separator = '<span class="sep">&bull;</span>';
       const segmentHtml = TICKER_MESSAGES.map(msg => `${msg}${separator}`).join('');
 
-      // Build primary and duplicate tracks for a mathematical 50% loop offset
       const segment1 = document.createElement('div');
       segment1.className = 'ticker-segment';
       segment1.innerHTML = `<span class="ticker-item">${segmentHtml}</span><span class="ticker-item">${segmentHtml}</span>`;
