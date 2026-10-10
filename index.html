@@ -291,7 +291,10 @@
       animation: none;
     }
 
-    /* Mascot Peeker */
+    /* Mascot Peeker 
+    Raise him up: Make TOP more negative
+    Lower him down: Make the number less negative */
+    
     .mascot-peeker {
       position: absolute;
       top: -88px;
@@ -303,7 +306,6 @@
       cursor: pointer;
       user-select: none;
       filter: drop-shadow(2px 2px 0px var(--black));
-      transition: opacity 0.15s ease-out;
     }
 
     .mascot-peeker.fallen {
@@ -393,7 +395,7 @@
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
       .mascot-peeker {
         width: 95px;
-        top: -60px;
+        top: -62px;
         right: 12px;
       }
     }
