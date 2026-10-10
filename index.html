@@ -12,30 +12,26 @@
   <style>
     :root {
       --black: #000000;
-      --gray-dark: #121212;
-      --gray-card: #1c1c1c;
-      --gray-border: #333333;
-      --gray-subtle: #444444;
-      --gray-mid: #888888;
-      --gray-light: #cccccc;
       --white: #ffffff;
+      --yellow: #ffff00;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--gray-dark);
-      color: var(--gray-light);
+      background-color: var(--black);
+      color: var(--white);
       font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       line-height: 1.5;
       padding-bottom: 48px;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Infinite Marquee Ticker */
+    /* High-Voltage Attention Marquee */
     .ticker-container {
-      background: var(--black);
-      border-bottom: 2px solid var(--gray-border);
+      background: var(--yellow);
+      color: var(--black);
+      border-bottom: 2px solid var(--white);
       overflow: hidden;
       display: flex;
       white-space: nowrap;
@@ -44,20 +40,21 @@
 
     .ticker-track {
       display: inline-flex;
-      animation: ticker-scroll 24s linear infinite;
+      animation: ticker-scroll 22s linear infinite;
     }
 
     .ticker-item {
-      color: var(--white);
+      color: var(--black);
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 10px 24px;
+      padding: 8px 24px;
     }
 
     .ticker-item em {
       font-style: italic;
+      text-decoration: underline;
     }
 
     @keyframes ticker-scroll {
@@ -67,7 +64,7 @@
 
     header {
       max-width: 960px;
-      margin: 24px auto 32px;
+      margin: 36px auto 32px;
       padding: 0 16px;
       display: flex;
       flex-direction: column;
@@ -78,7 +75,7 @@
     .brand-logo {
       height: 90px;
       width: auto;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       fill: var(--white);
       user-select: none;
       cursor: pointer;
@@ -88,15 +85,16 @@
 
     .header-sub {
       font-size: 0.95rem;
-      color: var(--gray-mid);
+      color: var(--white);
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 18px;
+      letter-spacing: 3px;
+      margin-bottom: 24px;
+      font-weight: 700;
     }
 
     nav {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -104,19 +102,27 @@
     nav a {
       color: var(--white);
       text-decoration: none;
-      background: var(--gray-card);
-      border: 2px outset var(--gray-subtle);
-      padding: 6px 16px;
+      background: var(--black);
+      border: 2px solid var(--white);
+      padding: 8px 20px;
       font-weight: 700;
       font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      box-shadow: 4px 4px 0px var(--white);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
 
     nav a:hover {
-      border-style: inset;
-      background: var(--black);
-      color: var(--white);
+      background: var(--yellow);
+      color: var(--black);
+      border-color: var(--yellow);
+      box-shadow: 4px 4px 0px var(--white);
+    }
+
+    nav a:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--white);
     }
 
     .container {
@@ -125,34 +131,35 @@
       padding: 0 16px;
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: 40px;
     }
 
     .card {
-      background: var(--gray-card);
-      border: 2px solid var(--gray-border);
-      border-radius: 4px;
-      padding: 24px;
+      background: var(--black);
+      border: 2px solid var(--white);
+      padding: 28px;
       position: relative;
+      box-shadow: 6px 6px 0px var(--white);
     }
 
     .section-title {
       font-size: 1.4rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
       text-align: center;
       color: var(--white);
+      border-bottom: 2px solid var(--white);
+      padding-bottom: 8px;
     }
 
     .hero-card {
       position: relative;
-      border: 2px solid var(--gray-border);
-      border-radius: 4px;
+      border: 2px solid var(--white);
       overflow: hidden;
       background: var(--black);
-      min-height: 440px;
+      min-height: 460px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -172,7 +179,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      filter: brightness(0.8);
+      filter: brightness(0.65) contrast(1.2);
     }
 
     .hero-content {
@@ -189,24 +196,24 @@
     .hero-logo-link {
       display: inline-block;
       line-height: 0;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .hero-logo {
       max-width: 440px;
       width: 82%;
       height: auto;
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.95));
-      transition: transform 0.2s ease;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 1));
+      transition: transform 0.15s ease;
     }
 
     .hero-logo:hover {
-      transform: scale(1.03);
+      transform: scale(1.04);
     }
 
     .hero-tagline-group {
-      margin: 16px 0 24px;
-      max-width: 580px;
+      margin: 16px 0 28px;
+      max-width: 600px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -214,33 +221,46 @@
 
     .hero-tagline-group p {
       color: var(--white);
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1.05rem;
       line-height: 1.6;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 4px 10px;
+      border-left: 3px solid var(--yellow);
     }
 
     .hero-tagline-group p em {
       font-style: italic;
+      color: var(--yellow);
     }
 
-    .btn {
+    /* Primary Mechanical Call to Action */
+    .btn-cta {
       display: inline-block;
-      background: var(--black);
-      color: var(--white);
+      background: var(--yellow);
+      color: var(--black);
       font-weight: 700;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 10px 24px;
-      border: 2px outset var(--gray-subtle);
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
+      padding: 14px 32px;
+      border: 2px solid var(--white);
+      font-size: 1.05rem;
+      letter-spacing: 1.5px;
       cursor: pointer;
+      box-shadow: 5px 5px 0px var(--white);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
 
-    .btn:hover {
-      border-style: inset;
-      background: #1f1f1f;
+    .btn-cta:hover {
+      background: var(--white);
+      color: var(--black);
+      border-color: var(--yellow);
+      box-shadow: 5px 5px 0px var(--yellow);
+    }
+
+    .btn-cta:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0px var(--yellow);
     }
 
     .mascot-peeker {
@@ -251,43 +271,54 @@
       height: auto;
       z-index: 3;
       pointer-events: none;
+      filter: drop-shadow(2px 2px 0px var(--black));
     }
 
     footer {
       max-width: 960px;
-      margin: 48px auto 0;
+      margin: 56px auto 0;
       padding: 32px 16px 0;
-      border-top: 1px solid var(--gray-border);
+      border-top: 2px solid var(--white);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
       text-align: center;
-      font-size: 0.85rem;
-      color: var(--gray-mid);
+      font-size: 0.9rem;
+      color: var(--white);
     }
 
     .footer-links {
       display: flex;
-      gap: 18px;
+      gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
     }
 
     .footer-links a {
-      color: var(--gray-light);
+      color: var(--white);
+      background: var(--black);
+      border: 1px solid var(--white);
+      padding: 4px 10px;
       text-decoration: none;
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.5px;
-      font-size: 0.8rem;
-      transition: color 0.15s ease;
+      font-size: 0.75rem;
+      box-shadow: 2px 2px 0px var(--white);
     }
 
     .footer-links a:hover {
-      color: var(--white);
-      text-decoration: underline;
+      background: var(--yellow);
+      color: var(--black);
+      border-color: var(--yellow);
+      box-shadow: 2px 2px 0px var(--white);
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
     }
 
     @media (max-width: 600px) {
@@ -295,12 +326,13 @@
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
       .mascot-peeker { width: 88px; top: -32px; }
+      .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Infinite Marquee Ticker -->
+  <!-- High-Voltage Attention Marquee -->
   <div class="ticker-container" aria-label="Announcements">
     <div class="ticker-track">
       <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
@@ -337,7 +369,7 @@
   <main class="container">
     <section id="games" class="card">
       <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
-      <div class="section-title">FEATURED</div>
+      <div class="section-title">Featured Release</div>
 
       <div class="hero-card">
         <div class="hero-bg-layer">
@@ -352,10 +384,10 @@
             <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.</p>
             <p>Round up some pals, because <em>Off the Shelf!</em> is better together.</p>
-            <p>Did we mention it's $3?</p>
+            <p>Did we mention it is $3?</p>
           </div>
 
-          <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="btn">
+          <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="btn-cta">
             Wishlist on Steam
           </a>
         </div>
@@ -364,7 +396,7 @@
 
     <section id="about" class="card">
       <div class="section-title">About NEVERUS</div>
-      <p style="color: var(--gray-light); line-height: 1.6; text-align: center;">
+      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
         NEVERUS Interactive LLC is an independent game development studio staffed by digital jolly toymakers in an attempt to simulate good things.
       </p>
     </section>
@@ -382,7 +414,7 @@
       <a href="NEVERUS_Manifesto.txt" download>Manifesto</a>
     </div>
 
-    <p>&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
+    <p class="footer-copy">&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
   </footer>
 
   <script>
@@ -457,8 +489,10 @@
               const vertexPhase = (item.x * 0.008) + (item.y * 0.011) + phase;
               const localWobbleX = Math.sin(vertexPhase) * CONFIG.localWobbleAmp;
               const localWobbleY = Math.cos(vertexPhase * 1.4) * CONFIG.localWobbleAmp;
+
               const worldX = item.x + driftX + localWobbleX;
               const worldY = item.y + driftY + localWobbleY;
+
               const snappedX = Math.round(worldX / CONFIG.snapGrid) * CONFIG.snapGrid;
               const snappedY = Math.round(worldY / CONFIG.snapGrid) * CONFIG.snapGrid;
               out.push(`${snappedX.toFixed(1)},${snappedY.toFixed(1)}`);
@@ -478,7 +512,6 @@
             const item = items[i];
             if (item.type === 'cmd') out.push(item.val);
             else if (item.type === 'point') {
-              const vertexPhase = 0;
               out.push(`${item.x},${item.y}`);
             } else {
               out.push(item.val);
