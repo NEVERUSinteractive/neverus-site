@@ -27,20 +27,26 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* High-Voltage Attention Marquee */
+    /* Seamless Non-Stop Marquee Ticker */
     .ticker-container {
       background: var(--yellow);
       color: var(--black);
       border-bottom: 2px solid var(--white);
       overflow: hidden;
       display: flex;
-      white-space: nowrap;
       user-select: none;
+      width: 100%;
     }
 
     .ticker-track {
-      display: inline-flex;
-      animation: ticker-scroll 22s linear infinite;
+      display: flex;
+      width: max-content;
+      animation: ticker-seamless 20s linear infinite;
+    }
+
+    .ticker-segment {
+      display: flex;
+      flex-shrink: 0;
     }
 
     .ticker-item {
@@ -49,7 +55,8 @@
       font-size: 0.85rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 8px 24px;
+      padding: 8px 18px;
+      white-space: nowrap;
     }
 
     .ticker-item em {
@@ -57,7 +64,7 @@
       text-decoration: underline;
     }
 
-    @keyframes ticker-scroll {
+    @keyframes ticker-seamless {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
@@ -99,7 +106,8 @@
       justify-content: center;
     }
 
-    nav a {
+    /* Major Interactive Buttons with PS1 Vertex Wobble */
+    .btn-major {
       color: var(--white);
       text-decoration: none;
       background: var(--black);
@@ -110,19 +118,29 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       box-shadow: 4px 4px 0px var(--white);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      display: inline-block;
+      cursor: pointer;
     }
 
-    nav a:hover {
+    .btn-major:hover {
       background: var(--yellow);
       color: var(--black);
       border-color: var(--yellow);
-      box-shadow: 4px 4px 0px var(--white);
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
     }
 
-    nav a:active {
+    .btn-major:active {
       transform: translate(2px, 2px);
       box-shadow: 2px 2px 0px var(--white);
+      animation: none;
+    }
+
+    @keyframes ps1-btn-jitter {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(-1.5px, 1px); }
+      50%  { transform: translate(1px, -1.5px); }
+      75%  { transform: translate(-1px, -1px); }
+      100% { transform: translate(1.5px, 1px); }
     }
 
     .container {
@@ -179,7 +197,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      filter: brightness(0.65) contrast(1.2);
+      filter: brightness(0.92) contrast(1.08);
     }
 
     .hero-content {
@@ -203,12 +221,12 @@
       max-width: 440px;
       width: 82%;
       height: auto;
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 1));
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.9));
       transition: transform 0.15s ease;
     }
 
     .hero-logo:hover {
-      transform: scale(1.04);
+      transform: scale(1.03);
     }
 
     .hero-tagline-group {
@@ -234,7 +252,6 @@
       color: var(--yellow);
     }
 
-    /* Primary Mechanical Call to Action */
     .btn-cta {
       display: inline-block;
       background: var(--yellow);
@@ -248,7 +265,6 @@
       letter-spacing: 1.5px;
       cursor: pointer;
       box-shadow: 5px 5px 0px var(--white);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
 
     .btn-cta:hover {
@@ -256,24 +272,28 @@
       color: var(--black);
       border-color: var(--yellow);
       box-shadow: 5px 5px 0px var(--yellow);
+      animation: ps1-btn-jitter 0.14s steps(2) infinite;
     }
 
     .btn-cta:active {
       transform: translate(3px, 3px);
       box-shadow: 2px 2px 0px var(--yellow);
+      animation: none;
     }
 
+    /* Scaled and repositioned mascot */
     .mascot-peeker {
       position: absolute;
-      top: -75px;
-      right: 20px;
-      width: 140px;
+      top: -88px;
+      right: 18px;
+      width: 110px;
       height: auto;
       z-index: 3;
       pointer-events: none;
       filter: drop-shadow(2px 2px 0px var(--black));
     }
 
+    /* Minimal plaintext footer */
     footer {
       max-width: 960px;
       margin: 56px auto 0;
@@ -284,13 +304,11 @@
       align-items: center;
       gap: 20px;
       text-align: center;
-      font-size: 0.9rem;
-      color: var(--white);
     }
 
     .footer-links {
       display: flex;
-      gap: 12px;
+      gap: 18px;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
@@ -298,47 +316,56 @@
 
     .footer-links a {
       color: var(--white);
-      background: var(--black);
-      border: 1px solid var(--white);
-      padding: 4px 10px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 2px 4px;
       text-decoration: none;
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.5px;
-      font-size: 0.75rem;
-      box-shadow: 2px 2px 0px var(--white);
+      font-size: 0.8rem;
+      transition: color 0.1s ease;
     }
 
     .footer-links a:hover {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: 2px 2px 0px var(--white);
+      color: var(--yellow);
+      text-decoration: underline;
     }
 
     .footer-copy {
       font-size: 0.8rem;
       letter-spacing: 0.5px;
+      color: var(--white);
     }
 
     @media (max-width: 600px) {
       .hero-card { min-height: 320px; }
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
-      .mascot-peeker { width: 88px; top: -32px; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
+      /* Tight margin to overlap slightly with the top section on mobile */
+      .mascot-peeker {
+        width: 76px;
+        top: -46px;
+        right: 12px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- High-Voltage Attention Marquee -->
+  <!-- Non-Stop Marquee Ticker -->
   <div class="ticker-container" aria-label="Announcements">
     <div class="ticker-track">
-      <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
-      <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
-      <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
-      <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+      <div class="ticker-segment">
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+      </div>
+      <div class="ticker-segment" aria-hidden="true">
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING SOON TO STEAM AND ITCH.IO 10/21! &bull; WISHLIST NOW! &bull; SEE YOU IN THE SHELVES! &bull;</span>
+      </div>
     </div>
   </div>
 
@@ -360,16 +387,25 @@
     <div class="header-sub">Interactive Arts</div>
 
     <nav>
-      <a href="#games">Games</a>
-      <a href="mystery-box/">Mystery Box</a>
-      <a href="#about">About</a>
+      <a href="#about" class="btn-major">About</a>
+      <a href="#games" class="btn-major">Games</a>
+      <a href="mystery-box/" class="btn-major">Mystery Box</a>
     </nav>
   </header>
 
   <main class="container">
+    <!-- Swapped: About Section -->
+    <section id="about" class="card">
+      <div class="section-title">About NEVERUS</div>
+      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
+        NEVERUS Interactive LLC is an independent game development studio staffed by digital jolly toymakers in an attempt to simulate the good in things.
+      </p>
+    </section>
+
+    <!-- Swapped: Featured Section -->
     <section id="games" class="card">
       <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
-      <div class="section-title">Featured Release</div>
+      <div class="section-title">FEATURED</div>
 
       <div class="hero-card">
         <div class="hero-bg-layer">
@@ -392,13 +428,6 @@
           </a>
         </div>
       </div>
-    </section>
-
-    <section id="about" class="card">
-      <div class="section-title">About NEVERUS</div>
-      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
-        NEVERUS Interactive LLC is an independent game development studio staffed by digital jolly toymakers in an attempt to simulate good things.
-      </p>
     </section>
   </main>
 
