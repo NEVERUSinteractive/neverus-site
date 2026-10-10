@@ -232,7 +232,7 @@
       text-transform: uppercase;
       text-decoration: none;
       padding: 10px 24px;
-      border: 2px outset #dddddd;
+      border: 2px outset var(--gray-subtle);
       font-size: 0.9rem;
       letter-spacing: 0.5px;
       cursor: pointer;
@@ -240,7 +240,7 @@
 
     .btn:hover {
       border-style: inset;
-      background: #bbbbbb;
+      background: #1f1f1f;
     }
 
     .mascot-peeker {
@@ -261,49 +261,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       text-align: center;
       font-size: 0.85rem;
       color: var(--gray-mid);
     }
 
-    .footer-actions {
+    .footer-links {
       display: flex;
-      gap: 12px;
+      gap: 18px;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
     }
 
-    .footer-actions .btn-secondary {
-      background: var(--gray-card);
-      color: var(--white);
-      border: 2px outset var(--gray-subtle);
-      font-size: 0.8rem;
-      padding: 8px 18px;
-    }
-
-    .footer-actions .btn-secondary:hover {
-      background: var(--black);
-      border-style: inset;
-    }
-
-    .footer-socials {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .footer-socials a {
+    .footer-links a {
       color: var(--gray-light);
       text-decoration: none;
       text-transform: uppercase;
       font-weight: 700;
       letter-spacing: 0.5px;
       font-size: 0.8rem;
+      transition: color 0.15s ease;
     }
 
-    .footer-socials a:hover {
+    .footer-links a:hover {
       color: var(--white);
       text-decoration: underline;
     }
@@ -369,7 +351,7 @@
           <div class="hero-tagline-group">
             <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.</p>
-            <p>Bring some pals, because <em>Off the Shelf</em> is better together!</p>
+            <p>Round up some pals, because <em>Off the Shelf!</em> is better together.</p>
             <p>Did we mention it's $3?</p>
           </div>
 
@@ -389,18 +371,15 @@
   </main>
 
   <footer>
-    <div class="footer-actions">
-      <a href="mailto:NEVERUSinteractive@gmail.com" class="btn btn-secondary">Contact</a>
-      <a href="NEVERUS_Manifesto.txt" download class="btn btn-secondary">Manifesto</a>
-      <a href="OffTheShelf_PressKit.zip" download class="btn btn-secondary">Press Kit</a>
-    </div>
-
-    <div class="footer-socials">
+    <div class="footer-links">
+      <a href="mailto:NEVERUSinteractive@gmail.com">Contact</a>
+      <a href="OffTheShelf_PressKit.zip" download>Press Kit</a>
       <a href="https://www.tiktok.com/@neverusinteractive" target="_blank" rel="noopener noreferrer">TikTok</a>
       <a href="https://www.instagram.com/neverus.interactive/" target="_blank" rel="noopener noreferrer">Instagram</a>
       <a href="https://www.youtube.com/@NEVERUS_interactive" target="_blank" rel="noopener noreferrer">YouTube</a>
       <a href="https://www.twitch.tv/neverusinteractive" target="_blank" rel="noopener noreferrer">Twitch</a>
       <a href="https://store.steampowered.com/search/?developer=NEVERUS" target="_blank" rel="noopener noreferrer">Steam</a>
+      <a href="NEVERUS_Manifesto.txt" download>Manifesto</a>
     </div>
 
     <p>&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
@@ -498,8 +477,12 @@
           for (let i = 0; i < items.length; i++) {
             const item = items[i];
             if (item.type === 'cmd') out.push(item.val);
-            else if (item.type === 'point') out.push(`${item.x},${item.y}`);
-            else out.push(item.val);
+            else if (item.type === 'point') {
+              const vertexPhase = 0;
+              out.push(`${item.x},${item.y}`);
+            } else {
+              out.push(item.val);
+            }
           }
           el.setAttribute('d', out.join(' '));
         });
