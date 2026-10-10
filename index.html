@@ -361,7 +361,20 @@
       color: var(--white);
     }
 
-    @media (max-width: 600px) {
+@media (max-width: 600px) {
+      /* Keep all 3 buttons locked on a single line */
+      nav {
+        gap: 8px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .btn-major {
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        letter-spacing: 0px;
+        box-shadow: 3px 3px 0px var(--white);
+      }
+
       .hero-card { min-height: 320px; }
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
