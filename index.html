@@ -286,12 +286,12 @@
       animation: none;
     }
 
-    /* Scaled and raised mascot */
+    /* Restored full desktop scale */
     .mascot-peeker {
       position: absolute;
-      top: -88px;
-      right: 18px;
-      width: 110px;
+      top: -75px;
+      right: 20px;
+      width: 140px;
       height: auto;
       z-index: 3;
       pointer-events: none;
@@ -349,6 +349,7 @@
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
+      /* Targeted mobile mascot scale and overlap */
       .mascot-peeker {
         width: 76px;
         top: -46px;
@@ -359,18 +360,9 @@
 </head>
 <body>
 
-  <!-- Non-Stop Marquee Ticker with Identical Segments -->
+  <!-- Dynamic Infinite Marquee -->
   <div class="ticker-container" aria-label="Announcements">
-    <div class="ticker-track">
-      <div class="ticker-segment">
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
-      </div>
-      <div class="ticker-segment" aria-hidden="true">
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
-        <span class="ticker-item"><em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!<span class="sep">&bull;</span>WISHLIST NOW!<span class="sep">&bull;</span>SEE YOU IN THE SHELVES!<span class="sep">&bull;</span></span>
-      </div>
-    </div>
+    <div class="ticker-track" id="tickerTrack"></div>
   </div>
 
   <header>
@@ -416,7 +408,7 @@
             <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos.</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing.</p>
             <p>Round up some pals, because <em>Off the Shelf!</em> is better together.</p>
-            <p>Did we mention it is $3?</p>
+            <p>Did we mention it's $3?</p>
           </div>
 
           <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="btn-cta">
@@ -430,7 +422,7 @@
     <section id="about" class="card">
       <div class="section-title">About NEVERUS</div>
       <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
-        NEVERUS Interactive LLC is an independent game development studio staffed by jolly digital toymakers endevouring in earnest to simulate the good in things.
+        NEVERUS Interactive LLC is an independent simulation software and entertainment studio staffed by jolly digital toymakers endeavouring in earnest to simulate the good in things.
       </p>
     </section>
   </main>
@@ -451,6 +443,37 @@
   </footer>
 
   <script>
+    // --- 1. DYNAMIC SEAMLESS TICKER CONFIGURATION ---
+    // Edit this list to update ticker announcements without modifying HTML
+    const TICKER_MESSAGES = [
+      "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
+      "WISHLIST NOW!",
+      "SEE YOU IN THE SHELVES!"
+    ];
+
+    (function initSeamlessTicker() {
+      const track = document.getElementById('tickerTrack');
+      if (!track) return;
+
+      const separator = '<span class="sep">&bull;</span>';
+      const segmentHtml = TICKER_MESSAGES.map(msg => `${msg}${separator}`).join('');
+
+      // Build primary and duplicate tracks for a mathematical 50% loop offset
+      const segment1 = document.createElement('div');
+      segment1.className = 'ticker-segment';
+      segment1.innerHTML = `<span class="ticker-item">${segmentHtml}</span><span class="ticker-item">${segmentHtml}</span>`;
+
+      const segment2 = document.createElement('div');
+      segment2.className = 'ticker-segment';
+      segment2.setAttribute('aria-hidden', 'true');
+      segment2.innerHTML = `<span class="ticker-item">${segmentHtml}</span><span class="ticker-item">${segmentHtml}</span>`;
+
+      track.innerHTML = '';
+      track.appendChild(segment1);
+      track.appendChild(segment2);
+    })();
+
+    // --- 2. PS1 LOGO VERTEX WOBBLE ---
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
