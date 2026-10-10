@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEVERUS Pixel Lab</title>
+
+  <!-- Atkinson Hyperlegible (SIL Open Font License) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #1a1a1a;
+      --card: #242424;
+      --border: rgba(255, 255, 255, 0.15);
+      --text: #e0e0e0;
+      --accent: #5ab9a8;
+      --muted: #888;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .brand-logo {
+      height: 80px;
+      width: auto;
+      margin-bottom: 12px;
+      fill: #ffffff;
+      user-select: none;
+      cursor: pointer;
+      transform-origin: center center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.85rem;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .subtitle {
+      margin: 4px 0 0 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+      max-width: 960px;
+      width: 100%;
+    }
+    .preview-pane {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 512px;
+      max-width: 100%;
+      flex-shrink: 0;
+    }
+    .preview-box {
+      width: 512px;
+      height: 512px;
+      max-width: 100%;
+      background: #202020;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      touch-action: none;
+    }
+    .preview-box.is-pannable {
+      cursor: grab;
+    }
+    .preview-box.is-dragging {
+      cursor: grabbing;
+    }
+    .preview-placeholder {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      user-select: none;
+    }
+    #previewImg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: none;
+      pointer-events: none;
+    }
+    .crop-hint-badge {
+      position: absolute;
+      bottom: 12px;
+      background: rgba(20, 20, 20, 0.75);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ccc;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translateY(4px);
+    }
+    .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .preview-box.is-dragging .crop-hint-badge {
+      opacity: 0 !important;
+      transform: translateY(4px) !important;
+      transition: opacity 0.1s ease, transform 0.1s ease;
+    }
+    .reset-crop-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(30, 30, 30, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, background 0.15s ease, color 0.15s ease, transform 0.2s ease;
+      z-index: 5;
+    }
+    .reset-crop-btn.visible {
+      opacity: 0.85;
+      pointer-events: auto;
+    }
+    .reset-crop-btn:hover {
+      opacity: 1;
+      background: #3e3e3e;
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+    .preview-box.is-dragging .reset-crop-btn {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.1s ease;
+    }
+    .batch-nav {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #2a2a2a;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+    .batch-nav button {
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
+    .remove-current-btn {
+      background: #442a2a;
+      color: #ff9999;
+      font-family: inherit;
+      border: 1px solid rgba(255, 100, 100, 0.3);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .remove-current-btn:hover {
+      background: #553333;
+    }
+    .controls {
+      flex: 1;
+      min-width: 300px;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: space-between;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .control-group.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .file-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #2a2a2a;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .browse-btn {
+      background: #3e3e3e;
+      color: var(--text);
+      font-family: inherit;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .browse-btn:hover {
+      background: #4a4a4a;
+    }
+    .file-status-label {
+      flex: 1;
+      font-size: 0.85rem;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-status-label.has-files {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .clear-batch-btn {
+      display: none;
+      background: #442a2a;
+      color: #ff9999;
+      font-family: inherit;
+      border: 1px solid rgba(255, 100, 100, 0.3);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .clear-batch-btn:hover {
+      background: #553333;
+    }
+    label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #bbb;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .toggle-label-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #bbb;
+      user-select: none;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 38px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider-round {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #333;
+      border: 1px solid var(--border);
+      transition: 0.2s ease;
+      border-radius: 20px;
+    }
+    .slider-round:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--muted);
+      transition: 0.2s ease;
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider-round {
+      background-color: rgba(90, 185, 168, 0.25);
+      border-color: var(--accent);
+    }
+    .switch input:checked + .slider-round:before {
+      transform: translateX(18px);
+      background-color: var(--accent);
+    }
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+    select, input[type="file"], button {
+      background: #333;
+      color: var(--text);
+      font-family: inherit;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .palette-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .palette-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 2px 7px;
+      font-size: 0.75rem;
+      line-height: 1;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .icon-btn:hover:not(:disabled) {
+      color: var(--text);
+      background: #333;
+      border-color: rgba(255,255,255,0.3);
+    }
+    .icon-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+    .palette-strip {
+      display: flex;
+      width: 100%;
+      height: 28px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 4px;
+    }
+    .palette-swatch {
+      flex: 1;
+      height: 100%;
+      cursor: pointer;
+      position: relative;
+      transition: filter 0.15s ease;
+    }
+    .palette-swatch:hover {
+      filter: brightness(1.2);
+    }
+    .palette-swatch:not(:last-child) {
+      border-right: 1px solid rgba(0, 0, 0, 0.35);
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      width: 100%;
+    }
+    .actions button {
+      width: 100%;
+      font-weight: 700;
+    }
+    #downloadAllBtn {
+      display: none;
+      background: var(--accent);
+      color: #121212;
+      border: none;
+    }
+    #downloadAllBtn:hover {
+      filter: brightness(1.1);
+    }
+    footer {
+      max-width: 960px;
+      width: 100%;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .footer-section {
+      margin-bottom: 12px;
+    }
+    .footer-title {
+      font-weight: 700;
+      color: #bbb;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <svg id="neverusLogo" class="brand-logo" viewBox="0 0 1640 1424" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+      <g>
+        <path d="M262.12,986.54L307.55,986.54L316.44,990.31L317.65,1012.68L333.42,1068.74C331.17,1091.47 337.28,1106.47 351.75,1113.75L350.13,1080.06L365.9,1001.49C367.34,995.74 370.66,990.75 375.87,986.53L414.41,987.07L418.18,998.26C409.29,1019.55 401.47,1043.23 394.73,1069.28L395.27,1080.6L389.34,1106.21L375.73,1177.23L326,1181L306.86,1124.94L296.21,1061.33C290.73,1064.83 285.2,1069.82 279.63,1076.29L279.5,1117.39L266.56,1184.77L257.67,1181L215.62,1181L217.37,1173.59L214.14,1173.59L222.9,1151.08L229.1,1124.94L241.5,1109.85L234.76,1102.44L241.23,1087.48C247.16,1082.36 247.52,1078.63 242.31,1076.29L243.39,1065.1L255.65,1027.64L262.12,986.54ZM269.01,1080.06L270.76,1072.51L267.53,1072.51L269.01,1080.06ZM279.38,1050.15C280.1,1054.64 282.79,1057.11 287.47,1057.56L279.38,1050.15ZM283.83,1031.41C282.84,1036.44 284.14,1040.17 287.74,1042.6C288.19,1037.66 286.89,1033.93 283.83,1031.41ZM325.47,952.85C327.9,953.3 329.47,955.81 330.19,960.4L325.47,952.85ZM344.74,1143.67C345.01,1140.35 343.44,1137.83 340.02,1136.12C340.2,1138.64 341.77,1141.15 344.74,1143.67ZM383.56,1091.79C379.16,1079.3 371.3,1070.05 359.98,1064.03L383.56,1091.79Z" style="fill-rule:nonzero;"/>
+        <path d="M468.38,998.4L521.88,1002.44L537.51,998.4L550.04,1006.49L546.4,1040.59L496.13,1036.55C489.03,1038.53 480.68,1039.88 471.06,1040.59L464.32,1037.63L461.76,1079.81C470.65,1086.46 485.43,1090.05 506.1,1090.59L531.3,1086.68L540.6,1090.59L541.27,1120.78L494.1,1128.87L484.67,1124.83L462.3,1125.91L463.78,1178.47L486.15,1173.35L495.58,1177.39L517.55,1173.35L539.52,1173.35L545.85,1177.39L550.03,1210.95L540.6,1214.99L512.43,1210.95L503,1214.99L477.8,1210.95L430.77,1214.99L424.44,1154.88L427.54,1114.72L427.54,1026.45L424.44,1010.41L427.54,1002.46L468.37,1002.46L468.37,998.42L468.38,998.4ZM550.04,1088.15L553.27,1115.51L545.18,1112.14L550.03,1088.15L550.04,1088.15Z" style="fill-rule:nonzero;"/>
+        <path d="M566.38,1000.69L589.29,1006.08L599.4,1030.47L625.81,1122.92C629.67,1130.92 635.15,1138.64 642.25,1146.1L671.9,1043.68C676.84,1029.76 683.44,1015.43 691.71,1000.69L711.52,1004.06L655.46,1162.54L645.49,1179.12C637.58,1177.5 629.9,1174.18 622.45,1169.15L576.23,1037.08C571.29,1026.66 568.01,1014.53 566.39,1000.69L566.38,1000.69Z" style="fill-rule:nonzero;"/>
+        <path d="M775.49,998.4L828.99,1002.44L844.62,998.4L857.15,1006.49L853.51,1040.59L803.24,1036.55C796.14,1038.53 787.79,1039.88 778.17,1040.59L771.43,1037.63L768.87,1079.81C777.76,1086.46 792.54,1090.05 813.21,1090.59L838.41,1086.68L847.71,1090.59L848.38,1120.78L801.21,1128.87L791.78,1124.83L769.41,1125.91L770.89,1178.47L793.26,1173.35L802.69,1177.39L824.66,1173.35L846.63,1173.35L852.96,1177.39L857.14,1210.95L847.71,1214.99L819.54,1210.95L810.11,1214.99L784.91,1210.95L737.88,1214.99L731.55,1154.88L734.65,1114.72L734.65,1026.45L731.55,1010.41L734.65,1002.46L775.48,1002.46L775.48,998.42L775.49,998.4ZM857.16,1088.15L860.39,1115.51L852.3,1112.14L857.15,1088.15L857.16,1088.15Z" style="fill-rule:nonzero;"/>
+        <path d="M933.28,983.03L1003.36,986.26C1030.85,989.59 1045.63,997.22 1047.7,1009.17C1054.71,1022.11 1053.85,1040.75 1045.14,1065.1C1038.13,1082.62 1026.81,1095.02 1011.18,1102.3C1026.09,1116.77 1031.08,1138.15 1026.14,1166.45L1022.5,1223.73C1016.21,1226.96 1007.63,1227.28 996.76,1224.67C984.81,1225.03 980.5,1214.79 983.82,1193.94L988,1165.1C986.29,1128.71 980.5,1111.64 970.62,1113.89L941.65,1113.49C936.17,1117.08 932.22,1124.41 929.79,1135.46C928.44,1152.62 924.85,1171.44 919.01,1191.93L913.22,1219.69L893.01,1219.82L875.22,1218.74L882.5,1187.47L920.37,986.8L933.31,983.03L933.28,983.03ZM951.88,1014.97L937.46,1088.42L986.92,1086.4C1014.59,1071.94 1021.96,1050.15 1009.02,1021.04C997.52,1015.11 978.47,1013.09 951.88,1014.98L951.88,1014.97Z" style="fill-rule:nonzero;"/>
+        <path d="M1087.52,985.19L1108.54,989.23L1117.16,985.19L1125.25,985.19L1126.19,997.45L1117.3,1042.33L1117.7,1058.77L1110.42,1091.38L1111.9,1099.6L1108.53,1124.13C1112.66,1140.84 1121.2,1150.37 1134.14,1152.7C1146.27,1142.64 1154.85,1126.29 1159.88,1103.65L1164.73,1050.55L1169.04,1038.29L1173.22,989.24L1187.37,985.2L1194.78,989.24L1217.02,985.2L1216.21,1009.73C1212.62,1023.93 1209.43,1040.28 1206.64,1058.78L1195.86,1136.4L1191.41,1148.66L1160.82,1193.54L1113.79,1201.63C1101.3,1196.96 1088.77,1190.17 1076.19,1181.28C1071.43,1165.65 1068.51,1147.95 1067.43,1128.18L1072.82,1071.04L1077.13,1058.78L1083.06,997.46L1087.51,985.2L1087.52,985.19Z" style="fill-rule:nonzero;"/>
+        <path d="M1362.58,963.49C1382.08,968.52 1401.12,978.36 1419.72,993C1422.59,1002.52 1424.57,1013.75 1425.65,1026.69L1378.48,1030.87C1365.45,1017.66 1347.53,1009.22 1324.71,1005.53C1316.09,1011.46 1308.76,1019.91 1302.74,1030.87L1333.87,1043.4C1354.62,1049.24 1376.81,1057.69 1400.44,1068.74C1410.14,1086.08 1412.93,1107.1 1408.8,1131.81C1396.04,1150.41 1378.66,1167.25 1356.65,1182.35L1317.16,1190.71L1275.92,1186.53C1255.17,1182.13 1237.78,1170.9 1223.77,1152.84L1218.65,1114.97L1253.15,1110.79C1269.5,1121.12 1271.12,1127.14 1258,1128.85L1263.93,1143.27L1267.7,1138.96L1281.45,1128.85L1300.32,1148.66C1314.07,1147.67 1328.62,1144.89 1343.98,1140.3L1352.47,1119.14L1349.91,1110.78L1287.65,1085.58C1267.88,1077.76 1253.87,1063.7 1245.6,1043.4L1247.22,1014.02L1253.15,1005.53L1283.47,980.33C1306.38,973.23 1332.75,967.62 1362.58,963.48L1362.58,963.49ZM1270.26,1053.65L1273.49,1061.74L1277.8,1052.04L1259.61,1029.13L1270.26,1047.86L1262.31,1047.86L1270.26,1053.65Z" style="fill-rule:nonzero;"/>
+      </g>
+      <path d="M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z" style="fill-rule:nonzero;"/>
+      <path d="M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z" style="fill-rule:nonzero;"/>
+      <path d="M1319.04,743.54C1289.06,962.83 996.87,1021.45 885.82,829.06L695.6,491.07C684.65,471.62 692.02,446.97 711.84,436.71C730.75,426.93 754.01,433.92 764.39,452.51L860.97,625.93C863.81,631.03 870.37,632.67 875.27,629.49C879.73,626.6 881.19,620.75 878.6,616.1L729.53,348.56C719.15,329.93 725.89,306.41 744.57,296.11C763.13,285.87 786.48,292.56 796.79,311.08L943.99,576.59C946.52,581.15 952.26,582.83 956.84,580.34C961.49,577.82 963.19,571.98 960.61,567.35L798.36,275.99C787.57,256.7 794.71,232.31 814.2,221.88C833.18,211.72 856.8,218.64 867.31,237.43L1033.5,534.61C1035.71,538.57 1040.54,540.24 1044.73,538.5C1049.66,536.45 1051.71,530.55 1049.1,525.89L897.69,254.93C887.25,236.26 893.92,212.65 912.59,202.21C921.03,197.49 949.98,189.67 965.31,217.11L1172.96,588.26C1175.61,592.99 1181.59,594.68 1186.32,592.03C1191.07,589.37 1192.75,583.35 1190.06,578.61L1101.21,422.55C1090.25,403.3 1097.29,378.81 1116.79,368.31C1135.68,358.14 1159.24,364.94 1169.81,383.61L1289.86,595.76C1294.1,603.12 1330.06,662.84 1319.03,743.52L1319.04,743.54Z" style="fill-rule:nonzero;"/>
+    </svg>
+
+    <h1>NEVERUS Pixel Lab</h1>
+    <div class="subtitle">Retro 2-Bit Ditherer & Upscaler</div>
+  </header>
+
+  <div class="container">
+    <div class="preview-pane">
+      <div class="preview-box" id="previewBox">
+        <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
+        <img id="previewImg" alt="Result preview">
+        <button type="button" id="resetCropBtn" class="reset-crop-btn" title="Reset crop to center (or double-click preview)">Reset</button>
+        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan</div>
+      </div>
+
+      <div id="batchNav" class="batch-nav">
+        <button id="prevBatchBtn">&larr; Prev</button>
+        <span id="batchCounter">Image 1 of 1</span>
+        <button id="removeCurrentBtn" class="remove-current-btn">Remove</button>
+        <button id="nextBatchBtn">Next &rarr;</button>
+      </div>
+
+      <div class="actions">
+        <button id="copyBtn">Copy to Clipboard</button>
+        <button id="downloadBtn">Save (PNG)</button>
+        <button id="downloadAllBtn">Save All as ZIP</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Input</label>
+        <div class="file-input-row">
+          <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+          <button type="button" id="browseBtn" class="browse-btn">Add Images...</button>
+          <span id="fileStatusLabel" class="file-status-label">No files loaded</span>
+          <button type="button" id="clearBatchBtn" class="clear-batch-btn">Clear All</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="modeSelect">Mode</label>
+        <select id="modeSelect">
+          <option value="dither" selected>Retro Ditherer</option>
+          <option value="passthrough">Pixel Upscaler</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label class="toggle-row" for="cropToggle">
+          <span class="toggle-label-text">1:1 Square Crop</span>
+          <span class="switch">
+            <input type="checkbox" id="cropToggle" checked>
+            <span class="slider-round"></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label for="scaleSelect">Scaling</label>
+        <select id="scaleSelect"></select>
+      </div>
+
+      <div class="control-group dither-control">
+        <label>Brightness: <span id="brightVal">3</span></label>
+        <input type="range" id="brightness" min="0" max="6" step="1" value="3">
+      </div>
+
+      <div class="control-group dither-control">
+        <label>Contrast: <span id="contrastVal">3</span></label>
+        <input type="range" id="contrast" min="0" max="6" step="1" value="3">
+      </div>
+
+      <div class="control-group dither-control">
+        <div class="palette-header-row">
+          <label for="paletteSelect">Palette</label>
+          <div class="palette-actions">
+            <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">⎘</button>
+            <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette">✎</button>
+            <button type="button" id="deletePaletteBtn" class="icon-btn" title="Delete Palette">×</button>
+          </div>
+        </div>
+        <select id="paletteSelect"></select>
+        <div id="palettePreview" class="palette-strip" title="Click any shade to edit color"></div>
+        <input type="color" id="nativeColorPicker" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-section">
+      <div class="footer-title">About</div>
+      <div>
+        NEVERUS Pixel Lab is a lightweight utility for 4-shade dithering and nearest-neighbor pixel art scaling.
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <div class="footer-title">Attribution</div>
+      <div>
+        Core dithering and quantization logic based on open-source code created by 
+        <strong><a href="https://beehive.gay/" target="_blank" rel="noopener noreferrer">Olivvybee</a></strong> for 
+        <a href="https://imagenerator.net" target="_blank" rel="noopener noreferrer">imagenerator.net</a> 
+        (<a href="https://github.com/olivvybee/imagenerator" target="_blank" rel="noopener noreferrer">Github</a>, MIT License).
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function initPS1LogoWobble() {
+      const logoSvg = document.getElementById('neverusLogo');
+      if (!logoSvg) return;
+
+      const CONFIG = {
+        fps: 24,
+        phaseSpeed: 0.022,
+        snapGrid: 11.0,
+        driftAmp: 10,
+        localWobbleAmp: 5,
+        hoverScale: 1.08,
+        scaleTransition: 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)',
+        theme: 'dark',
+        colors: {
+          dark: '#ffffff',
+          light: '#181818'
+        }
+      };
+
+      logoSvg.style.fill = CONFIG.colors[CONFIG.theme] || CONFIG.colors.dark;
+      logoSvg.style.transition = CONFIG.scaleTransition;
+      logoSvg.style.transformOrigin = 'center center';
+
+      const pathElements = Array.from(logoSvg.querySelectorAll('path'));
+
+      const parsedPathData = pathElements.map(el => {
+        const rawD = el.getAttribute('d');
+        const tokens = rawD.match(/[a-df-z]|[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?/gi) || [];
+        const structured = [];
+
+        for (let i = 0; i < tokens.length; i++) {
+          const token = tokens[i];
+          if (/^[a-df-z]$/i.test(token)) {
+            structured.push({ type: 'cmd', val: token });
+          } else {
+            const x = parseFloat(token);
+            const nextToken = tokens[i + 1];
+            if (nextToken !== undefined && !/^[a-df-z]$/i.test(nextToken)) {
+              const y = parseFloat(nextToken);
+              structured.push({ type: 'point', x, y });
+              i++;
+            } else {
+              structured.push({ type: 'val', val: x });
+            }
+          }
+        }
+        return structured;
+      });
+
+      let isWobbling = false;
+      let animFrameId = null;
+      let lastStepTime = 0;
+
+      function renderWobbleFrame(currentTime) {
+        if (!isWobbling) return;
+
+        animFrameId = requestAnimationFrame(renderWobbleFrame);
+
+        const stepIntervalMs = 1000 / CONFIG.fps;
+        if (currentTime - lastStepTime < stepIntervalMs) return;
+        lastStepTime = currentTime;
+
+        const phase = currentTime * CONFIG.phaseSpeed;
+        const driftX = Math.sin(phase * 1.3) * CONFIG.driftAmp;
+        const driftY = Math.cos(phase * 1.1) * CONFIG.driftAmp;
+
+        pathElements.forEach((el, index) => {
+          const items = parsedPathData[index];
+          const out = [];
+
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type === 'cmd') {
+              out.push(item.val);
+            } else if (item.type === 'point') {
+              const vertexPhase = (item.x * 0.008) + (item.y * 0.011) + phase;
+              const localWobbleX = Math.sin(vertexPhase) * CONFIG.localWobbleAmp;
+              const localWobbleY = Math.cos(vertexPhase * 1.4) * CONFIG.localWobbleAmp;
+
+              const worldX = item.x + driftX + localWobbleX;
+              const worldY = item.y + driftY + localWobbleY;
+
+              const snappedX = Math.round(worldX / CONFIG.snapGrid) * CONFIG.snapGrid;
+              const snappedY = Math.round(worldY / CONFIG.snapGrid) * CONFIG.snapGrid;
+
+              out.push(`${snappedX.toFixed(1)},${snappedY.toFixed(1)}`);
+            } else {
+              out.push(item.val);
+            }
+          }
+
+          el.setAttribute('d', out.join(' '));
+        });
+      }
+
+      function restoreOriginalPaths() {
+        pathElements.forEach((el, index) => {
+          const items = parsedPathData[index];
+          const out = [];
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type === 'cmd') out.push(item.val);
+            else if (item.type === 'point') out.push(`${item.x},${item.y}`);
+            else out.push(item.val);
+          }
+          el.setAttribute('d', out.join(' '));
+        });
+      }
+
+      logoSvg.addEventListener('mouseenter', () => {
+        isWobbling = true;
+        logoSvg.style.transform = `scale(${CONFIG.hoverScale})`;
+        lastStepTime = 0;
+        cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(renderWobbleFrame);
+      });
+
+      logoSvg.addEventListener('mouseleave', () => {
+        isWobbling = false;
+        logoSvg.style.transform = 'scale(1)';
+        cancelAnimationFrame(animFrameId);
+        restoreOriginalPaths();
+      });
+    })();
+
+    const TARGET_SIZE = 128;
+    const SCALING_FACTORS = [1, 4, 8, 10, 16, 24, 32, 64];
+    const MAX_CANVAS_DIMENSION = 8192;
+    const BRIGHTNESS_MAP = [2.5, 2.0, 1.5, 1.0, 0.8, 0.6, 0.4];
+    const CONTRAST_MAP = [0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4];
+
+    const bayer8 = [
+      [0, 48, 12, 60, 3, 51, 15, 63],
+      [32, 16, 44, 28, 35, 19, 47, 31],
+      [8, 56, 4, 52, 11, 59, 7, 55],
+      [40, 24, 36, 20, 43, 27, 39, 23],
+      [2, 50, 14, 62, 1, 49, 13, 61],
+      [34, 18, 46, 30, 33, 17, 45, 29],
+      [10, 58, 6, 54, 9, 57, 5, 53],
+      [42, 26, 38, 22, 41, 25, 37, 21],
+    ];
+
+    const BUILTIN_PALETTES = [
+      { name: 'Hollow', colours: ['#0f0f1b', '#565a75', '#c6b7be', '#fafbf6'] },
+      { name: 'Greyscale', colours: ['#141414', '#545454', '#949494', '#d4d4d4'] },
+      { name: 'Nostalgia', colours: ['#405010', '#708028', '#a0a840', '#d0d058'] },
+      { name: 'Ice Cream', colours: ['#7c3f58', '#eb6b6f', '#f9a875', '#fff6d3'] },
+      { name: 'Dream Candy', colours: ['#442d6e', '#d075b7', '#f0d063', '#ffffff'] },
+      { name: 'Coffee', colours: ['#564438', '#9f7369', '#d2bba0', '#f2efc7'] },
+      { name: 'Rustic', colours: ['#2c2137', '#764462', '#a96868', '#edb4a1'] },
+      { name: 'Mist', colours: ['#2d1b00', '#1e606e', '#5ab9a8', '#c4f0c2'] },
+      { name: 'Wish', colours: ['#622e4c', '#7550e8', '#608fcf', '#8be5ff'] },
+      { name: 'Spacehaze', colours: ['#0b0630', '#6b1fb1', '#cc3495', '#f8e3c4'] },
+      { name: 'Pumpkin', colours: ['#142b23', '#19692c', '#e06e16', '#f7db7e'] },
+      { name: 'Coldfire', colours: ['#46425e', '#5b768d', '#d17c7c', '#f6c6a8'] },
+      { name: 'Gold', colours: ['#210b1b', '#4d222c', '#9d654c', '#cfab51'] },
+      { name: 'Velvet Cherry', colours: ['#2d162c', '#412752', '#683a68', '#9775a6'] },
+      { name: 'Minty Fresh', colours: ['#40332f', '#856d52', '#95c798', '#fbffe0'] },
+      { name: 'Purple Dawn', colours: ['#001b2e', '#2d757e', '#9a7bbc', '#eefded'] },
+      { name: 'Metallic', colours: ['#221e31', '#41485d', '#778e98', '#c5dbd4'] },
+      { name: 'Earth', colours: ['#774346', '#b87652', '#acb965', '#f5f29e'] },
+      { name: 'Dreamland', colours: ['#2c2c96', '#7733e7', '#e78686', '#f7bef7'] },
+      { name: 'Spaghetti & Meatballs', colours: ['#141414', '#da7381', '#fbe2a2', '#d4d4d4'] }
+    ];
+
+    const imageInput = document.getElementById('imageInput');
+    const browseBtn = document.getElementById('browseBtn');
+    const fileStatusLabel = document.getElementById('fileStatusLabel');
+    const clearBatchBtn = document.getElementById('clearBatchBtn');
+    const modeSelect = document.getElementById('modeSelect');
+    const cropToggle = document.getElementById('cropToggle');
+    const scaleSelect = document.getElementById('scaleSelect');
+    const previewBox = document.getElementById('previewBox');
+    const previewImg = document.getElementById('previewImg');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const cropHintBadge = document.getElementById('cropHintBadge');
+    const resetCropBtn = document.getElementById('resetCropBtn');
+    const batchNav = document.getElementById('batchNav');
+    const batchCounter = document.getElementById('batchCounter');
+    const prevBatchBtn = document.getElementById('prevBatchBtn');
+    const nextBatchBtn = document.getElementById('nextBatchBtn');
+    const removeCurrentBtn = document.getElementById('removeCurrentBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const brightSlider = document.getElementById('brightness');
+    const contrastSlider = document.getElementById('contrast');
+    const brightVal = document.getElementById('brightVal');
+    const contrastVal = document.getElementById('contrastVal');
+    const paletteSelect = document.getElementById('paletteSelect');
+    const palettePreview = document.getElementById('palettePreview');
+    const nativeColorPicker = document.getElementById('nativeColorPicker');
+    const clonePaletteBtn = document.getElementById('clonePaletteBtn');
+    const renamePaletteBtn = document.getElementById('renamePaletteBtn');
+    const deletePaletteBtn = document.getElementById('deletePaletteBtn');
+
+    const CUSTOM_STORAGE_KEY = 'neverus_custom_palettes_v1';
+    let customPalettes = [];
+    try {
+      const rawStored = localStorage.getItem(CUSTOM_STORAGE_KEY);
+      if (rawStored) customPalettes = JSON.parse(rawStored);
+    } catch (e) {
+      customPalettes = [];
+    }
+
+    let activeEditingSwatchIndex = null;
+
+    const modeCropState = {
+      dither: true,
+      passthrough: false
+    };
+
+    function saveCustomPalettes() {
+      try {
+        localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(customPalettes));
+      } catch (e) {}
+    }
+
+    function getAllPalettes() {
+      return [
+        ...BUILTIN_PALETTES.map(p => ({ ...p, isCustom: false })),
+        ...customPalettes.map(p => ({ ...p, isCustom: true }))
+      ];
+    }
+
+    function getCurrentPalette() {
+      const all = getAllPalettes();
+      const idx = parseInt(paletteSelect.value, 10);
+      return all[idx] || all[0];
+    }
+
+    const cropCanvas = document.createElement('canvas');
+    const cropCtx = cropCanvas.getContext('2d');
+    const baseCanvas = document.createElement('canvas');
+    const baseCtx = baseCanvas.getContext('2d');
+
+    let loadedFiles = [];
+    let currentFileIndex = 0;
+
+    let isDraggingCrop = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialCropX = 0;
+    let initialCropY = 0;
+
+    function updateActionButtons() {
+      if (loadedFiles.length > 1) {
+        copyBtn.textContent = 'Copy Selected to Clipboard';
+        downloadBtn.textContent = 'Save Selected (PNG)';
+      } else {
+        copyBtn.textContent = 'Copy to Clipboard';
+        downloadBtn.textContent = 'Save (PNG)';
+      }
+    }
+
+    function getBaseDimensions(img) {
+      if (!img) return { w: TARGET_SIZE, h: TARGET_SIZE };
+      const srcW = img.naturalWidth || img.width;
+      const srcH = img.naturalHeight || img.height;
+      if (cropToggle.checked) {
+        return { w: TARGET_SIZE, h: TARGET_SIZE };
+      }
+      if (modeSelect.value === 'passthrough') {
+        return { w: srcW, h: srcH };
+      }
+      if (srcW >= srcH) {
+        return {
+          w: TARGET_SIZE,
+          h: Math.max(1, Math.round((srcH / srcW) * TARGET_SIZE))
+        };
+      }
+      return {
+        w: Math.max(1, Math.round((srcW / srcH) * TARGET_SIZE)),
+        h: TARGET_SIZE
+      };
+    }
+
+    function populateScaleOptions() {
+      const currentVal = scaleSelect.value || '4';
+      scaleSelect.innerHTML = '';
+      const activeItem = loadedFiles[currentFileIndex];
+      const hasImg = !!activeItem?.img;
+      const baseDims = hasImg ? getBaseDimensions(activeItem.img) : null;
+
+      SCALING_FACTORS.forEach((factor) => {
+        const opt = document.createElement('option');
+        opt.value = factor;
+        if (baseDims) {
+          const w = baseDims.w * factor;
+          const h = baseDims.h * factor;
+          opt.textContent = `${factor}× (${w} × ${h})`;
+        } else if (cropToggle.checked) {
+          const dim = TARGET_SIZE * factor;
+          opt.textContent = `${factor}× (${dim} × ${dim})`;
+        } else {
+          opt.textContent = `${factor}×`;
+        }
+        if (String(factor) === String(currentVal)) {
+          opt.selected = true;
+        }
+        scaleSelect.appendChild(opt);
+      });
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(n, max));
+    }
+
+    function chunkString(str, chunkSize) {
+      const numChunks = Math.ceil(str.length / chunkSize);
+      const chunks = new Array(numChunks);
+      for (let i = 0; i < numChunks; i++) {
+        chunks[i] = str.substring(i * chunkSize, i * chunkSize + chunkSize);
+      }
+      return chunks;
+    }
+
+    function getCropCoordinates(image, offsetX = 0, offsetY = 0) {
+      const w = image.naturalWidth || image.width;
+      const h = image.naturalHeight || image.height;
+
+      if (!cropToggle.checked) {
+        return {
+          x: 0,
+          y: 0,
+          width: w,
+          height: h,
+          canPanX: false,
+          canPanY: false,
+          maxSlackX: 0,
+          maxSlackY: 0
+        };
+      }
+
+      const size = Math.min(w, h);
+      const maxSlackX = w - size;
+      const maxSlackY = h - size;
+
+      const normX = clamp(offsetX, -1, 1);
+      const normY = clamp(offsetY, -1, 1);
+
+      const x = Math.round((maxSlackX / 2) + (normX * (maxSlackX / 2)));
+      const y = Math.round((maxSlackY / 2) + (normY * (maxSlackY / 2)));
+
+      return {
+        x: clamp(x, 0, maxSlackX),
+        y: clamp(y, 0, maxSlackY),
+        width: size,
+        height: size,
+        canPanX: maxSlackX > 0,
+        canPanY: maxSlackY > 0,
+        maxSlackX,
+        maxSlackY
+      };
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = url;
+      });
+    }
+
+    function applyDithering(pixels, brightness, contrast) {
+      const { data, width, height } = pixels;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const i = (x + y * width) * 4;
+          const bayer = bayer8[y % 8][x % 8];
+
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          const greyscale = r * 0.3 + g * 0.59 + b * 0.11;
+          const withContrast = (greyscale / 255 - 0.5) * contrast + 0.5;
+          const withBrightness = Math.pow(clamp(withContrast, 0, 1), brightness) * 255;
+          const levelled = clamp(withBrightness, 0, 255);
+
+          const filtered = clamp(levelled + (bayer - 32) * 0.75, 0, 255);
+          const quantised = clamp(Math.round(filtered / 64), 0, 3) * 64;
+
+          data[i] = quantised;
+          data[i + 1] = quantised;
+          data[i + 2] = quantised;
+        }
+      }
+      return pixels;
+    }
+
+    function recolour(pixels, palette) {
+      const { data } = pixels;
+      const { colours } = palette;
+      for (let i = 0; i < data.length; i += 4) {
+        const colourIndex = Math.min(Math.floor(data[i] / 64), 3);
+        const hex = colours[colourIndex];
+        const [r, g, b] = chunkString(hex.slice(1), 2).map((str) => parseInt(str, 16));
+        data[i] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
+      }
+      return pixels;
+    }
+
+    function renderBaseDither(item) {
+      const img = item.img;
+      const pixelCrop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0);
+      const baseDims = getBaseDimensions(img);
+
+      cropCanvas.width = pixelCrop.width;
+      cropCanvas.height = pixelCrop.height;
+      cropCtx.imageSmoothingEnabled = false;
+      cropCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+      cropCtx.drawImage(
+        img, 
+        pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height,
+        0, 0, pixelCrop.width, pixelCrop.height
+      );
+
+      baseCanvas.width = baseDims.w;
+      baseCanvas.height = baseDims.h;
+      baseCtx.imageSmoothingEnabled = false;
+      baseCtx.clearRect(0, 0, baseDims.w, baseDims.h);
+      baseCtx.drawImage(cropCanvas, 0, 0, baseDims.w, baseDims.h);
+      const pixels = baseCtx.getImageData(0, 0, baseDims.w, baseDims.h);
+
+      const bIdx = parseInt(brightSlider.value, 10);
+      const cIdx = parseInt(contrastSlider.value, 10);
+      const currentPal = getCurrentPalette();
+
+      applyDithering(pixels, BRIGHTNESS_MAP[bIdx], CONTRAST_MAP[cIdx]);
+      recolour(pixels, currentPal);
+      baseCtx.putImageData(pixels, 0, 0);
+
+      return baseCanvas;
+    }
+
+    function processImage(item, explicitScale = null) {
+      const mode = modeSelect.value;
+      const scaleMultiplier = explicitScale !== null ? explicitScale : parseInt(scaleSelect.value, 10);
+      const outCanvas = document.createElement('canvas');
+      const outCtx = outCanvas.getContext('2d');
+      const img = item.img;
+
+      if (mode === 'passthrough') {
+        const crop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0);
+        let targetW = crop.width * scaleMultiplier;
+        let targetH = crop.height * scaleMultiplier;
+
+        if (targetW > MAX_CANVAS_DIMENSION || targetH > MAX_CANVAS_DIMENSION) {
+          const clampFactor = Math.min(MAX_CANVAS_DIMENSION / targetW, MAX_CANVAS_DIMENSION / targetH);
+          targetW = Math.max(1, Math.floor(targetW * clampFactor));
+          targetH = Math.max(1, Math.floor(targetH * clampFactor));
+        }
+
+        outCanvas.width = targetW;
+        outCanvas.height = targetH;
+        outCtx.imageSmoothingEnabled = false;
+        outCtx.drawImage(
+          img,
+          crop.x, crop.y, crop.width, crop.height,
+          0, 0, targetW, targetH
+        );
+        return outCanvas;
+      }
+
+      const base = renderBaseDither(item);
+      const outputW = base.width * scaleMultiplier;
+      const outputH = base.height * scaleMultiplier;
+
+      outCanvas.width = outputW;
+      outCanvas.height = outputH;
+      outCtx.imageSmoothingEnabled = false;
+      outCtx.drawImage(baseCanvas, 0, 0, outputW, outputH);
+      return outCanvas;
+    }
+
+    function updateFileStatusLabel() {
+      if (loadedFiles.length === 0) {
+        fileStatusLabel.textContent = 'No files loaded';
+        fileStatusLabel.classList.remove('has-files');
+      } else if (loadedFiles.length === 1) {
+        fileStatusLabel.textContent = `${loadedFiles[0].name}`;
+        fileStatusLabel.classList.add('has-files');
+      } else {
+        fileStatusLabel.textContent = `${loadedFiles.length} images loaded`;
+        fileStatusLabel.classList.add('has-files');
+      }
+    }
+
+    function syncCropInteractivity() {
+      if (loadedFiles.length === 0 || !cropToggle.checked) {
+        previewBox.classList.remove('is-pannable');
+        resetCropBtn.classList.remove('visible');
+        return;
+      }
+      const activeItem = loadedFiles[currentFileIndex];
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+      const canPan = cropInfo.canPanX || cropInfo.canPanY;
+      previewBox.classList.toggle('is-pannable', canPan);
+
+      const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
+      resetCropBtn.classList.toggle('visible', canPan && isShifted);
+    }
+
+    function resetCurrentCrop() {
+      if (loadedFiles.length === 0) return;
+      const activeItem = loadedFiles[currentFileIndex];
+      if ((activeItem.cropOffsetX || 0) === 0 && (activeItem.cropOffsetY || 0) === 0) return;
+      activeItem.cropOffsetX = 0;
+      activeItem.cropOffsetY = 0;
+      generate();
+    }
+
+    async function generate() {
+      updateActionButtons();
+      populateScaleOptions();
+
+      if (loadedFiles.length === 0) {
+        previewImg.style.display = 'none';
+        previewPlaceholder.style.display = 'block';
+        batchNav.style.display = 'none';
+        clearBatchBtn.style.display = 'none';
+        downloadAllBtn.style.display = 'none';
+        syncCropInteractivity();
+        updateFileStatusLabel();
+        return;
+      }
+
+      const activeItem = loadedFiles[currentFileIndex];
+      const mode = modeSelect.value;
+
+      if (mode === 'passthrough') {
+        if (cropToggle.checked) {
+          const crop = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+          cropCanvas.width = crop.width;
+          cropCanvas.height = crop.height;
+          cropCtx.imageSmoothingEnabled = false;
+          cropCtx.clearRect(0, 0, crop.width, crop.height);
+          cropCtx.drawImage(
+            activeItem.img,
+            crop.x, crop.y, crop.width, crop.height,
+            0, 0, crop.width, crop.height
+          );
+          previewImg.src = cropCanvas.toDataURL('image/png');
+        } else {
+          previewImg.src = activeItem.img.src;
+        }
+      } else {
+        renderBaseDither(activeItem);
+        previewImg.src = baseCanvas.toDataURL('image/png');
+      }
+
+      previewImg.style.display = 'block';
+      previewPlaceholder.style.display = 'none';
+      clearBatchBtn.style.display = 'block';
+      syncCropInteractivity();
+      updateFileStatusLabel();
+
+      if (loadedFiles.length > 1) {
+        batchNav.style.display = 'flex';
+        batchCounter.textContent = `Image ${currentFileIndex + 1} of ${loadedFiles.length} (${activeItem.name})`;
+        downloadAllBtn.style.display = 'block';
+        downloadAllBtn.textContent = `Save All as ZIP (${loadedFiles.length} images)`;
+      } else {
+        batchNav.style.display = 'none';
+        downloadAllBtn.style.display = 'none';
+      }
+    }
+
+    previewBox.addEventListener('pointerdown', (e) => {
+      if (e.target === resetCropBtn) return;
+      if (loadedFiles.length === 0 || !cropToggle.checked) return;
+      const activeItem = loadedFiles[currentFileIndex];
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+
+      if (!cropInfo.canPanX && !cropInfo.canPanY) return;
+
+      isDraggingCrop = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      initialCropX = activeItem.cropOffsetX || 0;
+      initialCropY = activeItem.cropOffsetY || 0;
+
+      previewBox.classList.add('is-dragging');
+      previewBox.setPointerCapture(e.pointerId);
+    });
+
+    previewBox.addEventListener('pointermove', (e) => {
+      if (!isDraggingCrop || loadedFiles.length === 0 || !cropToggle.checked) return;
+      const activeItem = loadedFiles[currentFileIndex];
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+
+      const boxRect = previewBox.getBoundingClientRect();
+      const sensitivity = 2.0;
+
+      if (cropInfo.canPanX) {
+        const deltaNormX = -(dx / boxRect.width) * sensitivity;
+        activeItem.cropOffsetX = clamp(initialCropX + deltaNormX, -1, 1);
+      }
+      if (cropInfo.canPanY) {
+        const deltaNormY = -(dy / boxRect.height) * sensitivity;
+        activeItem.cropOffsetY = clamp(initialCropY + deltaNormY, -1, 1);
+      }
+
+      generate();
+    });
+
+    function endCropDrag(e) {
+      if (!isDraggingCrop) return;
+      isDraggingCrop = false;
+      previewBox.classList.remove('is-dragging');
+      try {
+        if (e && previewBox.hasPointerCapture(e.pointerId)) {
+          previewBox.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+    }
+
+    previewBox.addEventListener('pointerup', endCropDrag);
+    previewBox.addEventListener('pointercancel', endCropDrag);
+
+    previewBox.addEventListener('dblclick', (e) => {
+      if (e.target === resetCropBtn) return;
+      resetCurrentCrop();
+    });
+
+    resetCropBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetCurrentCrop();
+    });
+
+    function updatePaletteStrip(palette) {
+      palettePreview.innerHTML = '';
+      palette.colours.forEach((color, idx) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'palette-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.title = `Click to edit Color ${idx + 1} (${color})`;
+
+        swatch.addEventListener('click', () => {
+          activeEditingSwatchIndex = idx;
+          nativeColorPicker.value = color;
+          nativeColorPicker.click();
+        });
+
+        palettePreview.appendChild(swatch);
+      });
+    }
+
+    function populatePaletteSelect(selectIndex = 0) {
+      paletteSelect.innerHTML = '';
+      const all = getAllPalettes();
+
+      const builtinGroup = document.createElement('optgroup');
+      builtinGroup.label = 'Default Palettes';
+
+      BUILTIN_PALETTES.forEach((p, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = p.name;
+        builtinGroup.appendChild(opt);
+      });
+      paletteSelect.appendChild(builtinGroup);
+
+      if (customPalettes.length > 0) {
+        const customGroup = document.createElement('optgroup');
+        customGroup.label = 'Custom Palettes';
+        customPalettes.forEach((p, idx) => {
+          const opt = document.createElement('option');
+          opt.value = BUILTIN_PALETTES.length + idx;
+          opt.textContent = p.name;
+          customGroup.appendChild(opt);
+        });
+        paletteSelect.appendChild(customGroup);
+      }
+
+      const clampedIndex = clamp(selectIndex, 0, all.length - 1);
+      paletteSelect.value = clampedIndex;
+      syncPaletteState();
+    }
+
+    function syncPaletteState() {
+      const current = getCurrentPalette();
+      updatePaletteStrip(current);
+      deletePaletteBtn.disabled = !current.isCustom;
+      renamePaletteBtn.disabled = !current.isCustom;
+    }
+
+    function updateModeControls() {
+      const mode = modeSelect.value;
+      const isPassthrough = mode === 'passthrough';
+      document.querySelectorAll('.dither-control').forEach(el => {
+        el.classList.toggle('disabled', isPassthrough);
+      });
+      cropToggle.checked = !!modeCropState[mode];
+      populateScaleOptions();
+      syncCropInteractivity();
+    }
+
+    function syncControlsState() {
+      brightVal.textContent = brightSlider.value;
+      contrastVal.textContent = contrastSlider.value;
+      populatePaletteSelect(0);
+      updateModeControls();
+    }
+
+    nativeColorPicker.addEventListener('input', (e) => {
+      if (activeEditingSwatchIndex === null) return;
+      const newHex = e.target.value;
+      let currentIndex = parseInt(paletteSelect.value, 10);
+      const all = getAllPalettes();
+      let activePal = all[currentIndex];
+
+      if (!activePal.isCustom) {
+        const forkedColors = [...activePal.colours];
+        forkedColors[activeEditingSwatchIndex] = newHex;
+
+        const newCustom = {
+          name: `${activePal.name} (Copy)`,
+          colours: forkedColors
+        };
+        customPalettes.push(newCustom);
+        saveCustomPalettes();
+
+        const newIndex = BUILTIN_PALETTES.length + customPalettes.length - 1;
+        populatePaletteSelect(newIndex);
+      } else {
+        const customIdx = currentIndex - BUILTIN_PALETTES.length;
+        customPalettes[customIdx].colours[activeEditingSwatchIndex] = newHex;
+        saveCustomPalettes();
+        syncPaletteState();
+      }
+
+      generate();
+    });
+
+    clonePaletteBtn.addEventListener('click', () => {
+      const current = getCurrentPalette();
+      const defaultName = `${current.name} (Copy)`;
+      const name = prompt('Name for cloned palette:', defaultName);
+      if (!name || !name.trim()) return;
+
+      const newEntry = {
+        name: name.trim(),
+        colours: [...current.colours]
+      };
+      customPalettes.push(newEntry);
+      saveCustomPalettes();
+      populatePaletteSelect(BUILTIN_PALETTES.length + customPalettes.length - 1);
+      generate();
+    });
+
+    renamePaletteBtn.addEventListener('click', () => {
+      const currentIndex = parseInt(paletteSelect.value, 10);
+      const current = getCurrentPalette();
+      if (!current.isCustom) return;
+
+      const customIdx = currentIndex - BUILTIN_PALETTES.length;
+      const newName = prompt('Rename palette:', current.name);
+      if (!newName || !newName.trim()) return;
+
+      customPalettes[customIdx].name = newName.trim();
+      saveCustomPalettes();
+      populatePaletteSelect(currentIndex);
+    });
+
+    deletePaletteBtn.addEventListener('click', () => {
+      const currentIndex = parseInt(paletteSelect.value, 10);
+      const current = getCurrentPalette();
+      if (!current.isCustom) return;
+
+      if (!confirm(`Delete custom palette "${current.name}"?`)) return;
+
+      const customIdx = currentIndex - BUILTIN_PALETTES.length;
+      customPalettes.splice(customIdx, 1);
+      saveCustomPalettes();
+      populatePaletteSelect(Math.max(0, currentIndex - 1));
+      generate();
+    });
+
+    syncControlsState();
+
+    modeSelect.addEventListener('change', () => {
+      updateModeControls();
+      generate();
+    });
+
+    cropToggle.addEventListener('change', () => {
+      modeCropState[modeSelect.value] = cropToggle.checked;
+      populateScaleOptions();
+      syncCropInteractivity();
+      generate();
+    });
+
+    browseBtn.addEventListener('click', () => {
+      imageInput.click();
+    });
+
+    imageInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      for (const file of files) {
+        const isDuplicate = loadedFiles.some(item => item.name === file.name.substring(0, file.name.lastIndexOf('.')) && item.size === file.size);
+        if (isDuplicate) continue;
+
+        const objectUrl = URL.createObjectURL(file);
+        const img = await loadImage(objectUrl);
+        const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        loadedFiles.push({
+          name: baseName,
+          img,
+          url: objectUrl,
+          size: file.size,
+          cropOffsetX: 0,
+          cropOffsetY: 0
+        });
+      }
+
+      currentFileIndex = loadedFiles.length - 1;
+      imageInput.value = '';
+      generate();
+    });
+
+    clearBatchBtn.addEventListener('click', () => {
+      loadedFiles.forEach(item => URL.revokeObjectURL(item.url));
+      loadedFiles = [];
+      currentFileIndex = 0;
+      imageInput.value = '';
+      generate();
+    });
+
+    prevBatchBtn.addEventListener('click', () => {
+      if (loadedFiles.length <= 1) return;
+      currentFileIndex = (currentFileIndex - 1 + loadedFiles.length) % loadedFiles.length;
+      generate();
+    });
+
+    nextBatchBtn.addEventListener('click', () => {
+      if (loadedFiles.length <= 1) return;
+      currentFileIndex = (currentFileIndex + 1) % loadedFiles.length;
+      generate();
+    });
+
+    removeCurrentBtn.addEventListener('click', () => {
+      if (loadedFiles.length === 0) return;
+      URL.revokeObjectURL(loadedFiles[currentFileIndex].url);
+      loadedFiles.splice(currentFileIndex, 1);
+      if (currentFileIndex >= loadedFiles.length) {
+        currentFileIndex = Math.max(0, loadedFiles.length - 1);
+      }
+      generate();
+    });
+
+    scaleSelect.addEventListener('change', generate);
+
+    brightSlider.addEventListener('input', () => {
+      brightVal.textContent = brightSlider.value;
+      generate();
+    });
+
+    contrastSlider.addEventListener('input', () => {
+      contrastVal.textContent = contrastSlider.value;
+      generate();
+    });
+
+    paletteSelect.addEventListener('change', () => {
+      syncPaletteState();
+      generate();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (loadedFiles.length === 0) return;
+      const activeItem = loadedFiles[currentFileIndex];
+      const scaleMultiplier = scaleSelect.value;
+      const exportCanvas = processImage(activeItem, parseInt(scaleMultiplier, 10));
+
+      exportCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+        try {
+          if (!navigator.clipboard || !window.ClipboardItem) {
+            alert('Clipboard image copy is not supported in this browser environment.');
+            return;
+          }
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          const originalText = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => {
+            copyBtn.textContent = originalText;
+          }, 1500);
+        } catch (err) {
+          console.error('Failed to copy image to clipboard:', err);
+          alert('Could not copy image to clipboard. Clipboard permissions may be restricted.');
+        }
+      }, 'image/png');
+    });
+
+    downloadBtn.addEventListener('click', async () => {
+      if (loadedFiles.length === 0) return;
+      const activeItem = loadedFiles[currentFileIndex];
+      const scaleMultiplier = scaleSelect.value;
+      const modeLabel = modeSelect.value === 'passthrough' ? 'upscaled' : 'dithered';
+      const defaultFilename = `NEVERUS-${activeItem.name}-${modeLabel}-${scaleMultiplier}x.png`;
+
+      const exportCanvas = processImage(activeItem, parseInt(scaleMultiplier, 10));
+
+      exportCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+
+        if ('showSaveFilePicker' in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: defaultFilename,
+              types: [{ description: 'PNG Image', accept: { 'image/png': ['.png'] } }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            return;
+          } catch (err) {
+            if (err.name === 'AbortError') return;
+          }
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = defaultFilename;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    });
+
+    function makeZip(fileArray) {
+      const crcTable = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let k = 0; k < 8; k++) c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+        crcTable[i] = c;
+      }
+      function calcCrc(buf) {
+        let crc = 0xFFFFFFFF;
+        for (let i = 0; i < buf.length; i++) crc = (crc >>> 8) ^ crcTable[(crc ^ buf[i]) & 0xFF];
+        return (crc ^ 0xFFFFFFFF) >>> 0;
+      }
+
+      const fileEntries = [];
+      let offset = 0;
+
+      fileArray.forEach(file => {
+        const nameBytes = new TextEncoder().encode(file.name);
+        const dataBytes = file.data;
+        const crc = calcCrc(dataBytes);
+        const size = dataBytes.length;
+
+        const localHeader = new Uint8Array(30 + nameBytes.length);
+        const view = new DataView(localHeader.buffer);
+        view.setUint32(0, 0x04034b50, true);
+        view.setUint16(4, 20, true);
+        view.setUint16(6, 0, true);
+        view.setUint16(8, 0, true);
+        view.setUint16(10, 0, true);
+        view.setUint16(12, 0, true);
+        view.setUint32(14, crc, true);
+        view.setUint32(18, size, true);
+        view.setUint32(22, size, true);
+        view.setUint16(26, nameBytes.length, true);
+        view.setUint16(28, 0, true);
+        localHeader.set(nameBytes, 30);
+
+        fileEntries.push({ localHeader, dataBytes, crc, size, nameBytes, offset });
+        offset += localHeader.length + size;
+      });
+
+      const cdEntries = [];
+      let cdSize = 0;
+
+      fileEntries.forEach(entry => {
+        const cdHeader = new Uint8Array(46 + entry.nameBytes.length);
+        const view = new DataView(cdHeader.buffer);
+        view.setUint32(0, 0x02014b50, true);
+        view.setUint16(4, 20, true);
+        view.setUint16(6, 20, true);
+        view.setUint16(8, 0, true);
+        view.setUint16(10, 0, true);
+        view.setUint16(12, 0, true);
+        view.setUint16(14, 0, true);
+        view.setUint32(16, entry.crc, true);
+        view.setUint32(20, entry.size, true);
+        view.setUint32(24, entry.size, true);
+        view.setUint16(28, entry.nameBytes.length, true);
+        view.setUint16(30, 0, true);
+        view.setUint16(32, 0, true);
+        view.setUint16(34, 0, true);
+        view.setUint16(36, 0, true);
+        view.setUint32(38, 0, true);
+        view.setUint32(42, entry.offset, true);
+        cdHeader.set(entry.nameBytes, 46);
+
+        cdEntries.push(cdHeader);
+        cdSize += cdHeader.length;
+      });
+
+      const eocd = new Uint8Array(22);
+      const eocdView = new DataView(eocd.buffer);
+      eocdView.setUint32(0, 0x06054b50, true);
+      eocdView.setUint16(4, 0, true);
+      eocdView.setUint16(6, 0, true);
+      eocdView.setUint16(8, fileEntries.length, true);
+      eocdView.setUint16(10, fileEntries.length, true);
+      eocdView.setUint32(12, cdSize, true);
+      eocdView.setUint32(16, offset, true);
+      eocdView.setUint16(20, 0, true);
+
+      const chunks = [];
+      fileEntries.forEach(e => {
+        chunks.push(e.localHeader);
+        chunks.push(e.dataBytes);
+      });
+      cdEntries.forEach(cd => chunks.push(cd));
+      chunks.push(eocd);
+
+      return new Blob(chunks, { type: 'application/zip' });
+    }
+
+    downloadAllBtn.addEventListener('click', async () => {
+      if (loadedFiles.length === 0) return;
+
+      const scaleMultiplier = scaleSelect.value;
+      const modeLabel = modeSelect.value === 'passthrough' ? 'upscaled' : 'dithered';
+      const zipFiles = [];
+      const originalText = downloadAllBtn.textContent;
+
+      for (let i = 0; i < loadedFiles.length; i++) {
+        downloadAllBtn.textContent = `Processing ${i + 1} of ${loadedFiles.length}...`;
+        const item = loadedFiles[i];
+        const canvas = processImage(item, parseInt(scaleMultiplier, 10));
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const arrayBuf = await blob.arrayBuffer();
+
+        zipFiles.push({
+          name: `NEVERUS-${item.name}-${modeLabel}-${scaleMultiplier}x.png`,
+          data: new Uint8Array(arrayBuf)
+        });
+      }
+
+      downloadAllBtn.textContent = 'Building ZIP...';
+      const zipBlob = makeZip(zipFiles);
+      const zipName = `NEVERUS-${modeLabel}-${scaleMultiplier}x-batch.zip`;
+
+      const url = URL.createObjectURL(zipBlob);
+      const link = document.createElement('a');
+      link.download = zipName;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+      downloadAllBtn.textContent = originalText;
+    });
+  </script>
+</body>
+</html>
