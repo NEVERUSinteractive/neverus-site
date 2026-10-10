@@ -106,14 +106,13 @@
 
     nav {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
     }
 
-    /* Askew Neo-Brutalist Major Buttons */
+    /* Mechanical 2-Layer Neo-Brutalist Buttons */
     .btn-major {
-      position: relative;
       color: var(--white);
       text-decoration: none;
       background: var(--black);
@@ -123,46 +122,24 @@
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
+      box-shadow: 4px 4px 0px var(--white);
       display: inline-block;
       cursor: pointer;
-      z-index: 1;
-      transform-origin: center center;
-    }
-
-    /* Asymmetrical Backplates */
-    .btn-major::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background: var(--white);
-      z-index: -1;
-      transform: translate(5px, 5px) rotate(-1.5deg) skewX(1.5deg);
-      pointer-events: none;
-      transform-origin: center center;
-    }
-
-    nav a:nth-child(2)::before {
-      transform: translate(4px, 6px) rotate(2deg) skewY(-1.2deg);
-    }
-
-    nav a:nth-child(3)::before {
-      transform: translate(6px, 4px) rotate(-2.2deg) skewX(-2deg);
+      transition: background 0.1s ease, color 0.1s ease;
     }
 
     .btn-major:hover {
       background: var(--yellow);
       color: var(--black);
       border-color: var(--yellow);
+      box-shadow: 4px 4px 0px var(--white);
       animation: ps1-btn-jitter 0.16s steps(2) infinite;
     }
 
     .btn-major:active {
       transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--white);
       animation: none;
-    }
-
-    .btn-major:active::before {
-      transform: translate(2px, 2px) rotate(0deg);
     }
 
     @keyframes ps1-btn-jitter {
@@ -282,9 +259,8 @@
       color: var(--yellow);
     }
 
-    /* Expressionist Askew Hero CTA Button */
+    /* Hero CTA Button */
     .btn-cta {
-      position: relative;
       display: inline-block;
       background: var(--yellow);
       color: var(--black);
@@ -296,42 +272,25 @@
       font-size: 1.05rem;
       letter-spacing: 1.5px;
       cursor: pointer;
-      z-index: 1;
-      transform-origin: center center;
-    }
-
-    .btn-cta::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background: var(--white);
-      z-index: -1;
-      transform: translate(6px, 6px) rotate(2.4deg) skewX(-2deg);
-      pointer-events: none;
-      transform-origin: center center;
+      box-shadow: 6px 6px 0px var(--white);
+      transition: background 0.1s ease, color 0.1s ease;
     }
 
     .btn-cta:hover {
       background: var(--white);
       color: var(--black);
       border-color: var(--yellow);
+      box-shadow: 6px 6px 0px var(--yellow);
       animation: ps1-btn-jitter 0.14s steps(2) infinite;
-    }
-
-    .btn-cta:hover::before {
-      background: var(--yellow);
     }
 
     .btn-cta:active {
       transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0px var(--yellow);
       animation: none;
     }
 
-    .btn-cta:active::before {
-      transform: translate(2px, 2px) rotate(0deg);
-    }
-
-    /* Restored desktop mascot size */
+    /* Mascot Peeker */
     .mascot-peeker {
       position: absolute;
       top: -75px;
@@ -343,7 +302,43 @@
       filter: drop-shadow(2px 2px 0px var(--black));
     }
 
-    /* Minimal plaintext footer */
+    /* Web 1.0 External Hit Counter Housing */
+    .hit-counter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin: 8px 0 16px;
+    }
+
+    .hit-counter-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--yellow);
+    }
+
+    .hit-counter-box {
+      background: #000000;
+      border: 2px solid var(--white);
+      box-shadow: 4px 4px 0px var(--white);
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+    }
+
+    /* Ensure external counter images/iframes stay crisp */
+    .hit-counter-box img,
+    .hit-counter-box iframe {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* Plaintext Footer */
     footer {
       max-width: 960px;
       margin: 56px auto 0;
@@ -394,7 +389,6 @@
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
-      /* Targeted mobile mascot scale and overlap */
       .mascot-peeker {
         width: 76px;
         top: -46px;
@@ -473,6 +467,14 @@
   </main>
 
   <footer>
+    <!-- Center Authentic Web 1.0 Hit Counter -->
+    <div class="hit-counter-container" title="Visitors Logged">
+      <div class="hit-counter-label">Visitors Logged</div>
+      <div class="hit-counter-box">
+        <script type="text/javascript" src="https://counter.websiteout.com/js/7/6/0/0"></script>
+      </div>
+    </div>
+
     <div class="footer-links">
       <a href="mailto:NEVERUSinteractive@gmail.com">Contact</a>
       <a href="OffTheShelf_PressKit.zip" download>Press Kit</a>
@@ -488,7 +490,7 @@
   </footer>
 
   <script>
-    // --- 1. DYNAMIC SEAMLESS TICKER CONFIGURATION ---
+    // --- 1. DYNAMIC SEAMLESS TICKER ---
     const TICKER_MESSAGES = [
       "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
       "WISHLIST NOW!",
