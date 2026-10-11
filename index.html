@@ -10,6 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='290 460 630 520'%3E%3Cg fill='%23000000' stroke='%23ffffff' stroke-width='48' stroke-linejoin='round' stroke-linecap='round' paint-order='stroke fill'%3E%3Cpath d='M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z'/%3E%3Cpath d='M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z'/%3E%3C/g%3E%3C/svg%3E">
 
+  <!-- Shared Design System -->
+  <link rel="stylesheet" href="style.css">
+
   <style>
     @font-face {
       font-family: "VCR OSD Mono";
@@ -22,21 +25,8 @@
       font-display: swap;
     }
 
-    :root {
-      --black: #000000;
-      --white: #ffffff;
-      --yellow: #ffff00;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background-color: var(--black);
-      color: var(--white);
-      font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.5;
       padding-bottom: 48px;
-      -webkit-font-smoothing: antialiased;
       position: relative;
     }
 
@@ -71,91 +61,16 @@
       pointer-events: none;
     }
 
-    /* Standard Unobtrusive Button (Zero drop shadow, clean outline) */
-    .btn-unobtrusive,
+    /* Rule-Break: Dream Phase Floating Audio Control */
     .dream-audio-toggle {
       position: absolute;
       bottom: 24px;
       right: 24px;
       background: rgba(0, 0, 0, 0.85);
-      color: var(--white);
-      border: 1px solid var(--white);
-      box-shadow: none;
-      padding: 6px 14px;
-      font-family: inherit;
-      font-weight: 700;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      cursor: pointer;
       pointer-events: auto;
-      user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       z-index: 25;
-      transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
-    }
-
-    .btn-unobtrusive:hover,
-    .dream-audio-toggle:hover {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-unobtrusive.is-active,
-    .dream-audio-toggle.is-active {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: none;
-    }
-
-    /* Seamless Infinite Marquee Ticker */
-    .ticker-container {
-      background: var(--yellow);
-      color: var(--black);
-      border-bottom: 2px solid var(--white);
-      overflow: hidden;
-      display: flex;
-      user-select: none;
-      width: 100%;
-      position: relative;
-      z-index: 2;
-    }
-
-    .ticker-track {
-      display: flex;
-      width: max-content;
-      animation: ticker-seamless 20s linear infinite;
-    }
-
-    .ticker-segment {
-      display: inline-flex;
-      flex-shrink: 0;
-      align-items: center;
-    }
-
-    .ticker-item {
-      color: var(--black);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 8px 0;
-      white-space: nowrap;
-    }
-
-    .ticker-item em {
-      font-style: italic;
-      text-decoration: underline;
-    }
-
-    .ticker-item span.sep {
-      padding: 0 16px;
-    }
-
-    @keyframes ticker-seamless {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
     }
 
     header {
@@ -174,7 +89,7 @@
       height: 90px;
       width: auto;
       margin-bottom: 16px;
-      fill: var(--white);
+      fill: var(--blank-white);
       user-select: none;
       cursor: pointer;
       transform-origin: center center;
@@ -183,7 +98,7 @@
 
     .header-sub {
       font-size: 0.95rem;
-      color: var(--white);
+      color: var(--blank-white);
       text-transform: uppercase;
       letter-spacing: 3px;
       margin-bottom: 24px;
@@ -197,81 +112,11 @@
       justify-content: center;
     }
 
-    /* Mechanical 2-Layer Neo-Brutalist Buttons */
-    .btn-major {
-      color: var(--white);
-      text-decoration: none;
-      background: var(--black);
-      border: 2px solid var(--white);
-      padding: 8px 22px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 4px 4px 0px var(--white);
-      display: inline-block;
-      cursor: pointer;
-      transition: background 0.1s ease, color 0.1s ease;
-    }
-
-    .btn-major:hover {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: 4px 4px 0px var(--white);
-      animation: ps1-btn-jitter 0.16s steps(2) infinite;
-    }
-
-    .btn-major:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--white);
-      animation: none;
-    }
-
-    @keyframes ps1-btn-jitter {
-      0%   { transform: translate(0, 0); }
-      25%  { transform: translate(-1.5px, 1px); }
-      50%  { transform: translate(1px, -1.5px); }
-      75%  { transform: translate(-1px, -1px); }
-      100% { transform: translate(1.5px, 1px); }
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .card {
-      background: var(--black);
-      border: 2px solid var(--white);
-      padding: 28px;
-      position: relative;
-      box-shadow: 6px 6px 0px var(--white);
-    }
-
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
-      text-align: center;
-      color: var(--white);
-      border-bottom: 2px solid var(--white);
-      padding-bottom: 8px;
-    }
-
     .hero-card {
       position: relative;
-      border: 2px solid var(--white);
+      border: 2px solid var(--blank-white);
       overflow: hidden;
-      background: var(--black);
+      background: var(--pure-void);
       min-height: 460px;
       display: flex;
       align-items: center;
@@ -312,6 +157,7 @@
       margin-bottom: 16px;
     }
 
+    /* Rule-Break: Dream Atmospheric Soft Shadow */
     .hero-logo {
       max-width: 440px;
       width: 82%;
@@ -333,52 +179,21 @@
     }
 
     .hero-tagline-group p {
-      color: var(--white);
+      color: var(--blank-white);
       font-weight: 700;
       font-size: 1.05rem;
       line-height: 1.6;
       background: rgba(0, 0, 0, 0.85);
       padding: 4px 10px;
-      border-left: 3px solid var(--yellow);
+      border-left: 3px solid var(--hazard-accent);
     }
 
     .hero-tagline-group p em {
       font-style: italic;
-      color: var(--yellow);
+      color: var(--hazard-accent);
     }
 
-    /* Hero CTA Button */
-    .btn-cta {
-      display: inline-block;
-      background: var(--yellow);
-      color: var(--black);
-      font-weight: 700;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 14px 34px;
-      border: 2px solid var(--white);
-      font-size: 1.05rem;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      box-shadow: 6px 6px 0px var(--white);
-      transition: background 0.1s ease, color 0.1s ease;
-    }
-
-    .btn-cta:hover {
-      background: var(--white);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: 6px 6px 0px var(--yellow);
-      animation: ps1-btn-jitter 0.14s steps(2) infinite;
-    }
-
-    .btn-cta:active {
-      transform: translate(3px, 3px);
-      box-shadow: 3px 3px 0px var(--yellow);
-      animation: none;
-    }
-
-    /* Mascot Peeker */
+    /* Living Mascot */
     .mascot-peeker {
       position: absolute;
       top: -89px;
@@ -389,7 +204,7 @@
       pointer-events: auto;
       cursor: pointer;
       user-select: none;
-      filter: drop-shadow(2px 2px 0px var(--black));
+      filter: drop-shadow(2px 2px 0px var(--pure-void));
     }
 
     .mascot-peeker.fallen {
@@ -397,7 +212,7 @@
       pointer-events: none;
     }
 
-    /* --- THE DREAM PORTAL TRACK (RAW TYPOGRAPHY) --- */
+    /* The Dream Portal Track */
     .dream-portal-track {
       position: relative;
       z-index: 2;
@@ -421,9 +236,8 @@
       width: 100%;
     }
 
-    /* Unboxed Raw Typography with Hard Brutalist Shadows */
     .dream-text-reg {
-      color: var(--white);
+      color: var(--blank-white);
       font-size: 1.8rem;
       font-weight: 700;
       letter-spacing: 1.5px;
@@ -435,14 +249,13 @@
     .dream-text-reg.dream-win {
       font-size: 3.2rem;
       letter-spacing: 6px;
-      color: var(--white);
+      color: var(--blank-white);
       text-shadow: 5px 5px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
     }
 
-    /* Completely Raw VCR Mono Typography */
     .dream-text-vcr {
       font-family: "VCR OSD Mono", "Courier New", Courier, monospace;
-      color: var(--yellow);
+      color: var(--hazard-accent);
       font-size: 4.5rem;
       font-weight: 400;
       letter-spacing: 10px;
@@ -452,13 +265,12 @@
       line-height: 1;
     }
 
-    /* Neo-Brutalist Badge Button for Outro Link */
     .dream-badge-link {
       display: inline-block;
-      background: var(--yellow);
-      color: var(--black) !important;
-      border: 3px solid var(--white);
-      box-shadow: 6px 6px 0px var(--white);
+      background: var(--hazard-accent);
+      color: var(--pure-void) !important;
+      border: 3px solid var(--blank-white);
+      box-shadow: 6px 6px 0px var(--blank-white);
       padding: 8px 24px;
       text-decoration: none;
       font-weight: 700;
@@ -477,20 +289,19 @@
     }
 
     .dream-badge-link:hover {
-      background: var(--white);
-      color: var(--black) !important;
-      border-color: var(--yellow);
-      box-shadow: 6px 6px 0px var(--yellow);
-      animation: ps1-btn-jitter 0.14s steps(2) infinite;
+      background: var(--blank-white);
+      color: var(--pure-void) !important;
+      border-color: var(--hazard-accent);
+      box-shadow: 6px 6px 0px var(--hazard-accent);
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
     }
 
     .dream-badge-link:active {
-      transform: translate(3px, 3px);
-      box-shadow: 3px 3px 0px var(--yellow);
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0px var(--hazard-accent);
       animation: none;
     }
 
-    /* Hit counter */
     .raw-counter {
       margin-top: 4px;
       line-height: 0;
@@ -503,12 +314,11 @@
       display: inline-block;
     }
 
-    /* Plaintext Footer */
     footer {
       max-width: 960px;
       margin: 56px auto 0;
       padding: 32px 16px 0;
-      border-top: 2px solid var(--white);
+      border-top: 2px solid var(--blank-white);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -527,7 +337,7 @@
     }
 
     .footer-links a {
-      color: var(--white);
+      color: var(--blank-white);
       background: transparent;
       border: none;
       box-shadow: none;
@@ -541,14 +351,14 @@
     }
 
     .footer-links a:hover {
-      color: var(--yellow);
+      color: var(--hazard-accent);
       text-decoration: underline;
     }
 
     .footer-copy {
       font-size: 0.8rem;
       letter-spacing: 0.5px;
-      color: var(--white);
+      color: var(--blank-white);
     }
 
     @media (max-width: 600px) {
@@ -564,13 +374,13 @@
         padding: 8px 10px;
         font-size: 0.8rem;
         letter-spacing: 0.5px;
-        box-shadow: 3px 3px 0px var(--white);
+        box-shadow: 3px 3px 0px var(--blank-white);
         white-space: nowrap;
       }
       .hero-card { min-height: 320px; }
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
-      .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
+      .card { box-shadow: 4px 4px 0px var(--blank-white); padding: 18px; }
       .mascot-peeker {
         width: 95px;
         top: -62px;
@@ -589,7 +399,7 @@
         font-size: 1.4rem;
         padding: 6px 16px;
         letter-spacing: 1px;
-        box-shadow: 4px 4px 0px var(--white);
+        box-shadow: 4px 4px 0px var(--blank-white);
       }
       .dream-text-vcr {
         font-size: 2.2rem;
@@ -609,7 +419,7 @@
 </head>
 <body>
 
-  <!-- Fullscreen Dream Layer (Fades over the viewport during dream scroll) -->
+  <!-- Fullscreen Dream Layer -->
   <div class="dream-fullscreen-layer" id="dreamLayer">
     <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata">
       <source src="OTS_Reel.webm" type="video/webm">
@@ -677,7 +487,7 @@
       </div>
     </section>
 
-    <!-- The Dream Portal Track (Floating Dialogue Overlay) -->
+    <!-- The Dream Portal Track -->
     <section class="dream-portal-track" id="dreamTrack">
       <div class="dream-scroll-content">
         <div class="dream-line" id="lineImagine"><div class="dream-text-reg">Imagine, if you will....</div></div>
@@ -709,8 +519,8 @@
 
     <!-- About Section -->
     <section id="about" class="card">
-      <div class="section-title">About NEVERUS</div>
-      <p style="color: var(--white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
+      <div class="section-title">ABOUT NEVERUS</div>
+      <p style="color: var(--blank-white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
         NEVERUS Interactive LLC is an independent simulation software and entertainment studio staffed by jolly digital toymakers endeavouring in earnest to simulate the good in things.
       </p>
     </section>
