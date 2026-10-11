@@ -71,31 +71,42 @@
       pointer-events: none;
     }
 
+    /* Standard Unobtrusive Button (Zero drop shadow, clean outline) */
+    .btn-unobtrusive,
     .dream-audio-toggle {
       position: absolute;
       bottom: 24px;
       right: 24px;
-      background: var(--black);
+      background: rgba(0, 0, 0, 0.85);
       color: var(--white);
-      border: 2px solid var(--white);
-      box-shadow: 4px 4px 0px var(--white);
-      padding: 8px 16px;
+      border: 1px solid var(--white);
+      box-shadow: none;
+      padding: 6px 14px;
       font-family: inherit;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       letter-spacing: 1px;
       cursor: pointer;
       pointer-events: none;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
       z-index: 10;
-      transition: background 0.1s ease, color 0.1s ease;
+      transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
     }
 
+    .btn-unobtrusive:hover,
+    .dream-audio-toggle:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .btn-unobtrusive.is-active,
     .dream-audio-toggle.is-active {
       background: var(--yellow);
       color: var(--black);
       border-color: var(--yellow);
-      box-shadow: 4px 4px 0px var(--white);
+      box-shadow: none;
     }
 
     /* Seamless Infinite Marquee Ticker */
@@ -441,7 +452,7 @@
       line-height: 1;
     }
 
-    /* Neo-Brutalist Badge Button for Option 2 */
+    /* Neo-Brutalist Badge Button for Outro Link */
     .dream-badge-link {
       display: inline-block;
       background: var(--yellow);
@@ -587,6 +598,12 @@
       .dream-scroll-content {
         gap: 20vh;
       }
+      .dream-audio-toggle {
+        bottom: 16px;
+        right: 16px;
+        font-size: 0.7rem;
+        padding: 5px 10px;
+      }
     }
   </style>
 </head>
@@ -594,12 +611,12 @@
 
   <!-- Fullscreen Dream Layer (Fades over the viewport during dream scroll) -->
   <div class="dream-fullscreen-layer" id="dreamLayer">
-    <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline preload="metadata">
+    <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata">
       <source src="OTS_Reel.webm" type="video/webm">
       <source src="OTS_Reel.mp4" type="video/mp4">
     </video>
     <div class="dream-scanlines"></div>
-    <button type="button" class="dream-audio-toggle" id="dreamAudioToggle">AUDIO: OFF</button>
+    <button type="button" class="dream-audio-toggle btn-unobtrusive" id="dreamAudioToggle">AUDIO: OFF</button>
   </div>
 
   <!-- Dynamic Infinite Marquee -->
@@ -748,7 +765,7 @@
       track.appendChild(segment2);
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER (PARABOLA + AUDIO + HIT-TEST GATING) ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER (MOBILE UNMUTING + ZERO DROP SHADOW UNMUTED BUTTON) ---
     (function initDreamScrubber() {
       const lineStart = document.getElementById('lineImagine');
       const lineEnd = document.getElementById('lineUnderstand');
@@ -777,11 +794,10 @@
 
         layer.style.opacity = factor.toFixed(3);
         
-        // Strict pointer-events gating: completely disable button hit-testing when invisible
-        const isLayerInteractive = factor > 0.08;
-        layer.style.pointerEvents = isLayerInteractive ? 'auto' : 'none';
+        const isInteractive = factor > 0.08;
+        layer.style.pointerEvents = isInteractive ? 'auto' : 'none';
         if (audioBtn) {
-          audioBtn.style.pointerEvents = isLayerInteractive ? 'auto' : 'none';
+          audioBtn.style.pointerEvents = isInteractive ? 'auto' : 'none';
         }
 
         if (userUnmuted) {
@@ -789,21 +805,33 @@
         }
       }
 
-      if (audioBtn) {
-        audioBtn.addEventListener('click', () => {
-          userUnmuted = !userUnmuted;
-          if (userUnmuted) {
-            video.muted = false;
-            audioBtn.textContent = 'AUDIO: ON';
-            audioBtn.classList.add('is-active');
-            onScroll();
-          } else {
-            video.muted = true;
-            video.volume = 0;
-            audioBtn.textContent = 'AUDIO: OFF';
-            audioBtn.classList.remove('is-active');
+      function handleAudioToggle(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        userUnmuted = !userUnmuted;
+        if (userUnmuted) {
+          video.muted = false;
+          // Explicitly play on the gesture to unlock mobile Safari / Chrome audio pipeline
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
           }
-        });
+          audioBtn.textContent = 'AUDIO: ON';
+          audioBtn.classList.add('is-active');
+          onScroll();
+        } else {
+          video.muted = true;
+          video.volume = 0;
+          audioBtn.textContent = 'AUDIO: OFF';
+          audioBtn.classList.remove('is-active');
+        }
+      }
+
+      if (audioBtn) {
+        audioBtn.addEventListener('click', handleAudioToggle);
+        audioBtn.addEventListener('touchend', handleAudioToggle, { passive: false });
       }
 
       window.addEventListener('scroll', onScroll, { passive: true });
