@@ -46,7 +46,7 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 0;
+      z-index: 20;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.05s linear;
@@ -87,11 +87,11 @@
       font-size: 0.75rem;
       letter-spacing: 1px;
       cursor: pointer;
-      pointer-events: none;
+      pointer-events: auto;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      z-index: 10;
+      z-index: 25;
       transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
     }
 
@@ -765,7 +765,7 @@
       track.appendChild(segment2);
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER (MOBILE UNMUTING + ZERO DROP SHADOW UNMUTED BUTTON) ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER ---
     (function initDreamScrubber() {
       const lineStart = document.getElementById('lineImagine');
       const lineEnd = document.getElementById('lineUnderstand');
@@ -796,9 +796,6 @@
         
         const isInteractive = factor > 0.08;
         layer.style.pointerEvents = isInteractive ? 'auto' : 'none';
-        if (audioBtn) {
-          audioBtn.style.pointerEvents = isInteractive ? 'auto' : 'none';
-        }
 
         if (userUnmuted) {
           video.volume = Math.min(Math.max(factor, 0), 1);
@@ -813,7 +810,6 @@
         userUnmuted = !userUnmuted;
         if (userUnmuted) {
           video.muted = false;
-          // Explicitly play on the gesture to unlock mobile Safari / Chrome audio pipeline
           const playPromise = video.play();
           if (playPromise !== undefined) {
             playPromise.catch(() => {});
@@ -831,7 +827,6 @@
 
       if (audioBtn) {
         audioBtn.addEventListener('click', handleAudioToggle);
-        audioBtn.addEventListener('touchend', handleAudioToggle, { passive: false });
       }
 
       window.addEventListener('scroll', onScroll, { passive: true });
