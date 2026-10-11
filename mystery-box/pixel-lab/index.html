@@ -10,86 +10,82 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
+  <!-- Shared Design System -->
+  <link rel="stylesheet" href="style.css">
+
   <style>
-    :root {
-      --black: #000000;
-      --white: #ffffff;
-      --yellow: #ffff00;
-      --gray-dark: #141414;
-      --gray-mid: #222222;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background-color: var(--black);
-      color: var(--white);
-      font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.5;
       padding-bottom: 48px;
-      -webkit-font-smoothing: antialiased;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* Mechanical Jitter Keyframes */
-    @keyframes ps1-btn-jitter {
-      0%   { transform: translate(0, 0); }
-      25%  { transform: translate(-1.5px, 1px); }
-      50%  { transform: translate(1px, -1.5px); }
-      75%  { transform: translate(-1px, -1px); }
-      100% { transform: translate(1.5px, 1px); }
-    }
-
+    /* Centered Unified Lockup Header */
     header {
       max-width: 960px;
-      margin: 36px auto 28px;
-      padding: 0 16px;
+      width: 100%;
+      margin: 14px auto 20px;
+      padding: 0 16px 14px;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      text-align: center;
+      gap: 16px;
+      border-bottom: 2px solid var(--blank-white);
     }
 
     .brand-logo-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       line-height: 0;
       text-decoration: none;
       outline: none;
+      flex-shrink: 0;
     }
 
     .brand-logo {
-      height: 90px;
+      height: 56px;
       width: auto;
-      margin-bottom: 16px;
-      fill: var(--white);
+      margin-bottom: 0;
+      fill: var(--blank-white);
       user-select: none;
       cursor: pointer;
       transform-origin: center center;
-      transform: scale(1.5);
+      transform: scale(1);
+    }
+
+    .header-titles {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     h1 {
       margin: 0;
-      font-size: 1.6rem;
-      letter-spacing: 2px;
+      font-size: 1.25rem;
+      letter-spacing: 1.5px;
       font-weight: 700;
       text-transform: uppercase;
-      color: var(--white);
+      color: var(--blank-white);
+      line-height: 1.15;
+      text-align: center;
     }
 
     .header-sub {
-      font-size: 0.9rem;
-      color: var(--white);
+      font-size: 0.75rem;
+      color: var(--blank-white);
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 6px;
+      letter-spacing: 1.5px;
+      margin-top: 3px;
       font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
     }
 
-    .container {
+    .lab-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -97,15 +93,6 @@
       max-width: 960px;
       width: 100%;
       padding: 0 16px;
-    }
-
-    /* Neo-Brutalist Card Surface */
-    .card {
-      background: var(--black);
-      border: 2px solid var(--white);
-      box-shadow: 6px 6px 0px var(--white);
-      padding: 24px;
-      position: relative;
     }
 
     .preview-pane {
@@ -121,9 +108,9 @@
       width: 512px;
       height: 512px;
       max-width: 100%;
-      background: var(--gray-dark);
-      border: 2px solid var(--white);
-      box-shadow: 6px 6px 0px var(--white);
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      box-shadow: 6px 6px 0px var(--blank-white);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -137,7 +124,7 @@
     .preview-box.is-dragging { cursor: grabbing; }
 
     .preview-placeholder {
-      color: var(--white);
+      color: var(--blank-white);
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -158,9 +145,9 @@
     .crop-hint-badge {
       position: absolute;
       bottom: 12px;
-      background: var(--black);
-      border: 2px solid var(--white);
-      color: var(--white);
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      color: var(--blank-white);
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 1px;
@@ -177,40 +164,38 @@
       transform: translateY(0);
     }
 
-	.preview-box.is-dragging .crop-hint-badge,
-	.preview-box.is-dragging .reset-crop-btn {
-	  opacity: 0 !important;
-	  pointer-events: none !important;
-	}
-	
+    .preview-box.is-dragging .crop-hint-badge,
+    .preview-box.is-dragging .reset-crop-btn {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
     .reset-crop-btn {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: var(--black);
-      border: 2px solid var(--white);
-      color: var(--white);
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      color: var(--blank-white);
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
       padding: 4px 10px;
       cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
+      display: none;
       z-index: 5;
     }
 
     .reset-crop-btn.visible {
-      opacity: 1;
+      display: block;
       pointer-events: auto;
     }
 
     .reset-crop-btn:hover {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
+      background: var(--hazard-accent);
+      color: var(--pure-void);
+      border-color: var(--hazard-accent);
     }
 
     .batch-nav {
@@ -221,9 +206,9 @@
       width: 100%;
       margin-top: 16px;
       padding: 8px 12px;
-      background: var(--black);
-      border: 2px solid var(--white);
-      box-shadow: 4px 4px 0px var(--white);
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      box-shadow: 4px 4px 0px var(--blank-white);
       box-sizing: border-box;
       white-space: nowrap;
     }
@@ -237,7 +222,7 @@
       text-align: center;
       font-size: 0.82rem;
       font-weight: 700;
-      color: var(--white);
+      color: var(--blank-white);
       padding: 0 4px;
     }
 
@@ -246,100 +231,6 @@
       flex-shrink: 0;
       white-space: nowrap;
     }
-
-    /* Mechanical Neo-Brutalist Buttons */
-    .btn-brutal {
-      color: var(--white);
-      text-decoration: none;
-      background: var(--black);
-      border: 2px solid var(--white);
-      padding: 8px 18px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 4px 4px 0px var(--white);
-      display: inline-block;
-      cursor: pointer;
-      transition: background 0.1s ease, color 0.1s ease;
-      font-family: inherit;
-    }
-
-    .btn-brutal:hover {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: 4px 4px 0px var(--white);
-      animation: ps1-btn-jitter 0.16s steps(2) infinite;
-    }
-
-    .btn-brutal:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--white);
-      animation: none;
-    }
-
-    .btn-brutal-cta {
-      background: var(--yellow);
-      color: var(--black);
-      border: 2px solid var(--white);
-      box-shadow: 4px 4px 0px var(--white);
-      padding: 10px 20px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      font-family: inherit;
-      width: 100%;
-      transition: background 0.1s ease, color 0.1s ease;
-    }
-
-    .btn-brutal-cta:hover {
-      background: var(--white);
-      color: var(--black);
-      border-color: var(--yellow);
-      box-shadow: 4px 4px 0px var(--yellow);
-      animation: ps1-btn-jitter 0.14s steps(2) infinite;
-    }
-
-    .btn-brutal-cta:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--yellow);
-      animation: none;
-    }
-
-.btn-danger {
-  background: var(--black);
-  color: var(--white);
-  border: 2px solid #ff0000;
-  font-family: inherit;
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 3px 3px 0px #ff0000;
-}
-
-.btn-danger:hover {
-  background: #ff0000;
-  color: var(--black);
-  box-shadow: 
-    3px 3px 0px 0px var(--black),
-    4px 4px 0px 0px #ff0000,
-    4px 2px 0px 0px #ff0000,
-    2px 4px 0px 0px #ff0000;
-  animation: ps1-btn-jitter 0.16s steps(2) infinite;
-}
-
-.btn-danger:active {
-  transform: translate(2px, 2px);
-  box-shadow: 
-    1px 1px 0px 0px var(--black),
-    2px 2px 0px 0px #ff0000;
-  animation: none;
-}
 
     .actions {
       display: flex;
@@ -355,7 +246,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      justify-content: space-between;
+      justify-content: flex-start;
     }
 
     .control-group {
@@ -364,33 +255,24 @@
       gap: 8px;
     }
 
-    .control-group.disabled {
-      opacity: 0.35;
-      pointer-events: none;
-    }
-
     .file-input-row {
       display: flex;
       gap: 10px;
       align-items: center;
-      background: var(--gray-dark);
+      background: var(--pure-void);
       padding: 8px 10px;
-      border: 2px solid var(--white);
+      border: 2px solid var(--blank-white);
     }
 
     .file-status-label {
       flex: 1;
       font-size: 0.85rem;
-      color: #aaa;
+      color: var(--blank-white);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-    }
-
-    .file-status-label.has-files {
-      color: var(--white);
       font-weight: 700;
     }
 
@@ -399,25 +281,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--white);
-    }
-
-    select, input[type="file"] {
-      background: var(--black);
-      color: var(--white);
-      font-family: inherit;
-      border: 2px solid var(--white);
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 3px 3px 0px var(--white);
-      outline: none;
-    }
-
-    select:focus {
-      border-color: var(--yellow);
+      color: var(--blank-white);
     }
 
     .toggle-row {
@@ -433,54 +297,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--white);
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-
-    .switch input { opacity: 0; width: 0; height: 0; }
-
-    .slider-square {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--black);
-      border: 2px solid var(--white);
-      transition: 0.15s ease;
-      box-shadow: 2px 2px 0px var(--white);
-    }
-
-    .slider-square:before {
-      position: absolute;
-      content: "";
-      height: 12px;
-      width: 12px;
-      left: 3px;
-      bottom: 4px;
-      background-color: var(--white);
-      transition: 0.15s ease;
-    }
-
-    .switch input:checked + .slider-square {
-      background-color: var(--yellow);
-      border-color: var(--white);
-    }
-
-    .switch input:checked + .slider-square:before {
-      transform: translateX(20px);
-      background-color: var(--black);
-    }
-
-    input[type="range"] {
-      width: 100%;
-      cursor: pointer;
-      accent-color: var(--yellow);
+      color: var(--blank-white);
     }
 
     .palette-header-row {
@@ -494,34 +311,12 @@
       gap: 6px;
     }
 
-    .icon-btn {
-      background: var(--black);
-      border: 2px solid var(--white);
-      color: var(--white);
-      padding: 2px 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 2px 2px 0px var(--white);
-    }
-
-    .icon-btn:hover:not(:disabled) {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--yellow);
-    }
-
-    .icon-btn:disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-    }
-
     .palette-strip {
       display: flex;
       width: 100%;
       height: 32px;
-      border: 2px solid var(--white);
-      box-shadow: 3px 3px 0px var(--white);
+      border: 2px solid var(--blank-white);
+      box-shadow: 3px 3px 0px var(--blank-white);
       margin-top: 6px;
     }
 
@@ -537,7 +332,15 @@
     }
 
     .palette-swatch:not(:last-child) {
-      border-right: 2px solid var(--white);
+      border-right: 2px solid var(--blank-white);
+    }
+
+    /* Web-only App Download Link Banner */
+    .download-exe-link {
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     footer {
@@ -545,9 +348,9 @@
       width: 100%;
       margin: 48px auto 0;
       padding: 24px 16px 0;
-      border-top: 2px solid var(--white);
+      border-top: 2px solid var(--blank-white);
       font-size: 0.85rem;
-      color: var(--white);
+      color: var(--blank-white);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -555,21 +358,67 @@
     }
 
     footer a {
-      color: var(--yellow);
+      color: var(--hazard-accent);
       text-decoration: underline;
     }
 
     footer a:hover {
-      color: var(--white);
+      color: var(--blank-white);
     }
 
     .footer-title {
       font-weight: 700;
-      color: var(--white);
+      color: var(--blank-white);
       text-transform: uppercase;
       font-size: 0.85rem;
       letter-spacing: 1px;
       margin-bottom: 4px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        margin: 10px auto 14px;
+        padding: 0 12px 10px;
+        gap: 12px;
+      }
+
+      .brand-logo {
+        height: 44px;
+      }
+
+      h1 {
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+      }
+
+      .header-sub {
+        font-size: 0.68rem;
+        letter-spacing: 0.8px;
+        margin-top: 2px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      header {
+        gap: 10px;
+        padding: 0 8px 10px;
+      }
+
+      .brand-logo {
+        height: 38px;
+      }
+
+      h1 {
+        font-size: 0.92rem;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      .header-sub {
+        font-size: 0.62rem;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
     }
   </style>
 </head>
@@ -593,11 +442,13 @@
       </svg>
     </a>
 
-    <h1>NEVERUS Pixel Lab</h1>
-    <div class="header-sub">Retro 2-Bit Ditherer & Upscaler</div>
+    <div class="header-titles">
+      <h1>NEVERUS Pixel Lab</h1>
+      <div class="header-sub">2-Bit Ditherer &amp; Upscaler</div>
+    </div>
   </header>
 
-  <div class="container">
+  <div class="lab-container">
     <div class="preview-pane">
       <div class="preview-box" id="previewBox">
         <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
@@ -617,6 +468,11 @@
         <button id="copyBtn" class="btn-brutal">Copy to Clipboard</button>
         <button id="downloadBtn" class="btn-brutal">Save (PNG)</button>
         <button id="downloadAllBtn" class="btn-brutal-cta" style="display: none;">Save All as ZIP</button>
+        
+        <!-- Web-only Standalone EXE Download Trigger -->
+        <a id="exeDownloadBtn" href="NEVERUS_Pixel_Lab.exe" download class="btn-brutal download-exe-link" style="display: none;">
+          Download Desktop App (.EXE)
+        </a>
       </div>
     </div>
 
@@ -626,7 +482,7 @@
         <div class="file-input-row">
           <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
           <button type="button" id="browseBtn" class="btn-brutal" style="padding: 4px 10px; font-size: 0.75rem;">Add Images...</button>
-          <span id="fileStatusLabel" class="file-status-label">No files loaded</span>
+          <span id="fileStatusLabel" class="file-status-label">&lt; NO FILE LOADED &gt;</span>
           <button type="button" id="clearBatchBtn" class="btn-danger" style="display: none;">Clear All</button>
         </div>
       </div>
@@ -669,8 +525,8 @@
           <label for="paletteSelect">Palette</label>
           <div class="palette-actions">
             <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">+</button>
-            <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette">✎</button>
-            <button type="button" id="deletePaletteBtn" class="icon-btn" title="Delete Palette">×</button>
+            <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette" style="display: none;">✎</button>
+            <button type="button" id="deletePaletteBtn" class="icon-btn icon-btn-danger" title="Delete Palette" style="display: none;">×</button>
           </div>
         </div>
         <select id="paletteSelect"></select>
@@ -698,6 +554,23 @@
   </footer>
 
   <script>
+    // --- 1. ENVIRONMENT DETECTION (LITERAL PRESENCE) ---
+    (function initDesktopAppDetection() {
+      const exeBtn = document.getElementById('exeDownloadBtn');
+      if (!exeBtn) return;
+      
+      const isDesktop = window.location.protocol === 'file:' || 
+                        Boolean(window.pywebview) || 
+                        document.documentElement.classList.contains('is-desktop-app');
+
+      if (!isDesktop) {
+        exeBtn.style.display = 'inline-block';
+      } else {
+        exeBtn.style.display = 'none';
+      }
+    })();
+
+    // --- 2. PS1 LOGO WOBBLE ---
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
@@ -708,8 +581,8 @@
         snapGrid: 11.0,
         driftAmp: 10,
         localWobbleAmp: 5,
-        baseScale: 1.5,
-        hoverScale: 1.62,
+        baseScale: 1.0,
+        hoverScale: 1.10,
         scaleTransition: 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)',
         theme: 'dark',
         colors: { dark: '#ffffff', light: '#181818' }
@@ -791,8 +664,11 @@
           for (let i = 0; i < items.length; i++) {
             const item = items[i];
             if (item.type === 'cmd') out.push(item.val);
-            else if (item.type === 'point') out.push(`${item.x},${item.y}`);
-            else out.push(item.val);
+            else if (item.type === 'point') {
+              out.push(`${item.x},${item.y}`);
+            } else {
+              out.push(item.val);
+            }
           }
           el.setAttribute('d', out.join(' '));
         });
@@ -1112,8 +988,8 @@
         }
 
         outCanvas.width = targetW;
-        outCanvas.height = targetH;
         outCtx.imageSmoothingEnabled = false;
+        outCanvas.height = targetH;
         outCtx.drawImage(
           img,
           crop.x, crop.y, crop.width, crop.height,
@@ -1135,14 +1011,11 @@
 
     function updateFileStatusLabel() {
       if (loadedFiles.length === 0) {
-        fileStatusLabel.textContent = 'No files loaded';
-        fileStatusLabel.classList.remove('has-files');
+        fileStatusLabel.textContent = '< NO FILES LOADED >';
       } else if (loadedFiles.length === 1) {
         fileStatusLabel.textContent = `${loadedFiles[0].name}`;
-        fileStatusLabel.classList.add('has-files');
       } else {
-        fileStatusLabel.textContent = `${loadedFiles.length} images loaded`;
-        fileStatusLabel.classList.add('has-files');
+        fileStatusLabel.textContent = `${loadedFiles[0] ? loadedFiles.length : 0} IMAGES LOADED`;
       }
     }
 
@@ -1339,15 +1212,15 @@
     function syncPaletteState() {
       const current = getCurrentPalette();
       updatePaletteStrip(current);
-      deletePaletteBtn.disabled = !current.isCustom;
-      renamePaletteBtn.disabled = !current.isCustom;
+      deletePaletteBtn.style.display = current.isCustom ? 'inline-block' : 'none';
+      renamePaletteBtn.style.display = current.isCustom ? 'inline-block' : 'none';
     }
 
     function updateModeControls() {
       const mode = modeSelect.value;
       const isPassthrough = mode === 'passthrough';
       document.querySelectorAll('.dither-control').forEach(el => {
-        el.classList.toggle('disabled', isPassthrough);
+        el.style.display = isPassthrough ? 'none' : 'flex';
       });
       cropToggle.checked = !!modeCropState[mode];
       populateScaleOptions();
