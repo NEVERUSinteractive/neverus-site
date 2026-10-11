@@ -85,7 +85,7 @@
       font-size: 0.8rem;
       letter-spacing: 1px;
       cursor: pointer;
-      pointer-events: auto;
+      pointer-events: none;
       user-select: none;
       z-index: 10;
       transition: background 0.1s ease, color 0.1s ease;
@@ -410,7 +410,7 @@
       width: 100%;
     }
 
-    /* Unboxed Raw Typography with Hard Brutalist Shadows (Fuzzy blur removed) */
+    /* Unboxed Raw Typography with Hard Brutalist Shadows */
     .dream-text-reg {
       color: var(--white);
       font-size: 1.8rem;
@@ -428,6 +428,7 @@
       text-shadow: 5px 5px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
     }
 
+    /* Completely Raw VCR Mono Typography */
     .dream-text-vcr {
       font-family: "VCR OSD Mono", "Courier New", Courier, monospace;
       color: var(--yellow);
@@ -435,21 +436,47 @@
       font-weight: 400;
       letter-spacing: 10px;
       text-transform: uppercase;
-      text-shadow: 5px 5px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
+      text-shadow: none;
+      filter: none;
       line-height: 1;
     }
 
-    .dream-link {
-      color: inherit;
+    /* Neo-Brutalist Badge Button for Option 2 */
+    .dream-badge-link {
+      display: inline-block;
+      background: var(--yellow);
+      color: var(--black) !important;
+      border: 3px solid var(--white);
+      box-shadow: 6px 6px 0px var(--white);
+      padding: 8px 24px;
       text-decoration: none;
-      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 2.2rem;
+      text-transform: uppercase;
       pointer-events: auto;
-      transition: color 0.1s ease;
+      transition: transform 0.08s ease, background 0.08s ease, color 0.08s ease;
     }
 
-    .dream-link:hover {
-      color: var(--yellow);
+    .dream-badge-link em {
+      font-style: italic;
       text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 3px;
+    }
+
+    .dream-badge-link:hover {
+      background: var(--white);
+      color: var(--black) !important;
+      border-color: var(--yellow);
+      box-shadow: 6px 6px 0px var(--yellow);
+      animation: ps1-btn-jitter 0.14s steps(2) infinite;
+    }
+
+    .dream-badge-link:active {
+      transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0px var(--yellow);
+      animation: none;
     }
 
     /* Hit counter */
@@ -547,10 +574,15 @@
         font-size: 2.2rem;
         letter-spacing: 3px;
       }
+      .dream-badge-link {
+        font-size: 1.4rem;
+        padding: 6px 16px;
+        letter-spacing: 1px;
+        box-shadow: 4px 4px 0px var(--white);
+      }
       .dream-text-vcr {
-        font-size: 2.8rem;
-        letter-spacing: 6px;
-        text-shadow: 4px 4px 0px #000000;
+        font-size: 2.2rem;
+        letter-spacing: 4px;
       }
       .dream-scroll-content {
         gap: 20vh;
@@ -636,10 +668,10 @@
         <div class="dream-line"><div class="dream-text-reg">To let your intrusive thoughts...</div></div>
         <div class="dream-line"><div class="dream-text-reg dream-win">"WIN."</div></div>
 
-        <!-- High-Voltage VCR OSD Mono Chants -->
-        <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
-        <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
-        <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
+        <!-- High-Voltage Raw VCR OSD Mono Chants -->
+        <div class="dream-line"><div class="dream-text-vcr">SMASH STUFF</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SCORE POINTS</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">REPEAT FOREVER</div></div>
         <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
         <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
         <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
@@ -651,9 +683,9 @@
         <div class="dream-line" id="lineUnderstand"><div class="dream-text-reg">...Are you beginning to understand?</div></div>
         <div class="dream-line"><div class="dream-text-reg">...Or should you try it for yourself?</div></div>
         <div class="dream-line">
-          <div class="dream-text-reg dream-win">
-            <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="dream-link">It's Off the Shelf!</a>
-          </div>
+          <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="dream-badge-link">
+            PLAY <em>OFF THE SHELF!</em>
+          </a>
         </div>
       </div>
     </section>
@@ -716,7 +748,7 @@
       track.appendChild(segment2);
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER (TIGHTENED PARABOLA + AUDIO) ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER (PARABOLA + AUDIO + HIT-TEST GATING) ---
     (function initDreamScrubber() {
       const lineStart = document.getElementById('lineImagine');
       const lineEnd = document.getElementById('lineUnderstand');
@@ -732,27 +764,25 @@
         const rectStart = lineStart.getBoundingClientRect();
         const rectEnd = lineEnd.getBoundingClientRect();
 
-        // Start fading in once "Imagine, if you will" begins scrolling past the mid/upper screen
         const startY = rectStart.top;
-        const endY = rectEnd.top;
-
-        const rangeTop = windowH * 0.45;
-        const rangeBottom = windowH * 0.55;
-
-        // Progress 0.0 at Imagine line reaching center/upper viewport; 1.0 at Understand line reaching center
         const totalSpan = (rectEnd.top + window.scrollY) - (rectStart.top + window.scrollY);
         const scrolledSpan = (windowH * 0.5) - startY;
 
         const progress = Math.min(Math.max(scrolledSpan / totalSpan, 0), 1);
 
-        // Bell curve peaking in middle of chant sequence and dropping near zero at boundary markers
         let factor = 0;
         if (progress > 0 && progress < 1) {
           factor = Math.sin(progress * Math.PI);
         }
 
         layer.style.opacity = factor.toFixed(3);
-        layer.style.pointerEvents = factor > 0.08 ? 'auto' : 'none';
+        
+        // Strict pointer-events gating: completely disable button hit-testing when invisible
+        const isLayerInteractive = factor > 0.08;
+        layer.style.pointerEvents = isLayerInteractive ? 'auto' : 'none';
+        if (audioBtn) {
+          audioBtn.style.pointerEvents = isLayerInteractive ? 'auto' : 'none';
+        }
 
         if (userUnmuted) {
           video.volume = Math.min(Math.max(factor, 0), 1);
