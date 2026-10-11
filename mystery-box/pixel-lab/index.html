@@ -10,8 +10,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-  <!-- Shared Design System -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Dual-Environment Stylesheet Link -->
+  <!-- Resolves locally in PyInstaller and falls back to domain root on web -->
+  <link id="mainStyleLink" rel="stylesheet" href="style.css">
+  <script>
+    if (window.location.protocol.startsWith('http')) {
+      const link = document.getElementById('mainStyleLink');
+      link.href = '/style.css';
+    }
+  </script>
 
   <style>
     body {
@@ -335,14 +342,7 @@
       border-right: 2px solid var(--blank-white);
     }
 
-    /* Web-only App Download Link Banner */
-    .download-exe-link {
-      text-align: center;
-      text-decoration: none;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
+    /* Footer Layout & Download Trigger */
     footer {
       max-width: 960px;
       width: 100%;
@@ -353,6 +353,7 @@
       color: var(--blank-white);
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 16px;
       text-align: center;
     }
@@ -373,6 +374,18 @@
       font-size: 0.85rem;
       letter-spacing: 1px;
       margin-bottom: 4px;
+    }
+
+    .download-exe-container {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .download-exe-link {
+      text-decoration: none;
+      padding: 10px 24px;
     }
 
     @media (max-width: 600px) {
@@ -468,11 +481,6 @@
         <button id="copyBtn" class="btn-brutal">Copy to Clipboard</button>
         <button id="downloadBtn" class="btn-brutal">Save (PNG)</button>
         <button id="downloadAllBtn" class="btn-brutal-cta" style="display: none;">Save All as ZIP</button>
-        
-        <!-- Web-only Standalone EXE Download Trigger -->
-        <a id="exeDownloadBtn" href="NEVERUS_Pixel_Lab.exe" download class="btn-brutal download-exe-link" style="display: none;">
-          Download Desktop App (.EXE)
-        </a>
       </div>
     </div>
 
@@ -550,6 +558,13 @@
         <a href="https://imagenerator.net" target="_blank" rel="noopener noreferrer">imagenerator.net</a> 
         (<a href="https://github.com/olivvybee/imagenerator" target="_blank" rel="noopener noreferrer">Github</a>, MIT License).
       </div>
+    </div>
+
+    <!-- Web-only Standalone EXE Download Trigger -->
+    <div class="download-exe-container">
+      <a id="exeDownloadBtn" href="/NEVERUS_Pixel_Lab.exe" download class="btn-brutal download-exe-link" style="display: none;">
+        DOWNLOAD AS .EXE
+      </a>
     </div>
   </footer>
 
