@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>NEVERUS Interactive</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,10 +46,11 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 0;
+      height: 100dvh;
+      z-index: 1;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.05s linear;
+      transition: opacity 0.15s ease-out;
     }
 
     .dream-video {
@@ -71,12 +72,12 @@
       pointer-events: none;
     }
 
-    /* Standard Unobtrusive Button (Zero drop shadow, clean outline) */
+    /* Fixed Audio Toggle Button */
     .btn-unobtrusive,
     .dream-audio-toggle {
-      position: absolute;
-      bottom: 24px;
-      right: 24px;
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: calc(24px + env(safe-area-inset-right, 0px));
       background: rgba(0, 0, 0, 0.85);
       color: var(--white);
       border: 1px solid var(--white);
@@ -91,8 +92,9 @@
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      z-index: 10;
-      transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+      z-index: 99;
+      opacity: 0;
+      transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease, opacity 0.2s ease;
     }
 
     .btn-unobtrusive:hover,
@@ -599,8 +601,8 @@
         gap: 20vh;
       }
       .dream-audio-toggle {
-        bottom: 16px;
-        right: 16px;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        right: calc(16px + env(safe-area-inset-right, 0px));
         font-size: 0.7rem;
         padding: 5px 10px;
       }
@@ -609,15 +611,17 @@
 </head>
 <body>
 
-  <!-- Fullscreen Dream Layer (Fades over the viewport during dream scroll) -->
+  <!-- Fullscreen Dream Layer -->
   <div class="dream-fullscreen-layer" id="dreamLayer">
     <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata">
       <source src="OTS_Reel.webm" type="video/webm">
       <source src="OTS_Reel.mp4" type="video/mp4">
     </video>
     <div class="dream-scanlines"></div>
-    <button type="button" class="dream-audio-toggle btn-unobtrusive" id="dreamAudioToggle">AUDIO: OFF</button>
   </div>
+
+  <!-- Audio Toggle Button (Placed at top-level for clean viewport hit-testing) -->
+  <button type="button" class="dream-audio-toggle btn-unobtrusive" id="dreamAudioToggle" aria-label="Toggle Dream Audio">AUDIO: OFF</button>
 
   <!-- Dynamic Infinite Marquee -->
   <div class="ticker-container" aria-label="Announcements">
@@ -765,14 +769,14 @@
       track.appendChild(segment2);
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER (MOBILE UNMUTING + ZERO DROP SHADOW UNMUTED BUTTON) ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER & ROBUST CROSS-PLATFORM AUDIO CONTROLLER ---
     (function initDreamScrubber() {
       const lineStart = document.getElementById('lineImagine');
       const lineEnd = document.getElementById('lineUnderstand');
       const layer = document.getElementById('dreamLayer');
       const video = document.getElementById('dreamVideo');
       const audioBtn = document.getElementById('dreamAudioToggle');
-      if (!lineStart || !lineEnd || !layer || !video) return;
+      if (!lineStart || !lineEnd || !layer || !video || !audioBtn) return;
 
       let userUnmuted = false;
 
@@ -781,11 +785,13 @@
         const rectStart = lineStart.getBoundingClientRect();
         const rectEnd = lineEnd.getBoundingClientRect();
 
-        const startY = rectStart.top;
-        const totalSpan = (rectEnd.top + window.scrollY) - (rectStart.top + window.scrollY);
-        const scrolledSpan = (windowH * 0.5) - startY;
+        // Calculate progress across the entire dream portal track
+        const totalDist = (rectEnd.top + window.scrollY) - (rectStart.top + window.scrollY);
+        const startTriggerY = windowH * 0.8;
+        const scrolledDist = startTriggerY - rectStart.top;
 
-        const progress = Math.min(Math.max(scrolledSpan / totalSpan, 0), 1);
+        let progress = scrolledDist / (totalDist + windowH * 0.4);
+        progress = Math.min(Math.max(progress, 0), 1);
 
         let factor = 0;
         if (progress > 0 && progress < 1) {
@@ -793,48 +799,61 @@
         }
 
         layer.style.opacity = factor.toFixed(3);
-        
-        const isInteractive = factor > 0.08;
-        layer.style.pointerEvents = isInteractive ? 'auto' : 'none';
-        if (audioBtn) {
-          audioBtn.style.pointerEvents = isInteractive ? 'auto' : 'none';
-        }
 
+        const isInteractive = factor > 0.05;
+        layer.style.pointerEvents = isInteractive ? 'auto' : 'none';
+        audioBtn.style.pointerEvents = isInteractive ? 'auto' : 'none';
+        audioBtn.style.opacity = isInteractive ? '1' : '0';
+
+        // Modulate volume for desktop browsers (fails gracefully on mobile where volume is read-only)
         if (userUnmuted) {
-          video.volume = Math.min(Math.max(factor, 0), 1);
+          try {
+            video.volume = Math.min(Math.max(factor, 0.1), 1);
+          } catch (err) {}
         }
       }
 
-      function handleAudioToggle(e) {
+      async function toggleAudio(e) {
         if (e) {
-          e.preventDefault();
           e.stopPropagation();
         }
+
         userUnmuted = !userUnmuted;
+
         if (userUnmuted) {
           video.muted = false;
-          // Explicitly play on the gesture to unlock mobile Safari / Chrome audio pipeline
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(() => {});
+          try {
+            video.volume = 1.0;
+          } catch (err) {}
+
+          // Directly invoke .play() within the user gesture execution context
+          try {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              await playPromise;
+            }
+          } catch (err) {
+            console.warn('Playback trigger exception:', err);
           }
+
           audioBtn.textContent = 'AUDIO: ON';
           audioBtn.classList.add('is-active');
           onScroll();
         } else {
           video.muted = true;
-          video.volume = 0;
+          try {
+            video.volume = 0;
+          } catch (err) {}
           audioBtn.textContent = 'AUDIO: OFF';
           audioBtn.classList.remove('is-active');
         }
       }
 
-      if (audioBtn) {
-        audioBtn.addEventListener('click', handleAudioToggle);
-        audioBtn.addEventListener('touchend', handleAudioToggle, { passive: false });
-      }
+      // Pointerdown guarantees an immediate, trusted user gesture on both touchscreens and mouse clicks
+      audioBtn.addEventListener('pointerdown', toggleAudio);
 
       window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
       onScroll();
     })();
 
