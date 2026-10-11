@@ -177,11 +177,12 @@
       transform: translateY(0);
     }
 
-    .preview-box.is-dragging .crop-hint-badge {
-      opacity: 0 !important;
-      transform: translateY(4px) !important;
-    }
-
+	.preview-box.is-dragging .crop-hint-badge,
+	.preview-box.is-dragging .reset-crop-btn {
+	  opacity: 0 !important;
+	  pointer-events: none !important;
+	}
+	
     .reset-crop-btn {
       position: absolute;
       top: 10px;
@@ -667,7 +668,7 @@
         <div class="palette-header-row">
           <label for="paletteSelect">Palette</label>
           <div class="palette-actions">
-            <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">⎘</button>
+            <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">+</button>
             <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette">✎</button>
             <button type="button" id="deletePaletteBtn" class="icon-btn" title="Delete Palette">×</button>
           </div>
