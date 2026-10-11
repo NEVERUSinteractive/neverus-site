@@ -308,24 +308,37 @@
       animation: none;
     }
 
-    .btn-danger {
-      background: var(--black);
-      color: var(--white);
-      border: 2px solid #ff4444;
-      font-family: inherit;
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 3px 3px 0px #ff4444;
-    }
+.btn-danger {
+  background: var(--black);
+  color: var(--white);
+  border: 2px solid #ff4444;
+  font-family: inherit;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #ff4444;
+}
 
-    .btn-danger:hover {
-      background: #ff4444;
-      color: var(--black);
-      animation: ps1-btn-jitter 0.16s steps(2) infinite;
-    }
+.btn-danger:hover {
+  background: #ff4444;
+  color: var(--black);
+  box-shadow: 
+    3px 3px 0px 0px var(--black),
+    4px 4px 0px 0px #ff4444,
+    4px 2px 0px 0px #ff4444,
+    2px 4px 0px 0px #ff4444;
+  animation: ps1-btn-jitter 0.16s steps(2) infinite;
+}
+
+.btn-danger:active {
+  transform: translate(2px, 2px);
+  box-shadow: 
+    1px 1px 0px 0px var(--black),
+    2px 2px 0px 0px #ff4444;
+  animation: none;
+}
 
     .actions {
       display: flex;
