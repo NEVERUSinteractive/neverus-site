@@ -8,14 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='290 460 630 520'%3E%3Cg fill='%23000000' stroke='%23ffffff' stroke-width='48' stroke-linejoin='round' stroke-linecap='round' paint-order='stroke fill'%3E%3Cpath d='M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z'/%3E%3Cpath d='M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z'/%3E%3C/g%3E%3C/svg%3E">
 
   <style>
     @font-face {
       font-family: "VCR OSD Mono";
-      src: url("VCROSDMono.ttf") format("truetype"),
-           local("VCR OSD Mono");
+      src: url("VCR_OSD_MONO_1.001.ttf") format("truetype"),
+           url("VCROSDMono.ttf") format("truetype"),
+           local("VCR OSD Mono"),
+           local("VCROSDMono");
       font-weight: normal;
       font-style: normal;
+      font-display: swap;
     }
 
     :root {
@@ -45,7 +49,7 @@
       z-index: 0;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.08s linear;
+      transition: opacity 0.05s linear;
     }
 
     .dream-video {
@@ -139,7 +143,7 @@
     }
 
     @keyframes ticker-seamless {
-      0% { transform: translateX(0); }
+      0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
@@ -182,7 +186,7 @@
       justify-content: center;
     }
 
-    /* Mechanical Neo-Brutalist Buttons */
+    /* Mechanical 2-Layer Neo-Brutalist Buttons */
     .btn-major {
       color: var(--white);
       text-decoration: none;
@@ -332,6 +336,7 @@
       color: var(--yellow);
     }
 
+    /* Hero CTA Button */
     .btn-cta {
       display: inline-block;
       background: var(--yellow);
@@ -362,30 +367,39 @@
       animation: none;
     }
 
+    /* Mascot Peeker */
     .mascot-peeker {
       position: absolute;
-      top: -75px;
+      top: -89px;
       right: 20px;
       width: 140px;
       height: auto;
       z-index: 3;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: pointer;
+      user-select: none;
       filter: drop-shadow(2px 2px 0px var(--black));
     }
 
-    /* Dream Portal Track & Overlay Typography */
+    .mascot-peeker.fallen {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* --- THE DREAM PORTAL TRACK (RAW TYPOGRAPHY) --- */
     .dream-portal-track {
       position: relative;
       z-index: 2;
-      margin: 60px 0;
+      margin-top: 40px;
+      margin-bottom: 240px; /* Provides full scroll buffer before About section */
     }
 
     .dream-scroll-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 22vh;
-      padding: 12vh 16px;
+      gap: 26vh;
+      padding: 10vh 16px;
       pointer-events: none;
     }
 
@@ -397,37 +411,35 @@
       width: 100%;
     }
 
+    /* Unboxed Raw Typography with Hard Brutalist Shadows */
     .dream-text-reg {
       color: var(--white);
-      font-size: 1.45rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      letter-spacing: 1px;
-      background: rgba(0, 0, 0, 0.88);
-      border: 2px solid var(--white);
-      box-shadow: 4px 4px 0px var(--white);
-      padding: 12px 24px;
-      max-width: 600px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-shadow: 4px 4px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
+      filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.9));
+      max-width: 820px;
     }
 
     .dream-text-reg.dream-win {
-      font-size: 2.2rem;
-      letter-spacing: 4px;
-      border-color: var(--yellow);
-      box-shadow: 5px 5px 0px var(--yellow);
+      font-size: 3.2rem;
+      letter-spacing: 6px;
+      color: var(--yellow);
+      text-shadow: 5px 5px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
     }
 
     .dream-text-vcr {
       font-family: "VCR OSD Mono", "Courier New", Courier, monospace;
       color: var(--yellow);
-      font-size: 3.2rem;
+      font-size: 4.5rem;
       font-weight: 400;
-      letter-spacing: 6px;
+      letter-spacing: 10px;
       text-transform: uppercase;
-      background: rgba(0, 0, 0, 0.92);
-      border: 3px solid var(--yellow);
-      box-shadow: 6px 6px 0px var(--white);
-      padding: 10px 28px;
-      text-shadow: 2px 2px 0px var(--black);
+      text-shadow: 5px 5px 0px #000000, -2px -2px 0px #000000, 2px -2px 0px #000000, -2px 2px 0px #000000;
+      filter: drop-shadow(0 0 24px rgba(0, 0, 0, 0.95));
+      line-height: 1;
     }
 
     /* Hit counter */
@@ -512,13 +524,27 @@
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
       .mascot-peeker {
-        width: 76px;
-        top: -46px;
+        width: 95px;
+        top: -62px;
         right: 12px;
       }
-      .dream-text-reg { font-size: 1.15rem; }
-      .dream-text-reg.dream-win { font-size: 1.7rem; }
-      .dream-text-vcr { font-size: 2.1rem; letter-spacing: 4px; }
+      .dream-text-reg {
+        font-size: 1.35rem;
+        letter-spacing: 1px;
+        text-shadow: 3px 3px 0px #000000;
+      }
+      .dream-text-reg.dream-win {
+        font-size: 2.2rem;
+        letter-spacing: 3px;
+      }
+      .dream-text-vcr {
+        font-size: 2.8rem;
+        letter-spacing: 6px;
+        text-shadow: 4px 4px 0px #000000;
+      }
+      .dream-scroll-content {
+        gap: 20vh;
+      }
     }
   </style>
 </head>
@@ -566,7 +592,7 @@
   <main class="container">
     <!-- Featured Section -->
     <section id="games" class="card">
-      <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
+      <img id="mascotGuy" src="mascot-1.png" alt="NEVERUS Mascot" class="mascot-peeker">
       <div class="section-title">FEATURED</div>
 
       <div class="hero-card">
@@ -579,7 +605,7 @@
           </a>
           
           <div class="hero-tagline-group">
-            <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos</p>
+            <p>Experience 1,000 newtons of pure, exhilarating, free-flying, ragdoll chaos</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing</p>
             <p>Round up some pals, because <em>Off the Shelf!</em> is better together</p>
             <p>Did we mention it's $3?</p>
@@ -631,11 +657,11 @@
     <div class="footer-links">
       <a href="mailto:NEVERUSinteractive@gmail.com">Contact</a>
       <a href="OffTheShelf_PressKit.zip" download>Press Kit</a>
-      <a href="https://discord.gg/neverus" target="_blank" rel="noopener noreferrer">Discord</a>
       <a href="https://www.tiktok.com/@neverusinteractive" target="_blank" rel="noopener noreferrer">TikTok</a>
       <a href="https://www.instagram.com/neverus.interactive/" target="_blank" rel="noopener noreferrer">Instagram</a>
       <a href="https://www.youtube.com/@NEVERUS_interactive" target="_blank" rel="noopener noreferrer">YouTube</a>
       <a href="https://www.twitch.tv/neverusinteractive" target="_blank" rel="noopener noreferrer">Twitch</a>
+      <a href="https://discord.gg/T3JWf9FnKt" target="_blank" rel="noopener noreferrer">Discord</a>
       <a href="NEVERUS_Manifesto.txt" download>Manifesto</a>
     </div>
 
@@ -676,44 +702,67 @@
       track.appendChild(segment2);
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER & AUDIO TOGGLE ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER (VIDEO + AUDIO VOLUME SCALING) ---
     (function initDreamScrubber() {
       const track = document.getElementById('dreamTrack');
       const layer = document.getElementById('dreamLayer');
       const video = document.getElementById('dreamVideo');
       const audioBtn = document.getElementById('dreamAudioToggle');
+      const aboutSection = document.getElementById('about');
       if (!track || !layer || !video) return;
+
+      let userUnmuted = false;
 
       function onScroll() {
         const rect = track.getBoundingClientRect();
         const windowH = window.innerHeight;
 
+        // Determine when about section begins to ensure absolute zero by the time it enters
+        const aboutTop = aboutSection ? aboutSection.getBoundingClientRect().top : Infinity;
+
+        // Start fading in as the track enters view
         const startFade = windowH;
-        const endFade = -rect.height;
+        // End fading completely before about section gets near the viewport
+        const endFade = 0; 
         const current = rect.top;
 
-        if (current > startFade || current < endFade) {
+        // If above track or if about card is entering the viewport, kill layer instantly
+        if (current > startFade || rect.bottom <= 0 || aboutTop <= windowH) {
           layer.style.opacity = '0';
           layer.style.pointerEvents = 'none';
+          if (video) video.volume = 0;
           return;
         }
 
-        // Progress across the dream zone (0.0 -> 1.0)
-        const progress = Math.min(Math.max((startFade - current) / (startFade - endFade), 0), 1);
+        // Compute normalized progress through the dream sequence
+        const totalDistance = rect.height;
+        const scrolledDistance = startFade - current;
+        const progress = Math.min(Math.max(scrolledDistance / (totalDistance + windowH * 0.5), 0), 1);
 
-        // Parabolic arc: peaks at 1.0 at 50% scroll
-        const opacity = Math.max(0, 4 * progress * (1 - progress));
-        layer.style.opacity = opacity.toFixed(3);
-        layer.style.pointerEvents = opacity > 0.08 ? 'auto' : 'none';
+        // Symmetric curve peaking at 1.0 in the middle and dropping to 0 at edges
+        const rawFactor = Math.max(0, 4 * progress * (1 - progress));
+        const factor = Math.min(rawFactor, 1.0);
+
+        layer.style.opacity = factor.toFixed(3);
+        layer.style.pointerEvents = factor > 0.08 ? 'auto' : 'none';
+
+        // Scale audio volume along with scroll progress when unmuted
+        if (userUnmuted) {
+          video.volume = Math.min(Math.max(factor, 0), 1);
+        }
       }
 
       if (audioBtn) {
         audioBtn.addEventListener('click', () => {
-          video.muted = !video.muted;
-          if (!video.muted) {
+          userUnmuted = !userUnmuted;
+          if (userUnmuted) {
+            video.muted = false;
             audioBtn.textContent = 'AUDIO: ON';
             audioBtn.classList.add('is-active');
+            onScroll();
           } else {
+            video.muted = true;
+            video.volume = 0;
             audioBtn.textContent = 'AUDIO: OFF';
             audioBtn.classList.remove('is-active');
           }
@@ -841,6 +890,45 @@
         logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
         cancelAnimationFrame(animFrameId);
         restoreOriginalPaths();
+      });
+    })();
+
+    // --- 4. MASCOT CLICK TUMBLE ---
+    (function initMascotTumble() {
+      const mascot = document.getElementById('mascotGuy');
+      if (!mascot) return;
+
+      const frames = [
+        'mascot-1.png',
+        'mascot-2.png',
+        'mascot-3.png',
+        'mascot-4.png'
+      ];
+
+      frames.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+
+      let isTumbling = false;
+
+      mascot.addEventListener('click', () => {
+        if (isTumbling) return;
+        isTumbling = true;
+
+        let frameIdx = 1;
+        const tumbleInterval = setInterval(() => {
+          if (frameIdx < frames.length) {
+            mascot.src = frames[frameIdx];
+            frameIdx++;
+          } else {
+            clearInterval(tumbleInterval);
+            mascot.classList.add('fallen');
+            setTimeout(() => {
+              mascot.style.display = 'none';
+            }, 100);
+          }
+        }, 110);
       });
     })();
   </script>
