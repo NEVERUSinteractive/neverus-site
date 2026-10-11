@@ -8,9 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='290 460 630 520'%3E%3Cg fill='%23000000' stroke='%23ffffff' stroke-width='48' stroke-linejoin='round' stroke-linecap='round' paint-order='stroke fill'%3E%3Cpath d='M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z'/%3E%3Cpath d='M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z'/%3E%3C/g%3E%3C/svg%3E">
 
   <style>
+    @font-face {
+      font-family: "VCR OSD Mono";
+      src: url("VCROSDMono.ttf") format("truetype"),
+           local("VCR OSD Mono");
+      font-weight: normal;
+      font-style: normal;
+    }
+
     :root {
       --black: #000000;
       --white: #ffffff;
@@ -26,6 +33,65 @@
       line-height: 1.5;
       padding-bottom: 48px;
       -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* Fixed Fullscreen Dream Video Layer */
+    .dream-fullscreen-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.08s linear;
+    }
+
+    .dream-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.92) contrast(1.15);
+    }
+
+    .dream-scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.35) 3px,
+        rgba(0, 0, 0, 0.35) 4px
+      );
+      pointer-events: none;
+    }
+
+    .dream-audio-toggle {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: var(--black);
+      color: var(--white);
+      border: 2px solid var(--white);
+      box-shadow: 4px 4px 0px var(--white);
+      padding: 8px 16px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
+      z-index: 10;
+      transition: background 0.1s ease, color 0.1s ease;
+    }
+
+    .dream-audio-toggle.is-active {
+      background: var(--yellow);
+      color: var(--black);
+      border-color: var(--yellow);
+      box-shadow: 4px 4px 0px var(--white);
     }
 
     /* Seamless Infinite Marquee Ticker */
@@ -37,6 +103,8 @@
       display: flex;
       user-select: none;
       width: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .ticker-track {
@@ -71,7 +139,7 @@
     }
 
     @keyframes ticker-seamless {
-      0%   { transform: translateX(0); }
+      0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
@@ -83,6 +151,8 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
     .brand-logo {
@@ -112,7 +182,7 @@
       justify-content: center;
     }
 
-    /* Mechanical 2-Layer Neo-Brutalist Buttons */
+    /* Mechanical Neo-Brutalist Buttons */
     .btn-major {
       color: var(--white);
       text-decoration: none;
@@ -158,6 +228,8 @@
       display: flex;
       flex-direction: column;
       gap: 40px;
+      position: relative;
+      z-index: 2;
     }
 
     .card {
@@ -260,7 +332,6 @@
       color: var(--yellow);
     }
 
-    /* Hero CTA Button */
     .btn-cta {
       display: inline-block;
       background: var(--yellow);
@@ -291,26 +362,72 @@
       animation: none;
     }
 
-    /* Mascot Peeker 
-    Raise him up: Make TOP smaller
-    Lower him down: Make TOP bigger */
-    
     .mascot-peeker {
       position: absolute;
-      top: -89px;
+      top: -75px;
       right: 20px;
       width: 140px;
       height: auto;
       z-index: 3;
-      pointer-events: auto;
-      cursor: pointer;
-      user-select: none;
+      pointer-events: none;
       filter: drop-shadow(2px 2px 0px var(--black));
     }
 
-    .mascot-peeker.fallen {
-      opacity: 0;
+    /* Dream Portal Track & Overlay Typography */
+    .dream-portal-track {
+      position: relative;
+      z-index: 2;
+      margin: 60px 0;
+    }
+
+    .dream-scroll-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22vh;
+      padding: 12vh 16px;
       pointer-events: none;
+    }
+
+    .dream-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .dream-text-reg {
+      color: var(--white);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: rgba(0, 0, 0, 0.88);
+      border: 2px solid var(--white);
+      box-shadow: 4px 4px 0px var(--white);
+      padding: 12px 24px;
+      max-width: 600px;
+    }
+
+    .dream-text-reg.dream-win {
+      font-size: 2.2rem;
+      letter-spacing: 4px;
+      border-color: var(--yellow);
+      box-shadow: 5px 5px 0px var(--yellow);
+    }
+
+    .dream-text-vcr {
+      font-family: "VCR OSD Mono", "Courier New", Courier, monospace;
+      color: var(--yellow);
+      font-size: 3.2rem;
+      font-weight: 400;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: rgba(0, 0, 0, 0.92);
+      border: 3px solid var(--yellow);
+      box-shadow: 6px 6px 0px var(--white);
+      padding: 10px 28px;
+      text-shadow: 2px 2px 0px var(--black);
     }
 
     /* Hit counter */
@@ -337,6 +454,8 @@
       align-items: center;
       gap: 20px;
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
     .footer-links {
@@ -388,20 +507,32 @@
         box-shadow: 3px 3px 0px var(--white);
         white-space: nowrap;
       }
-/* mobile mascot options */
       .hero-card { min-height: 320px; }
       .hero-logo { max-width: 280px; }
       .hero-tagline-group p { font-size: 0.95rem; }
       .card { box-shadow: 4px 4px 0px var(--white); padding: 18px; }
       .mascot-peeker {
-        width: 95px;
-        top: -62px;
+        width: 76px;
+        top: -46px;
         right: 12px;
       }
+      .dream-text-reg { font-size: 1.15rem; }
+      .dream-text-reg.dream-win { font-size: 1.7rem; }
+      .dream-text-vcr { font-size: 2.1rem; letter-spacing: 4px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Fullscreen Dream Layer (Fades over the viewport during dream scroll) -->
+  <div class="dream-fullscreen-layer" id="dreamLayer">
+    <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline preload="metadata">
+      <source src="OTS_Reel.webm" type="video/webm">
+      <source src="OTS_Reel.mp4" type="video/mp4">
+    </video>
+    <div class="dream-scanlines"></div>
+    <button type="button" class="dream-audio-toggle" id="dreamAudioToggle">AUDIO: OFF</button>
+  </div>
 
   <!-- Dynamic Infinite Marquee -->
   <div class="ticker-container" aria-label="Announcements">
@@ -435,7 +566,7 @@
   <main class="container">
     <!-- Featured Section -->
     <section id="games" class="card">
-      <img id="mascotGuy" src="mascot-1.png" alt="NEVERUS Mascot" class="mascot-peeker">
+      <img src="OurGuySitting.webp" alt="NEVERUS Mascot" class="mascot-peeker">
       <div class="section-title">FEATURED</div>
 
       <div class="hero-card">
@@ -448,7 +579,7 @@
           </a>
           
           <div class="hero-tagline-group">
-            <p>Experience 1,000 newtons of pure, exhilarating, free-flying, ragdoll chaos</p>
+            <p>Experience 1,000 newtons per frame of pure, exhilarating, free-flying, ragdoll chaos</p>
             <p>Steer 12 quirky characters to the top of the leaderboards as you master the esoteric art of Shelf Surfing</p>
             <p>Round up some pals, because <em>Off the Shelf!</em> is better together</p>
             <p>Did we mention it's $3?</p>
@@ -458,6 +589,32 @@
             Wishlist on Steam
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- The Dream Portal Track (Floating Dialogue Overlay) -->
+    <section class="dream-portal-track" id="dreamTrack">
+      <div class="dream-scroll-content">
+        <div class="dream-line"><div class="dream-text-reg">"Imagine, if you will...."</div></div>
+        <div class="dream-line"><div class="dream-text-reg">"How it would feel..."</div></div>
+        <div class="dream-line"><div class="dream-text-reg">"To let your intrusive thoughts..."</div></div>
+        <div class="dream-line"><div class="dream-text-reg dream-win">"WIN."</div></div>
+
+        <!-- High-Voltage VCR OSD Mono Chants -->
+        <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
+
+        <!-- Outro Sequence -->
+        <div class="dream-line"><div class="dream-text-reg">"...Are you beginning to understand?"</div></div>
+        <div class="dream-line"><div class="dream-text-reg">"...Or should you try it for yourself?"</div></div>
+        <div class="dream-line"><div class="dream-text-reg dream-win">"It's Off the Shelf!"</div></div>
       </div>
     </section>
 
@@ -474,24 +631,24 @@
     <div class="footer-links">
       <a href="mailto:NEVERUSinteractive@gmail.com">Contact</a>
       <a href="OffTheShelf_PressKit.zip" download>Press Kit</a>
+      <a href="https://discord.gg/neverus" target="_blank" rel="noopener noreferrer">Discord</a>
       <a href="https://www.tiktok.com/@neverusinteractive" target="_blank" rel="noopener noreferrer">TikTok</a>
       <a href="https://www.instagram.com/neverus.interactive/" target="_blank" rel="noopener noreferrer">Instagram</a>
       <a href="https://www.youtube.com/@NEVERUS_interactive" target="_blank" rel="noopener noreferrer">YouTube</a>
       <a href="https://www.twitch.tv/neverusinteractive" target="_blank" rel="noopener noreferrer">Twitch</a>
-      <a href="https://discord.gg/T3JWf9FnKt" target="_blank" rel="noopener noreferrer">Discord</a>
       <a href="NEVERUS_Manifesto.txt" download>Manifesto</a>
     </div>
 
     <p class="footer-copy">&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p>
 
-    <!-- Raw Web 1.0 counter script -->
+    <!-- Raw Web 1.0 Visitor Counter -->
     <div class="raw-counter">
       <script type="text/javascript" src="https://counter.websiteout.com/js/7/6/0/0"></script>
     </div>
   </footer>
 
   <script>
-    // --- TICKER ---
+    // --- 1. DYNAMIC SEAMLESS TICKER ---
     const TICKER_MESSAGES = [
       "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
       "WISHLIST NOW!",
@@ -519,7 +676,55 @@
       track.appendChild(segment2);
     })();
 
-    // --- PS1 LOGO VERTEX WOBBLE ---
+    // --- 2. FULLSCREEN DREAM SCRUBBER & AUDIO TOGGLE ---
+    (function initDreamScrubber() {
+      const track = document.getElementById('dreamTrack');
+      const layer = document.getElementById('dreamLayer');
+      const video = document.getElementById('dreamVideo');
+      const audioBtn = document.getElementById('dreamAudioToggle');
+      if (!track || !layer || !video) return;
+
+      function onScroll() {
+        const rect = track.getBoundingClientRect();
+        const windowH = window.innerHeight;
+
+        const startFade = windowH;
+        const endFade = -rect.height;
+        const current = rect.top;
+
+        if (current > startFade || current < endFade) {
+          layer.style.opacity = '0';
+          layer.style.pointerEvents = 'none';
+          return;
+        }
+
+        // Progress across the dream zone (0.0 -> 1.0)
+        const progress = Math.min(Math.max((startFade - current) / (startFade - endFade), 0), 1);
+
+        // Parabolic arc: peaks at 1.0 at 50% scroll
+        const opacity = Math.max(0, 4 * progress * (1 - progress));
+        layer.style.opacity = opacity.toFixed(3);
+        layer.style.pointerEvents = opacity > 0.08 ? 'auto' : 'none';
+      }
+
+      if (audioBtn) {
+        audioBtn.addEventListener('click', () => {
+          video.muted = !video.muted;
+          if (!video.muted) {
+            audioBtn.textContent = 'AUDIO: ON';
+            audioBtn.classList.add('is-active');
+          } else {
+            audioBtn.textContent = 'AUDIO: OFF';
+            audioBtn.classList.remove('is-active');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // --- 3. PS1 LOGO VERTEX WOBBLE ---
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
@@ -636,45 +841,6 @@
         logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
         cancelAnimationFrame(animFrameId);
         restoreOriginalPaths();
-      });
-    })();
-
-    // --- MASCOT CLICK TUMBLE ---
-    (function initMascotTumble() {
-      const mascot = document.getElementById('mascotGuy');
-      if (!mascot) return;
-
-      const frames = [
-        'mascot-1.png',
-        'mascot-2.png',
-        'mascot-3.png',
-        'mascot-4.png'
-      ];
-
-      frames.forEach(src => {
-        const img = new Image();
-        img.src = src;
-      });
-
-      let isTumbling = false;
-
-      mascot.addEventListener('click', () => {
-        if (isTumbling) return;
-        isTumbling = true;
-
-        let frameIdx = 1;
-        const tumbleInterval = setInterval(() => {
-          if (frameIdx < frames.length) {
-            mascot.src = frames[frameIdx];
-            frameIdx++;
-          } else {
-            clearInterval(tumbleInterval);
-            mascot.classList.add('fallen');
-            setTimeout(() => {
-              mascot.style.display = 'none';
-            }, 100);
-          }
-        }, 110);
       });
     })();
   </script>
