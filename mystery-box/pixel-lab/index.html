@@ -122,7 +122,7 @@
       overflow: hidden;
       position: relative;
       user-select: none;
-      touch-action: none;
+      touch-action: pan-y;
     }
 
     .preview-box.is-pannable { cursor: grab; }
@@ -458,8 +458,8 @@
       <div class="preview-box" id="previewBox">
         <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
         <img id="previewImg" alt="Result preview">
-        <button type="button" id="resetCropBtn" class="reset-crop-btn" title="Reset crop to center">Reset</button>
-        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan</div>
+        <button type="button" id="resetCropBtn" class="reset-crop-btn" title="Reset crop and zoom">Reset</button>
+        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan · Pinch / Wheel to Zoom</div>
       </div>
 
       <div id="batchNav" class="batch-nav">
@@ -807,11 +807,17 @@
 
     let loadedFiles = [];
     let currentFileIndex = 0;
+
     let isDraggingCrop = false;
     let dragStartX = 0;
     let dragStartY = 0;
     let initialCropX = 0;
     let initialCropY = 0;
+
+    // Gesture tracking for touch & desktop zoom
+    const activeTouches = new Map();
+    let initialPinchDistance = null;
+    let initialPinchZoom = 1.0;
 
     function updateActionButtons() {
       if (loadedFiles.length > 1) {
@@ -871,17 +877,20 @@
       return chunks;
     }
 
-    function getCropCoordinates(image, offsetX = 0, offsetY = 0) {
+    function getCropCoordinates(image, offsetX = 0, offsetY = 0, zoomLevel = 1.0) {
       const w = image.naturalWidth || image.width;
       const h = image.naturalHeight || image.height;
+      const zoom = clamp(zoomLevel || 1.0, 1.0, 4.0);
 
       if (!cropToggle.checked) {
         return { x: 0, y: 0, width: w, height: h, canPanX: false, canPanY: false, maxSlackX: 0, maxSlackY: 0 };
       }
 
-      const size = Math.min(w, h);
-      const maxSlackX = w - size;
-      const maxSlackY = h - size;
+      const baseSize = Math.min(w, h);
+      const windowSize = Math.max(1, Math.round(baseSize / zoom));
+
+      const maxSlackX = w - windowSize;
+      const maxSlackY = h - windowSize;
       const normX = clamp(offsetX, -1, 1);
       const normY = clamp(offsetY, -1, 1);
       const x = Math.round((maxSlackX / 2) + (normX * (maxSlackX / 2)));
@@ -890,8 +899,8 @@
       return {
         x: clamp(x, 0, maxSlackX),
         y: clamp(y, 0, maxSlackY),
-        width: size,
-        height: size,
+        width: windowSize,
+        height: windowSize,
         canPanX: maxSlackX > 0,
         canPanY: maxSlackY > 0,
         maxSlackX,
@@ -946,7 +955,7 @@
 
     function renderBaseDither(item) {
       const img = item.img;
-      const pixelCrop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0);
+      const pixelCrop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0, item.cropZoom || 1.0);
       const baseDims = getBaseDimensions(img);
 
       cropCanvas.width = pixelCrop.width;
@@ -985,7 +994,7 @@
       const img = item.img;
 
       if (mode === 'passthrough') {
-        const crop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0);
+        const crop = getCropCoordinates(img, item.cropOffsetX || 0, item.cropOffsetY || 0, item.cropZoom || 1.0);
         let targetW = crop.width * scaleMultiplier;
         let targetH = crop.height * scaleMultiplier;
 
@@ -1034,20 +1043,23 @@
         return;
       }
       const activeItem = loadedFiles[currentFileIndex];
-      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       const canPan = cropInfo.canPanX || cropInfo.canPanY;
       previewBox.classList.toggle('is-pannable', canPan);
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
-      resetCropBtn.classList.toggle('visible', canPan && isShifted);
+      const isZoomed = Math.abs((activeItem.cropZoom || 1.0) - 1.0) > 0.01;
+      resetCropBtn.classList.toggle('visible', isShifted || isZoomed);
     }
 
     function resetCurrentCrop() {
       if (loadedFiles.length === 0) return;
       const activeItem = loadedFiles[currentFileIndex];
-      if ((activeItem.cropOffsetX || 0) === 0 && (activeItem.cropOffsetY || 0) === 0) return;
+      const hadChanges = (activeItem.cropOffsetX || 0) !== 0 || (activeItem.cropOffsetY || 0) !== 0 || (activeItem.cropZoom || 1.0) !== 1.0;
+      if (!hadChanges) return;
       activeItem.cropOffsetX = 0;
       activeItem.cropOffsetY = 0;
+      activeItem.cropZoom = 1.0;
       generate();
     }
 
@@ -1071,7 +1083,7 @@
 
       if (mode === 'passthrough') {
         if (cropToggle.checked) {
-          const crop = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+          const crop = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
           cropCanvas.width = crop.width;
           cropCanvas.height = crop.height;
           cropCtx.imageSmoothingEnabled = false;
@@ -1107,27 +1119,69 @@
       }
     }
 
+    // Touch & Pointer Gesture Management
+    function getTouchDistance(touches) {
+      const arr = Array.from(touches.values());
+      const dx = arr[0].clientX - arr[1].clientX;
+      const dy = arr[0].clientY - arr[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
     previewBox.addEventListener('pointerdown', (e) => {
       if (e.target === resetCropBtn) return;
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
+
+      activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
-      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+
+      if (activeTouches.size === 2) {
+        // Pinch gesture active
+        isDraggingCrop = false;
+        previewBox.classList.remove('is-dragging');
+        initialPinchDistance = getTouchDistance(activeTouches);
+        initialPinchZoom = activeItem.cropZoom || 1.0;
+        return;
+      }
+
+      // Single pointer drag (pan)
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       if (!cropInfo.canPanX && !cropInfo.canPanY) return;
+
+      // On mobile touch, only grab pointer capture for mouse/pen or established intentional pans
+      if (e.pointerType !== 'touch') {
+        previewBox.setPointerCapture(e.pointerId);
+      }
 
       isDraggingCrop = true;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
-
       previewBox.classList.add('is-dragging');
-      previewBox.setPointerCapture(e.pointerId);
     });
 
     previewBox.addEventListener('pointermove', (e) => {
-      if (!isDraggingCrop || loadedFiles.length === 0 || !cropToggle.checked) return;
+      if (activeTouches.has(e.pointerId)) {
+        activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+      }
+
+      if (loadedFiles.length === 0 || !cropToggle.checked) return;
       const activeItem = loadedFiles[currentFileIndex];
-      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0);
+
+      // Two-touch pinch zoom
+      if (activeTouches.size === 2) {
+        if (initialPinchDistance) {
+          const currentDist = getTouchDistance(activeTouches);
+          const ratio = currentDist / initialPinchDistance;
+          activeItem.cropZoom = clamp(initialPinchZoom * ratio, 1.0, 4.0);
+          generate();
+        }
+        return;
+      }
+
+      // Single pointer pan
+      if (!isDraggingCrop) return;
+      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
 
       const dx = e.clientX - dragStartX;
       const dy = e.clientY - dragStartY;
@@ -1146,9 +1200,14 @@
     });
 
     function endCropDrag(e) {
-      if (!isDraggingCrop) return;
-      isDraggingCrop = false;
-      previewBox.classList.remove('is-dragging');
+      if (e) activeTouches.delete(e.pointerId);
+      if (activeTouches.size < 2) {
+        initialPinchDistance = null;
+      }
+      if (activeTouches.size === 0) {
+        isDraggingCrop = false;
+        previewBox.classList.remove('is-dragging');
+      }
       try {
         if (e && previewBox.hasPointerCapture(e.pointerId)) {
           previewBox.releasePointerCapture(e.pointerId);
@@ -1158,6 +1217,19 @@
 
     previewBox.addEventListener('pointerup', endCropDrag);
     previewBox.addEventListener('pointercancel', endCropDrag);
+
+    // Desktop Scroll-Wheel to Zoom
+    previewBox.addEventListener('wheel', (e) => {
+      if (loadedFiles.length === 0 || !cropToggle.checked) return;
+      e.preventDefault();
+
+      const activeItem = loadedFiles[currentFileIndex];
+      const currentZoom = activeItem.cropZoom || 1.0;
+      const zoomDelta = e.deltaY < 0 ? 0.15 : -0.15;
+      activeItem.cropZoom = clamp(currentZoom + zoomDelta, 1.0, 4.0);
+      generate();
+    }, { passive: false });
+
     previewBox.addEventListener('dblclick', (e) => {
       if (e.target === resetCropBtn) return;
       resetCurrentCrop();
@@ -1348,7 +1420,8 @@
           url: objectUrl,
           size: file.size,
           cropOffsetX: 0,
-          cropOffsetY: 0
+          cropOffsetY: 0,
+          cropZoom: 1.0
         });
       }
 
