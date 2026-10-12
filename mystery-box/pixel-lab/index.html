@@ -133,8 +133,9 @@
 
     .preview-box {
       width: 512px;
-      height: 512px;
       max-width: 100%;
+      aspect-ratio: 1 / 1;
+      height: auto;
       background: var(--pure-void);
       border: 2px solid var(--blank-white);
       box-shadow: 6px 6px 0px var(--blank-white);
@@ -145,6 +146,7 @@
       position: relative;
       user-select: none;
       touch-action: pan-y;
+      box-sizing: border-box;
     }
 
     /* Scroll rails on the edges pass vertical drag gestures straight to the viewport */
@@ -858,8 +860,16 @@
       if (!img) return { w: TARGET_SIZE, h: TARGET_SIZE };
       const srcW = img.naturalWidth || img.width;
       const srcH = img.naturalHeight || img.height;
+
+      if (modeSelect.value === 'passthrough') {
+        if (cropToggle.checked) {
+          const squareSide = Math.min(srcW, srcH);
+          return { w: squareSide, h: squareSide };
+        }
+        return { w: srcW, h: srcH };
+      }
+
       if (cropToggle.checked) return { w: TARGET_SIZE, h: TARGET_SIZE };
-      if (modeSelect.value === 'passthrough') return { w: srcW, h: srcH };
       if (srcW >= srcH) {
         return { w: TARGET_SIZE, h: Math.max(1, Math.round((srcH / srcW) * TARGET_SIZE)) };
       }
