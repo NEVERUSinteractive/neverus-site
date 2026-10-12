@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-  <!-- Environment-Aware Stylesheet Loader (Root Authority for Web, Local Bundle for Desktop) -->
+  <!-- Environment-Aware Stylesheet Loader -->
   <script>
     (function loadStylesheet() {
       const isDesktop = window.location.protocol === 'file:' || 
@@ -149,7 +149,7 @@
       box-sizing: border-box;
     }
 
-    /* Scroll rails on the edges pass vertical drag gestures straight to the viewport */
+    /* Scroll rails on the outer margins yield straight to page scroll */
     .preview-touch-surface {
       position: absolute;
       top: 28px;
@@ -162,7 +162,7 @@
     }
 
     .preview-box.is-pannable .preview-touch-surface {
-      display: block;
+      display: block !important;
       cursor: grab;
     }
 
@@ -1074,6 +1074,7 @@
     function syncCropInteractivity() {
       if (loadedFiles.length === 0 || !cropToggle.checked) {
         previewBox.classList.remove('is-pannable');
+        previewTouchSurface.style.display = 'none';
         resetCropBtn.classList.remove('visible');
         return;
       }
@@ -1082,6 +1083,7 @@
       const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
       
       previewBox.classList.toggle('is-pannable', canPan);
+      previewTouchSurface.style.display = canPan ? 'block' : 'none';
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
       const isZoomed = Math.abs((activeItem.cropZoom || 1.0) - 1.0) > 0.01;
