@@ -22,30 +22,13 @@
     }
   </style>
 
-  <!-- Synchronous Dual-Environment Stylesheet Loader -->
-  <script>
-    (function() {
-      // If root is needed in subpaths, relative path './style.css' or checking origin works best
-      var cssPath = (window.location.protocol.startsWith('http') && window.location.pathname.length <= 1) 
-        ? '/style.css' 
-        : 'style.css';
-      document.write('<link rel="stylesheet" href="' + cssPath + '">');
-    })();
-  </script>
-
   <!-- Atkinson Hyperlegible -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <!-- Dual-Environment Stylesheet Loader -->
-  <script>
-    (function() {
-      var link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = window.location.protocol.startsWith('http') ? '/style.css' : 'style.css';
-      document.head.appendChild(link);
-    })();
-  </script>
+
+  <!-- Static Relative Stylesheet Loader (Valid for both Web & Desktop EXE) -->
+  <link rel="stylesheet" href="style.css">
 
   <style>
     body {
@@ -976,7 +959,7 @@
       const { colours } = palette;
       for (let i = 0; i < data.length; i += 4) {
         const colourIndex = Math.min(Math.floor(data[i] / 64), 3);
-        const hex = colours[paletteIndex = colourIndex];
+        const hex = colours[colourIndex];
         const [r, g, b] = chunkString(hex.slice(1), 2).map((str) => parseInt(str, 16));
         data[i] = r;
         data[i + 1] = g;
