@@ -66,7 +66,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Soft subpixel rolloff eliminates hard Nyquist aliasing across all DPR levels */
+      
+  /* subpixel roloff to kill moire */
   background: repeating-linear-gradient(
     to bottom,
     transparent 0px,
@@ -76,7 +77,7 @@
     transparent 4px
   );
   box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.75);
-  /* Forces compositing onto its own GPU layer to avoid subpixel jitter during scroll/scaling */
+  /* compositing onto its own GPU layer to avoid subpixel jitter */
   transform: translateZ(0);
   will-change: transform;
 }
@@ -473,6 +474,22 @@
 </head>
 <body>
 
+<!-- CRT Barrel Distortion Filter -->
+<svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Map red/green channels of a spherical gradient to warp coordinates -->
+    <filter id="crt-barrel" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox">
+      <!-- Generate smooth radial field for barrel curvature -->
+      <feRadialGradient id="barrel-lens" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#808080"/>
+        <stop offset="100%" stop-color="#ffffff"/>
+      </feRadialGradient>
+      <!-- Subtle displacement: scale="14" provides tangible curvature without unreadable text -->
+      <feDisplacementMap in="SourceGraphic" in2="SourceGraphic" scale="14" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>
+  
   <!-- fullscreen dream layer -->
   <div class="dream-fullscreen-layer" id="dreamLayer">
     <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata">
@@ -483,7 +500,7 @@
     <button type="button" class="dream-audio-toggle btn-utility" id="dreamAudioToggle">AUDIO: OFF</button>
   </div>
 
-  <!-- infinite marquee ticker: pre-rendered items eliminate blank flash -->
+  <!-- infinite marquee ticker pre-render -->
   <div class="ticker-container" aria-label="Announcements">
     <div class="ticker-track" id="tickerTrack">
       <div class="ticker-segment">
@@ -498,7 +515,7 @@
   </div>
 
   <header>
-    <!-- SVG paths pre-rendered in HTML to eliminate initial render delay -->
+    <!-- SVG pre-render -->
     <svg id="neverusLogo" class="brand-logo" viewBox="0 0 1640 1424" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
       <g>
         <path d="M262.12,986.54L307.55,986.54L316.44,990.31L317.65,1012.68L333.42,1068.74C331.17,1091.47 337.28,1106.47 351.75,1113.75L350.13,1080.06L365.9,1001.49C367.34,995.74 370.66,990.75 375.87,986.53L414.41,987.07L418.18,998.26C409.29,1019.55 401.47,1043.23 394.73,1069.28L395.27,1080.6L389.34,1106.21L375.73,1177.23L326,1181L306.86,1124.94L296.21,1061.33C290.73,1064.83 285.2,1069.82 279.63,1076.29L279.5,1117.39L266.56,1184.77L257.67,1181L215.62,1181L217.37,1173.59L214.14,1173.59L222.9,1151.08L229.1,1124.94L241.5,1109.85L234.76,1102.44L241.23,1087.48C247.16,1082.36 247.52,1078.63 242.31,1076.29L243.39,1065.1L255.65,1027.64L262.12,986.54ZM269.01,1080.06L270.76,1072.51L267.53,1072.51L269.01,1080.06ZM279.38,1050.15C280.1,1054.64 282.79,1057.11 287.47,1057.56L279.38,1050.15ZM283.83,1031.41C282.84,1036.44 284.14,1040.17 287.74,1042.6C288.19,1037.66 286.89,1033.93 283.83,1031.41ZM325.47,952.85C327.9,953.3 329.47,955.81 330.19,960.4L325.47,952.85ZM344.74,1143.67C345.01,1140.35 343.44,1137.83 340.02,1136.12C340.2,1138.64 341.77,1141.15 344.74,1143.67ZM383.56,1091.79C379.16,1079.3 371.3,1070.05 359.98,1064.03L383.56,1091.79Z" style="fill-rule:nonzero;"/>
@@ -617,7 +634,7 @@
   <script src="neverus-logo.js"></script>
 
   <script>
-    // initialize kinetic engine logo with scale and automatic hover growth
+    // logo engine scaling
     NeverusLogo.init('#neverusLogo', {
       scale: 1.5,
       hoverGrowth: 0.10
@@ -650,7 +667,7 @@
 
       function populateTrack() {
         const screenWidth = window.innerWidth;
-        // ensure a single segment covers at least 120% of the viewport width
+        // cover at least 120% of the viewport width
         const targetSegmentWidth = screenWidth * 1.2;
         const repeatsPerSegment = Math.max(2, Math.ceil(targetSegmentWidth / unitWidth));
 
@@ -739,7 +756,7 @@
       onScroll();
     })();
 
-    // mascot click tumble
+    // our guy mascot tumble
     (function initMascotTumble() {
       const mascot = document.getElementById('mascotGuy');
       if (!mascot) return;
