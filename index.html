@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='290 460 630 520'%3E%3Cg fill='%23000000' stroke='%23ffffff' stroke-width='48' stroke-linejoin='round' stroke-linecap='round' paint-order='stroke fill'%3E%3Cpath d='M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z'/%3E%3Cpath d='M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z'/%3E%3C/g%3E%3C/svg%3E">
 
-  <!-- Shared Design System -->
+  <!-- central stylesheet -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -37,7 +37,7 @@
       position: relative;
     }
 
-    /* Fixed Fullscreen Dream Video Layer */
+    /* dream phase */
     .dream-fullscreen-layer {
       position: fixed;
       inset: 0;
@@ -80,7 +80,7 @@
       }
     }
 
-    /* Dream Phase Floating Audio Control */
+    /* dream phase audio control */
     .dream-audio-toggle {
       position: absolute;
       bottom: 24px;
@@ -458,7 +458,7 @@
 </head>
 <body>
 
-  <!-- Fullscreen Dream Layer -->
+  <!-- fullscreen dream layer -->
   <div class="dream-fullscreen-layer" id="dreamLayer">
     <video class="dream-video" id="dreamVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata">
       <source src="OTS_Reel.webm" type="video/webm">
@@ -498,7 +498,7 @@
   </header>
 
   <main class="container">
-    <!-- Featured Section -->
+    <!-- featured section -->
     <section id="games" class="card">
       <img id="mascotGuy" src="mascot-1.png" alt="NEVERUS Mascot" class="mascot-peeker">
       <div class="section-title">FEATURED</div>
@@ -526,7 +526,7 @@
       </div>
     </section>
 
-    <!-- The Dream Portal Track -->
+    <!-- OTS dream text intro -->
     <section class="dream-portal-track" id="dreamTrack">
       <div class="dream-scroll-content">
         <div class="dream-line" id="lineImagine"><div class="dream-text-reg">Imagine, if you will....</div></div>
@@ -534,7 +534,7 @@
         <div class="dream-line"><div class="dream-text-reg">To let your intrusive thoughts...</div></div>
         <div class="dream-line"><div class="dream-text-reg dream-win">"WIN."</div></div>
 
-        <!-- High-Voltage Raw VCR OSD Mono Chants -->
+        <!-- OTS dream text body -->
         <div class="dream-line"><div class="dream-text-vcr">SMASH STUFF</div></div>
         <div class="dream-line"><div class="dream-text-vcr">SCORE POINTS</div></div>
         <div class="dream-line"><div class="dream-text-vcr">REPEAT FOREVER</div></div>
@@ -544,8 +544,11 @@
         <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
         <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
         <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SMASH</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">SCORE</div></div>
+        <div class="dream-line"><div class="dream-text-vcr">REPEAT</div></div>
 
-        <!-- Outro Sequence -->
+        <!-- OTS dream text outro -->
         <div class="dream-line" id="lineUnderstand"><div class="dream-text-reg">...Are you beginning to understand?</div></div>
         <div class="dream-line"><div class="dream-text-reg">Or should you try it for yourself?</div></div>
         <div class="dream-line">
@@ -556,7 +559,7 @@
       </div>
     </section>
 
-    <!-- About Section -->
+    <!-- about section -->
     <section id="about" class="card">
       <div class="section-title">ABOUT NEVERUS</div>
       <p style="color: var(--blank-white); line-height: 1.6; text-align: center; font-size: 1.05rem;">
@@ -579,14 +582,14 @@
 
     <p class="footer-copy">&copy; 2026 NEVERUS Interactive LLC. All rights reserved?</p> 
 
-    <!-- Raw Web 1.0 Visitor Counter --> 
+    <!-- visitor counter --> 
     <div class="raw-counter"> 
       <script type="text/javascript" src="https://counter.websiteout.com/js/7/6/0/0"></script> 
     </div> 
   </footer> 
 
   <script>
-    // --- 1. VIEWPORT-ADAPTIVE SEAMLESS TICKER ---
+    // ticker
     const TICKER_MESSAGES = [
       "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
       "WISHLIST NOW!",
@@ -600,7 +603,7 @@
       const separator = '<span class="sep">&bull;</span>';
       const unitHtml = `<span class="ticker-item">${TICKER_MESSAGES.map(msg => `${msg}${separator}`).join('')}</span>`;
 
-      // Measure single unit width offscreen
+      // measure single unit width offscreen for resolution safety
       const probe = document.createElement('div');
       probe.className = 'ticker-segment';
       probe.style.visibility = 'hidden';
@@ -613,7 +616,7 @@
 
       function populateTrack() {
         const screenWidth = window.innerWidth;
-        // Ensure a single segment covers at least 120% of the viewport width
+        // ensure a single segment covers at least 120% of the viewport width
         const targetSegmentWidth = screenWidth * 1.2;
         const repeatsPerSegment = Math.max(2, Math.ceil(targetSegmentWidth / unitWidth));
 
@@ -634,7 +637,7 @@
       });
     })();
 
-    // --- 2. FULLSCREEN DREAM SCRUBBER ---
+    // dream scrubber
     (function initDreamScrubber() {
       const lineStart = document.getElementById('lineImagine');
       const lineEnd = document.getElementById('lineUnderstand');
@@ -702,7 +705,7 @@
       onScroll();
     })();
 
-    // --- 3. PS1 LOGO VERTEX WOBBLE ---
+    // logo vertex wobble
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
