@@ -259,7 +259,7 @@ body {
   letter-spacing: 1px;
   cursor: pointer;
   user-select: none;
-/* transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease; */
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease; 
 }
 
 .btn-utility:hover {
