@@ -245,9 +245,9 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Tactile UI: utility Standard (.btn-utility)
+   Tactile UI: Unobtrusive Standard (.btn-unobtrusive)
    -------------------------------------------------------------------------- */
-.btn-utility {
+.btn-unobtrusive {
   background: var(--pure-void);
   color: var(--blank-white);
   border: 1px solid var(--blank-white);
@@ -259,15 +259,15 @@ body {
   letter-spacing: 1px;
   cursor: pointer;
   user-select: none;
-  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease; 
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
-.btn-utility:hover {
+.btn-unobtrusive:hover {
   background: var(--blank-white);
   color: var(--pure-void);
 }
 
-.btn-utility.is-active {
+.btn-unobtrusive.is-active {
   background: var(--hazard-accent);
   color: var(--pure-void);
   border-color: var(--hazard-accent);
