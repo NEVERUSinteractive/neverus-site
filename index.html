@@ -41,12 +41,15 @@
     .dream-fullscreen-layer {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       z-index: 20;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.05s linear;
+      will-change: opacity;
+      transform: translateZ(0);
     }
 
     .dream-video {
@@ -82,9 +85,9 @@
 
     /* Dream Phase Floating Audio Control */
     .dream-audio-toggle {
-      position: absolute;
-      bottom: 24px;
-      right: 24px;
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: calc(24px + env(safe-area-inset-right, 0px));
       background: rgba(0, 0, 0, 0.85);
       color: var(--blank-white);
       border: 1px solid var(--blank-white);
@@ -101,6 +104,9 @@
       touch-action: manipulation;
       z-index: 25;
       transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .dream-audio-toggle:hover {
@@ -448,8 +454,8 @@
         gap: 20vh;
       }
       .dream-audio-toggle {
-        bottom: 16px;
-        right: 16px;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        right: calc(16px + env(safe-area-inset-right, 0px));
         font-size: 0.7rem;
         padding: 5px 10px;
       }
@@ -547,7 +553,7 @@
 
         <!-- Outro Sequence -->
         <div class="dream-line" id="lineUnderstand"><div class="dream-text-reg">...Are you beginning to understand?</div></div>
-        <div class="dream-line"><div class="dream-text-reg">...Or should you try it for yourself?</div></div>
+        <div class="dream-line"><div class="dream-text-reg">Or should you try it for yourself?</div></div>
         <div class="dream-line">
           <a href="https://store.steampowered.com/app/3584250/Off_the_Shelf/" target="_blank" rel="noopener noreferrer" class="dream-badge-link">
             PLAY <em>OFF THE SHELF!</em>
@@ -665,7 +671,6 @@
           }
           audioBtn.textContent = 'AUDIO: ON';
           audioBtn.classList.add('is-active');
-          onScroll();
         } else {
           video.muted = true;
           video.volume = 0;
