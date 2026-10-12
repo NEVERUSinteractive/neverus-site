@@ -125,14 +125,25 @@
       touch-action: pan-y;
     }
 
-    .preview-box.is-pannable { 
-      cursor: grab;
+    /* Scroll rails on the edges pass vertical drag gestures straight to the viewport */
+    .preview-touch-surface {
+      position: absolute;
+      top: 28px;
+      bottom: 28px;
+      left: 28px;
+      right: 28px;
+      display: none;
+      z-index: 2;
       touch-action: none;
     }
 
-    .preview-box.is-dragging { 
+    .preview-box.is-pannable .preview-touch-surface {
+      display: block;
+      cursor: grab;
+    }
+
+    .preview-box.is-dragging .preview-touch-surface {
       cursor: grabbing;
-      touch-action: none;
     }
 
     .preview-placeholder {
@@ -168,6 +179,7 @@
       display: none;
       pointer-events: none;
       box-shadow: none;
+      z-index: 3;
     }
 
     .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
@@ -450,6 +462,7 @@
         <img id="previewImg" alt="Result preview">
         <button type="button" id="resetCropBtn" class="btn-utility reset-crop-btn" title="Reset crop and zoom">RESET</button>
         <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan / Pinch or Scroll to Zoom</div>
+        <div id="previewTouchSurface" class="preview-touch-surface" title="Pan and zoom interaction surface"></div>
       </div>
 
       <div id="batchNav" class="batch-nav">
@@ -737,6 +750,7 @@
     const scaleSelect = document.getElementById('scaleSelect');
     const previewBox = document.getElementById('previewBox');
     const previewImg = document.getElementById('previewImg');
+    const previewTouchSurface = document.getElementById('previewTouchSurface');
     const previewPlaceholder = document.getElementById('previewPlaceholder');
     const cropHintBadge = document.getElementById('cropHintBadge');
     const resetCropBtn = document.getElementById('resetCropBtn');
@@ -1109,7 +1123,7 @@
       }
     }
 
-    // --- DIRECT RESPONSIVE GESTURE ENGINE ---
+    // --- INNER GESTURE SURFACE (RAIL MARGIN ARCHITECTURE) ---
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
@@ -1117,8 +1131,7 @@
       return Math.hypot(dx, dy);
     }
 
-    previewBox.addEventListener('pointerdown', (e) => {
-      if (e.target === resetCropBtn) return;
+    previewTouchSurface.addEventListener('pointerdown', (e) => {
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
 
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
@@ -1130,7 +1143,7 @@
         previewBox.classList.remove('is-dragging');
         initialPinchDistance = getTouchDistance(activeTouches);
         initialPinchZoom = activeItem.cropZoom || 1.0;
-        try { previewBox.setPointerCapture(e.pointerId); } catch (err) {}
+        try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (err) {}
         return;
       }
 
@@ -1138,17 +1151,16 @@
       const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
       if (!canPan) return;
 
-      // Lock pointer exclusively to canvas
       isDraggingCrop = true;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
       previewBox.classList.add('is-dragging');
-      try { previewBox.setPointerCapture(e.pointerId); } catch (err) {}
+      try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (err) {}
     });
 
-    previewBox.addEventListener('pointermove', (e) => {
+    previewTouchSurface.addEventListener('pointermove', (e) => {
       if (activeTouches.has(e.pointerId)) {
         activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       }
@@ -1156,7 +1168,7 @@
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Handle pinch-zoom
+      // Two-touch pinch zoom
       if (activeTouches.size === 2) {
         if (initialPinchDistance) {
           const currentDist = getTouchDistance(activeTouches);
@@ -1167,7 +1179,7 @@
         return;
       }
 
-      // Handle pan
+      // Single-pointer dragging
       if (isDraggingCrop) {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragStartX;
@@ -1191,8 +1203,8 @@
       if (e) {
         activeTouches.delete(e.pointerId);
         try {
-          if (previewBox.hasPointerCapture(e.pointerId)) {
-            previewBox.releasePointerCapture(e.pointerId);
+          if (previewTouchSurface.hasPointerCapture(e.pointerId)) {
+            previewTouchSurface.releasePointerCapture(e.pointerId);
           }
         } catch (err) {}
       }
@@ -1206,11 +1218,11 @@
       }
     }
 
-    previewBox.addEventListener('pointerup', endCropDrag);
-    previewBox.addEventListener('pointercancel', endCropDrag);
+    previewTouchSurface.addEventListener('pointerup', endCropDrag);
+    previewTouchSurface.addEventListener('pointercancel', endCropDrag);
 
     // Desktop Scroll-Wheel to Zoom
-    previewBox.addEventListener('wheel', (e) => {
+    previewTouchSurface.addEventListener('wheel', (e) => {
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       e.preventDefault();
 
@@ -1221,8 +1233,7 @@
       generate();
     }, { passive: false });
 
-    previewBox.addEventListener('dblclick', (e) => {
-      if (e.target === resetCropBtn) return;
+    previewTouchSurface.addEventListener('dblclick', () => {
       resetCurrentCrop();
     });
 
