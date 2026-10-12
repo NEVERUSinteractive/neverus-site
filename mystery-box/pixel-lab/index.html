@@ -162,7 +162,6 @@
     }
 
     .preview-box.is-pannable .preview-touch-surface {
-      display: block !important;
       cursor: grab;
     }
 
@@ -924,10 +923,12 @@
       const baseSize = Math.min(w, h);
       const windowSize = Math.max(1, Math.round(baseSize / zoom));
 
-      const maxSlackX = w - windowSize;
-      const maxSlackY = h - windowSize;
+      const maxSlackX = Math.max(0, w - windowSize);
+      const maxSlackY = Math.max(0, h - windowSize);
+
       const normX = clamp(offsetX, -1, 1);
       const normY = clamp(offsetY, -1, 1);
+
       const x = Math.round((maxSlackX / 2) + (normX * (maxSlackX / 2)));
       const y = Math.round((maxSlackY / 2) + (normY * (maxSlackY / 2)));
 
@@ -1082,8 +1083,9 @@
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
       
+      // Surface must stay open to receive desktop wheel and pinch zooms even on square images
+      previewTouchSurface.style.display = 'block';
       previewBox.classList.toggle('is-pannable', canPan);
-      previewTouchSurface.style.display = canPan ? 'block' : 'none';
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
       const isZoomed = Math.abs((activeItem.cropZoom || 1.0) - 1.0) > 0.01;
