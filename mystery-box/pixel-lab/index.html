@@ -158,15 +158,12 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       padding: 4px 10px;
-      opacity: 0;
+      display: none;
       pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      transform: translateY(4px);
     }
 
     .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
-      opacity: 1;
-      transform: translateY(0);
+      display: block;
     }
 
     .preview-box.is-dragging .crop-hint-badge,
@@ -459,7 +456,7 @@
         <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
         <img id="previewImg" alt="Result preview">
         <button type="button" id="resetCropBtn" class="reset-crop-btn" title="Reset crop and zoom">Reset</button>
-        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan · Pinch / Wheel to Zoom</div>
+        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan / Pinch or Scroll to Zoom</div>
       </div>
 
       <div id="batchNav" class="batch-nav">
