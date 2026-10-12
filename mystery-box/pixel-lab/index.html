@@ -126,7 +126,10 @@
     }
 
     .preview-box.is-pannable { cursor: grab; }
-    .preview-box.is-dragging { cursor: grabbing; }
+    .preview-box.is-dragging { 
+      cursor: grabbing;
+      touch-action: none;
+    }
 
     .preview-placeholder {
       color: var(--blank-white);
@@ -811,10 +814,15 @@
     let initialCropX = 0;
     let initialCropY = 0;
 
-    // Gesture tracking for touch & desktop zoom
+    // --- Gesture Tracking & Touch Slop ---
+    const TOUCH_SLOP = 8;
     const activeTouches = new Map();
     let initialPinchDistance = null;
     let initialPinchZoom = 1.0;
+
+    let gestureState = 'IDLE'; // 'IDLE' | 'PENDING' | 'PANNING' | 'SCROLLING'
+    let gestureOriginX = 0;
+    let gestureOriginY = 0;
 
     function updateActionButtons() {
       if (loadedFiles.length > 1) {
@@ -1041,7 +1049,7 @@
       }
       const activeItem = loadedFiles[currentFileIndex];
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
-      const canPan = cropInfo.canPanX || cropInfo.canPanY;
+      const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
       previewBox.classList.toggle('is-pannable', canPan);
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
@@ -1131,30 +1139,46 @@
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
 
+      // Two-touch pinch zoom unconditionally locks gesture
       if (activeTouches.size === 2) {
-        // Pinch gesture active
+        gestureState = 'PANNING';
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
         initialPinchDistance = getTouchDistance(activeTouches);
         initialPinchZoom = activeItem.cropZoom || 1.0;
+        try {
+          previewBox.setPointerCapture(e.pointerId);
+        } catch (err) {}
         return;
       }
 
-      // Single pointer drag (pan)
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
-      if (!cropInfo.canPanX && !cropInfo.canPanY) return;
+      const isZoomed = (activeItem.cropZoom || 1.0) > 1.0;
+      if (!cropInfo.canPanX && !cropInfo.canPanY && !isZoomed) return;
 
-      // On mobile touch, only grab pointer capture for mouse/pen or established intentional pans
-      if (e.pointerType !== 'touch') {
-        previewBox.setPointerCapture(e.pointerId);
+      // Mouse drag engages panning immediately
+      if (e.pointerType === 'mouse') {
+        gestureState = 'PANNING';
+        isDraggingCrop = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        initialCropX = activeItem.cropOffsetX || 0;
+        initialCropY = activeItem.cropOffsetY || 0;
+        previewBox.classList.add('is-dragging');
+        try {
+          previewBox.setPointerCapture(e.pointerId);
+        } catch (err) {}
+        return;
       }
 
-      isDraggingCrop = true;
+      // Touch drag enters PENDING state to evaluate Touch Slop
+      gestureState = 'PENDING';
+      gestureOriginX = e.clientX;
+      gestureOriginY = e.clientY;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
-      previewBox.classList.add('is-dragging');
     });
 
     previewBox.addEventListener('pointermove', (e) => {
@@ -1176,40 +1200,75 @@
         return;
       }
 
-      // Single pointer pan
-      if (!isDraggingCrop) return;
-      const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
+      if (gestureState === 'SCROLLING') return;
 
-      const dx = e.clientX - dragStartX;
-      const dy = e.clientY - dragStartY;
-      const boxRect = previewBox.getBoundingClientRect();
-      const sensitivity = 2.0;
+      // Disambiguate Gesture Intent with Touch Slop
+      if (gestureState === 'PENDING') {
+        const deltaX = Math.abs(e.clientX - gestureOriginX);
+        const deltaY = Math.abs(e.clientY - gestureOriginY);
+        const totalDistance = Math.hypot(deltaX, deltaY);
 
-      if (cropInfo.canPanX) {
-        const deltaNormX = -(dx / boxRect.width) * sensitivity;
-        activeItem.cropOffsetX = clamp(initialCropX + deltaNormX, -1, 1);
+        if (totalDistance >= TOUCH_SLOP) {
+          const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
+
+          // If movement is predominantly vertical and panning Y is constrained, yield to viewport scroll
+          if (deltaY > deltaX && !cropInfo.canPanY) {
+            gestureState = 'SCROLLING';
+            return;
+          }
+
+          // Otherwise lock into panning
+          gestureState = 'PANNING';
+          isDraggingCrop = true;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          previewBox.classList.add('is-dragging');
+          try {
+            previewBox.setPointerCapture(e.pointerId);
+          } catch (err) {}
+        } else {
+          return;
+        }
       }
-      if (cropInfo.canPanY) {
-        const deltaNormY = -(dy / boxRect.height) * sensitivity;
-        activeItem.cropOffsetY = clamp(initialCropY + deltaNormY, -1, 1);
+
+      // Execute locked crop pan
+      if (gestureState === 'PANNING' && isDraggingCrop) {
+        const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        const boxRect = previewBox.getBoundingClientRect();
+        const sensitivity = 2.0;
+
+        if (cropInfo.canPanX) {
+          const deltaNormX = -(dx / boxRect.width) * sensitivity;
+          activeItem.cropOffsetX = clamp(initialCropX + deltaNormX, -1, 1);
+        }
+        if (cropInfo.canPanY) {
+          const deltaNormY = -(dy / boxRect.height) * sensitivity;
+          activeItem.cropOffsetY = clamp(initialCropY + deltaNormY, -1, 1);
+        }
+        generate();
       }
-      generate();
     });
 
     function endCropDrag(e) {
-      if (e) activeTouches.delete(e.pointerId);
+      if (e) {
+        activeTouches.delete(e.pointerId);
+        try {
+          if (previewBox.hasPointerCapture(e.pointerId)) {
+            previewBox.releasePointerCapture(e.pointerId);
+          }
+        } catch (err) {}
+      }
+
       if (activeTouches.size < 2) {
         initialPinchDistance = null;
       }
       if (activeTouches.size === 0) {
+        gestureState = 'IDLE';
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
       }
-      try {
-        if (e && previewBox.hasPointerCapture(e.pointerId)) {
-          previewBox.releasePointerCapture(e.pointerId);
-        }
-      } catch (err) {}
     }
 
     previewBox.addEventListener('pointerup', endCropDrag);
@@ -1596,7 +1655,7 @@
         view.setUint32(20, entry.size, true);
         view.setUint32(24, entry.size, true);
         view.setUint16(28, entry.nameBytes.length, true);
-        view.setUint16(30, 0, true);
+        view.setUint30(30, 0, true);
         view.setUint16(32, 0, true);
         view.setUint16(34, 0, true);
         view.setUint16(36, 0, true);
