@@ -5,17 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEVERUS Pixel Lab</title>
 
+  <!-- Prevent White Flash / FOUC -->
+  <meta name="color-scheme" content="dark">
+  <style>
+    :root {
+      --pure-void: #000000;
+      --blank-white: #ffffff;
+      --hazard-accent: #ffff00;
+      --emergency-accent: #ff0000;
+    }
+    html, body {
+      background-color: #000000 !important;
+      color: #ffffff;
+    }
+  </style>
+
   <!-- Atkinson Hyperlegible -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
   <!-- Dual-Environment Stylesheet Loader -->
-  <link id="mainStyleLink" rel="stylesheet" href="style.css">
   <script>
-    if (window.location.protocol.startsWith('http')) {
-      document.getElementById('mainStyleLink').href = '/style.css';
-    }
+    (function() {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = window.location.protocol.startsWith('http') ? '/style.css' : 'style.css';
+      document.head.appendChild(link);
+    })();
   </script>
 
   <style>
@@ -947,7 +964,7 @@
       const { colours } = palette;
       for (let i = 0; i < data.length; i += 4) {
         const colourIndex = Math.min(Math.floor(data[i] / 64), 3);
-        const hex = colours[colourIndex];
+        const hex = colours[paletteIndex = colourIndex];
         const [r, g, b] = chunkString(hex.slice(1), 2).map((str) => parseInt(str, 16));
         data[i] = r;
         data[i + 1] = g;
