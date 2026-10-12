@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>NEVERUS Pixel Lab</title>
 
-  <!-- Instant Pre-paint Canvas Lock -->
+  <!-- pre-paint canvas lock -->
   <style>
     html, body {
       background-color: #000000 !important;
@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-  <!-- Environment-Aware Stylesheet Loader -->
+  <!-- dual-environment stylesheet loader -->
   <script>
     (function loadStylesheet() {
       const isDesktop = window.location.protocol === 'file:' || 
@@ -608,7 +608,7 @@
       </div>
     </div>
 
-    <!-- Web-only Standalone EXE Section -->
+    <!-- download section -->
     <div class="footer-section" id="exeDownloadSection" style="display: none;">
       <div class="footer-title">DOWNLOAD</div>
       <div>
@@ -618,7 +618,7 @@
   </footer>
 
   <script>
-    // --- 1. ENVIRONMENT DETECTION (LITERAL PRESENCE) ---
+    // environment detection
     (function initDesktopAppDetection() {
       const downloadSec = document.getElementById('exeDownloadSection');
       const cropHintBadge = document.getElementById('cropHintBadge');
@@ -644,7 +644,7 @@
       }
     })();
 
-    // --- 2. PS1 LOGO WOBBLE ---
+    // logo wobble
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
@@ -1196,7 +1196,7 @@
       }
     }
 
-    // --- INNER GESTURE SURFACE (RAIL MARGIN ARCHITECTURE) ---
+    // no-touch margins
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
@@ -1210,7 +1210,7 @@
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Two-touch pinch zoom
+      // pinch zoom
       if (activeTouches.size === 2) {
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
@@ -1241,7 +1241,6 @@
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Two-touch pinch zoom
       if (activeTouches.size === 2) {
         if (initialPinchDistance) {
           const currentDist = getTouchDistance(activeTouches);
@@ -1252,7 +1251,7 @@
         return;
       }
 
-      // Single-pointer dragging
+      // touch dragging
       if (isDraggingCrop) {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragStartX;
@@ -1294,7 +1293,7 @@
     previewTouchSurface.addEventListener('pointerup', endCropDrag);
     previewTouchSurface.addEventListener('pointercancel', endCropDrag);
 
-    // Desktop Scroll-Wheel to Zoom
+    // scroll wheel zoom
     previewTouchSurface.addEventListener('wheel', (e) => {
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       e.preventDefault();
