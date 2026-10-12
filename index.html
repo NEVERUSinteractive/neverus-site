@@ -56,17 +56,41 @@
       filter: brightness(0.92) contrast(1.15);
     }
 
-    .dream-scanlines {
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        rgba(0, 0, 0, 0) 0px,
-        rgba(0, 0, 0, 0) 2px,
-        rgba(0, 0, 0, 0.35) 3px,
-        rgba(0, 0, 0, 0.35) 4px
-      );
-      pointer-events: none;
-    }
+   .dream-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Use fixed size tiling instead of unconstrained subpixel repeating gradients */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.45) 51%
+  );
+  background-size: 100% 6px;
+  /* Softens harsh subpixel moiré artifacts */
+  image-rendering: pixelated;
+  /* CRT edge vignette to ground the illusion */
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.75);
+}
+
+/* Scaling adjustment for 4K / high-resolution desktop screens */
+@media (min-width: 2500px) {
+  .dream-scanlines {
+    background-size: 100% 10px;
+  }
+}
+
+/* Scaling adjustment for mobile viewports */
+@media (max-width: 768px) {
+  .dream-scanlines {
+    background-size: 100% 4px;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.35) 50%
+    );
+  }
+}
 
     /* Dream Phase Floating Audio Control (Rule Break) */
 .dream-audio-toggle {
