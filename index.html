@@ -485,10 +485,47 @@
     <button type="button" class="dream-audio-toggle btn-utility" id="dreamAudioToggle">AUDIO: OFF</button>
   </div>
 
-  <!-- infinite marquee ticker -->
+  <!-- infinite marquee ticker: generated inline synchronously to eliminate initial blank flash -->
   <div class="ticker-container" aria-label="Announcements">
     <div class="ticker-track" id="tickerTrack"></div>
   </div>
+  <script>
+    // ticker input
+    const TICKER_MESSAGES = [
+      "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
+      "WISHLIST NOW!",
+      "SEE YOU IN THE SHELVES!"
+    ];
+
+    (function initSeamlessTicker() {
+      const track = document.getElementById('tickerTrack');
+      if (!track) return;
+
+      const separator = '<span class="sep">&bull;</span>';
+      const unitHtml = `<span class="ticker-item">${TICKER_MESSAGES.map(msg => `${msg}${separator}`).join('')}</span>`;
+
+      function populateTrack() {
+        const screenWidth = window.innerWidth || 1920;
+        const approxUnitWidth = 650;
+        const repeatsPerSegment = Math.max(2, Math.ceil((screenWidth * 1.2) / approxUnitWidth));
+        const segmentHtml = unitHtml.repeat(repeatsPerSegment);
+
+        track.innerHTML = `
+          <div class="ticker-segment">${segmentHtml}</div>
+          <div class="ticker-segment" aria-hidden="true">${segmentHtml}</div>
+        `;
+      }
+
+      // run immediately before browser paint
+      populateTrack();
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(populateTrack, 150);
+      });
+    })();
+  </script>
 
   <header>
     <!-- SVG paths pre-rendered in HTML to eliminate initial render delay -->
@@ -615,54 +652,6 @@
       scale: 1.5,
       hoverGrowth: 0.10
     });
-
-    // ticker input
-    const TICKER_MESSAGES = [
-      "<em>OFF THE SHELF!</em> COMING TO STEAM AND ITCH.IO 10/21!",
-      "WISHLIST NOW!",
-      "SEE YOU IN THE SHELVES!"
-    ];
-
-    (function initSeamlessTicker() {
-      const track = document.getElementById('tickerTrack');
-      if (!track) return;
-
-      const separator = '<span class="sep">&bull;</span>';
-      const unitHtml = `<span class="ticker-item">${TICKER_MESSAGES.map(msg => `${msg}${separator}`).join('')}</span>`;
-
-      // measure single unit width offscreen for resolution safety
-      const probe = document.createElement('div');
-      probe.className = 'ticker-segment';
-      probe.style.visibility = 'hidden';
-      probe.style.position = 'absolute';
-      probe.innerHTML = unitHtml;
-      document.body.appendChild(probe);
-
-      const unitWidth = probe.getBoundingClientRect().width || 600;
-      document.body.removeChild(probe);
-
-      function populateTrack() {
-        const screenWidth = window.innerWidth;
-        // ensure a single segment covers at least 120% of the viewport width
-        const targetSegmentWidth = screenWidth * 1.2;
-        const repeatsPerSegment = Math.max(2, Math.ceil(targetSegmentWidth / unitWidth));
-
-        const segmentHtml = unitHtml.repeat(repeatsPerSegment);
-
-        track.innerHTML = `
-          <div class="ticker-segment">${segmentHtml}</div>
-          <div class="ticker-segment" aria-hidden="true">${segmentHtml}</div>
-        `;
-      }
-
-      populateTrack();
-
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(populateTrack, 150);
-      });
-    })();
 
     // dream scrubber
     (function initDreamScrubber() {
