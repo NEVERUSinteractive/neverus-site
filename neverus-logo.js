@@ -1,4 +1,4 @@
-// NEVERUS LOGO & KINTETIC ENGINE
+// NEVERUS LOGO & KINETIC ENGINE
 
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -80,14 +80,18 @@
       pathElements = Array.from(el.querySelectorAll('path'));
     }
 
+    const scale = options.scale !== undefined ? options.scale : (options.baseScale !== undefined ? options.baseScale : 1.0);
+    const hoverGrowth = options.hoverGrowth !== undefined ? options.hoverGrowth : 0.10;
+    const computedHoverScale = options.hoverScale !== undefined ? options.hoverScale : (scale * (1 + hoverGrowth));
+
     const CONFIG = {
       fps: 24,
       phaseSpeed: 0.022,
       snapGrid: 11.0,
       driftAmp: 10,
       localWobbleAmp: 5,
-      baseScale: 1.0,
-      hoverScale: 1.10,
+      baseScale: scale,
+      hoverScale: computedHoverScale,
       scaleTransition: 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)',
       theme: 'dark',
       colors: { dark: '#ffffff', light: '#181818' },
