@@ -61,17 +61,40 @@
       pointer-events: none;
     }
 
-    /* Rule-Break: Dream Phase Floating Audio Control */
-    .dream-audio-toggle {
-      position: absolute;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(0, 0, 0, 0.85);
-      pointer-events: auto;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      z-index: 25;
-    }
+    /* Dream Phase Floating Audio Control (Rule Break) */
+.dream-audio-toggle {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--blank-white);
+  border: 1px solid var(--blank-white);
+  box-shadow: none;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 25;
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+
+.dream-audio-toggle:hover {
+  background: var(--blank-white);
+  color: var(--pure-void);
+}
+
+.dream-audio-toggle.is-active {
+  background: var(--hazard-accent);
+  color: var(--pure-void);
+  border-color: var(--hazard-accent);
+  box-shadow: none;
+}
 
     header {
       max-width: 960px;
