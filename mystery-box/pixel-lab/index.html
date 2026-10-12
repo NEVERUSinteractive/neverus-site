@@ -194,6 +194,7 @@
       pointer-events: none;
     }
 
+    /* Unobtrusive Utility Standard Badge */
     .crop-hint-badge {
       position: absolute;
       bottom: 12px;
@@ -211,22 +212,18 @@
       z-index: 3;
     }
 
+    /* Desktop: strictly reveals on cursor hover over pannable frame */
     @media (hover: hover) {
       .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
         display: block;
       }
     }
 
+    /* Mobile: literal presence when pannable, snapping to display: none while actively dragged */
     @media (hover: none) {
-      .preview-box.is-pannable .crop-hint-badge {
+      .preview-box.is-pannable:not(.is-dragging) .crop-hint-badge {
         display: block;
-        animation: fadeBadge 3.5s forwards;
       }
-    }
-
-    @keyframes fadeBadge {
-      0%, 70% { opacity: 1; }
-      100% { opacity: 0; pointer-events: none; }
     }
 
     .preview-box.is-dragging .crop-hint-badge,
