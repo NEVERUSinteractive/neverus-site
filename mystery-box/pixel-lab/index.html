@@ -125,7 +125,11 @@
       touch-action: pan-y;
     }
 
-    .preview-box.is-pannable { cursor: grab; }
+    .preview-box.is-pannable { 
+      cursor: grab;
+      touch-action: none;
+    }
+
     .preview-box.is-dragging { 
       cursor: grabbing;
       touch-action: none;
@@ -154,7 +158,7 @@
       position: absolute;
       bottom: 12px;
       background: var(--pure-void);
-      border: 2px solid var(--blank-white);
+      border: 1px solid var(--blank-white);
       color: var(--blank-white);
       font-size: 0.75rem;
       font-weight: 700;
@@ -163,6 +167,7 @@
       padding: 4px 10px;
       display: none;
       pointer-events: none;
+      box-shadow: none;
     }
 
     .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
@@ -179,28 +184,13 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      background: var(--pure-void);
-      border: 2px solid var(--blank-white);
-      color: var(--blank-white);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      cursor: pointer;
       display: none;
       z-index: 5;
     }
 
     .reset-crop-btn.visible {
-      display: block;
+      display: inline-block;
       pointer-events: auto;
-    }
-
-    .reset-crop-btn:hover {
-      background: var(--hazard-accent);
-      color: var(--pure-void);
-      border-color: var(--hazard-accent);
     }
 
     .batch-nav {
@@ -458,7 +448,7 @@
       <div class="preview-box" id="previewBox">
         <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
         <img id="previewImg" alt="Result preview">
-        <button type="button" id="resetCropBtn" class="reset-crop-btn" title="Reset crop and zoom">Reset</button>
+        <button type="button" id="resetCropBtn" class="btn-utility reset-crop-btn" title="Reset crop and zoom">RESET</button>
         <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan / Pinch or Scroll to Zoom</div>
       </div>
 
@@ -814,15 +804,9 @@
     let initialCropX = 0;
     let initialCropY = 0;
 
-    // --- Gesture Tracking & Touch Slop ---
-    const TOUCH_SLOP = 8;
     const activeTouches = new Map();
     let initialPinchDistance = null;
     let initialPinchZoom = 1.0;
-
-    let gestureState = 'IDLE'; // 'IDLE' | 'PENDING' | 'PANNING' | 'SCROLLING'
-    let gestureOriginX = 0;
-    let gestureOriginY = 0;
 
     function updateActionButtons() {
       if (loadedFiles.length > 1) {
@@ -1050,6 +1034,7 @@
       const activeItem = loadedFiles[currentFileIndex];
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
+      
       previewBox.classList.toggle('is-pannable', canPan);
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
@@ -1124,12 +1109,12 @@
       }
     }
 
-    // Touch & Pointer Gesture Management
+    // --- DIRECT RESPONSIVE GESTURE ENGINE ---
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
       const dy = arr[0].clientY - arr[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
+      return Math.hypot(dx, dy);
     }
 
     previewBox.addEventListener('pointerdown', (e) => {
@@ -1139,46 +1124,28 @@
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Two-touch pinch zoom unconditionally locks gesture
+      // Two-touch pinch zoom
       if (activeTouches.size === 2) {
-        gestureState = 'PANNING';
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
         initialPinchDistance = getTouchDistance(activeTouches);
         initialPinchZoom = activeItem.cropZoom || 1.0;
-        try {
-          previewBox.setPointerCapture(e.pointerId);
-        } catch (err) {}
+        try { previewBox.setPointerCapture(e.pointerId); } catch (err) {}
         return;
       }
 
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
-      const isZoomed = (activeItem.cropZoom || 1.0) > 1.0;
-      if (!cropInfo.canPanX && !cropInfo.canPanY && !isZoomed) return;
+      const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
+      if (!canPan) return;
 
-      // Mouse drag engages panning immediately
-      if (e.pointerType === 'mouse') {
-        gestureState = 'PANNING';
-        isDraggingCrop = true;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        initialCropX = activeItem.cropOffsetX || 0;
-        initialCropY = activeItem.cropOffsetY || 0;
-        previewBox.classList.add('is-dragging');
-        try {
-          previewBox.setPointerCapture(e.pointerId);
-        } catch (err) {}
-        return;
-      }
-
-      // Touch drag enters PENDING state to evaluate Touch Slop
-      gestureState = 'PENDING';
-      gestureOriginX = e.clientX;
-      gestureOriginY = e.clientY;
+      // Lock pointer exclusively to canvas
+      isDraggingCrop = true;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
+      previewBox.classList.add('is-dragging');
+      try { previewBox.setPointerCapture(e.pointerId); } catch (err) {}
     });
 
     previewBox.addEventListener('pointermove', (e) => {
@@ -1189,7 +1156,7 @@
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Two-touch pinch zoom
+      // Handle pinch-zoom
       if (activeTouches.size === 2) {
         if (initialPinchDistance) {
           const currentDist = getTouchDistance(activeTouches);
@@ -1200,39 +1167,8 @@
         return;
       }
 
-      if (gestureState === 'SCROLLING') return;
-
-      // Disambiguate Gesture Intent with Touch Slop
-      if (gestureState === 'PENDING') {
-        const deltaX = Math.abs(e.clientX - gestureOriginX);
-        const deltaY = Math.abs(e.clientY - gestureOriginY);
-        const totalDistance = Math.hypot(deltaX, deltaY);
-
-        if (totalDistance >= TOUCH_SLOP) {
-          const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
-
-          // If movement is predominantly vertical and panning Y is constrained, yield to viewport scroll
-          if (deltaY > deltaX && !cropInfo.canPanY) {
-            gestureState = 'SCROLLING';
-            return;
-          }
-
-          // Otherwise lock into panning
-          gestureState = 'PANNING';
-          isDraggingCrop = true;
-          dragStartX = e.clientX;
-          dragStartY = e.clientY;
-          previewBox.classList.add('is-dragging');
-          try {
-            previewBox.setPointerCapture(e.pointerId);
-          } catch (err) {}
-        } else {
-          return;
-        }
-      }
-
-      // Execute locked crop pan
-      if (gestureState === 'PANNING' && isDraggingCrop) {
+      // Handle pan
+      if (isDraggingCrop) {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragStartX;
         const dy = e.clientY - dragStartY;
@@ -1265,7 +1201,6 @@
         initialPinchDistance = null;
       }
       if (activeTouches.size === 0) {
-        gestureState = 'IDLE';
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
       }
@@ -1655,7 +1590,7 @@
         view.setUint32(20, entry.size, true);
         view.setUint32(24, entry.size, true);
         view.setUint16(28, entry.nameBytes.length, true);
-        view.setUint30(30, 0, true);
+        view.setUint16(30, 0, true);
         view.setUint16(32, 0, true);
         view.setUint16(34, 0, true);
         view.setUint16(36, 0, true);
