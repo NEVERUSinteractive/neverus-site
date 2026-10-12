@@ -49,6 +49,10 @@
       min-height: 100vh;
     }
 
+    button, select, input {
+      touch-action: manipulation;
+    }
+
     /* Centered Unified Lockup Header */
     header {
       max-width: 960px;
@@ -146,6 +150,7 @@
       position: relative;
       user-select: none;
       touch-action: pan-y;
+      overscroll-behavior: contain;
       box-sizing: border-box;
     }
 
@@ -162,6 +167,7 @@
     }
 
     .preview-box.is-pannable .preview-touch-surface {
+      display: block !important;
       cursor: grab;
     }
 
@@ -205,8 +211,22 @@
       z-index: 3;
     }
 
-    .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
-      display: block;
+    @media (hover: hover) {
+      .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
+        display: block;
+      }
+    }
+
+    @media (hover: none) {
+      .preview-box.is-pannable .crop-hint-badge {
+        display: block;
+        animation: fadeBadge 3.5s forwards;
+      }
+    }
+
+    @keyframes fadeBadge {
+      0%, 70% { opacity: 1; }
+      100% { opacity: 0; pointer-events: none; }
     }
 
     .preview-box.is-dragging .crop-hint-badge,
@@ -226,6 +246,13 @@
     .reset-crop-btn.visible {
       display: inline-block;
       pointer-events: auto;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .reset-crop-btn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+      }
     }
 
     .batch-nav {
@@ -405,6 +432,12 @@
       margin-bottom: 4px;
     }
 
+    @media (max-width: 768px) {
+      select, input[type="text"] {
+        font-size: 16px !important;
+      }
+    }
+
     @media (max-width: 600px) {
       header {
         margin: 10px auto 14px;
@@ -484,7 +517,7 @@
         <span id="previewPlaceholder" class="preview-placeholder">No Image Loaded</span>
         <img id="previewImg" alt="Result preview">
         <button type="button" id="resetCropBtn" class="btn-utility reset-crop-btn" title="Reset crop and zoom">RESET</button>
-        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan / Pinch or Scroll to Zoom</div>
+        <div id="cropHintBadge" class="crop-hint-badge">Drag to Pan / Scroll to Zoom</div>
         <div id="previewTouchSurface" class="preview-touch-surface" title="Pan and zoom interaction surface"></div>
       </div>
 
@@ -591,16 +624,26 @@
     // --- 1. ENVIRONMENT DETECTION (LITERAL PRESENCE) ---
     (function initDesktopAppDetection() {
       const downloadSec = document.getElementById('exeDownloadSection');
-      if (!downloadSec) return;
+      const cropHintBadge = document.getElementById('cropHintBadge');
       
       const isDesktop = window.location.protocol === 'file:' || 
                         Boolean(window.pywebview) || 
                         document.documentElement.classList.contains('is-desktop-app');
 
-      if (!isDesktop) {
-        downloadSec.style.display = 'block';
-      } else {
-        downloadSec.style.display = 'none';
+      if (downloadSec) {
+        downloadSec.style.display = !isDesktop ? 'block' : 'none';
+      }
+
+      if (cropHintBadge) {
+        const isTouchDevice = !isDesktop && (
+          window.matchMedia('(pointer: coarse)').matches || 
+          'ontouchstart' in window || 
+          navigator.maxTouchPoints > 0
+        );
+
+        cropHintBadge.textContent = isTouchDevice 
+          ? 'Drag to Pan / Pinch to Zoom' 
+          : 'Drag to Pan / Scroll to Zoom';
       }
     })();
 
@@ -923,12 +966,10 @@
       const baseSize = Math.min(w, h);
       const windowSize = Math.max(1, Math.round(baseSize / zoom));
 
-      const maxSlackX = Math.max(0, w - windowSize);
-      const maxSlackY = Math.max(0, h - windowSize);
-
+      const maxSlackX = w - windowSize;
+      const maxSlackY = h - windowSize;
       const normX = clamp(offsetX, -1, 1);
       const normY = clamp(offsetY, -1, 1);
-
       const x = Math.round((maxSlackX / 2) + (normX * (maxSlackX / 2)));
       const y = Math.round((maxSlackY / 2) + (normY * (maxSlackY / 2)));
 
@@ -1083,9 +1124,8 @@
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       const canPan = cropInfo.canPanX || cropInfo.canPanY || (activeItem.cropZoom || 1.0) > 1.0;
       
-      // Surface must stay open to receive desktop wheel and pinch zooms even on square images
-      previewTouchSurface.style.display = 'block';
       previewBox.classList.toggle('is-pannable', canPan);
+      previewTouchSurface.style.display = canPan ? 'block' : 'none';
 
       const isShifted = Math.abs(activeItem.cropOffsetX || 0) > 0.001 || Math.abs(activeItem.cropOffsetY || 0) > 0.001;
       const isZoomed = Math.abs((activeItem.cropZoom || 1.0) - 1.0) > 0.01;
