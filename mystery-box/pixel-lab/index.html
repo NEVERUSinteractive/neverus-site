@@ -151,27 +151,22 @@
       overflow: hidden;
       position: relative;
       user-select: none;
-      touch-action: pan-y;
-      overscroll-behavior: contain;
       box-sizing: border-box;
     }
 
-    /* Scroll rails on the outer margins yield straight to page scroll */
+    /* Thicker 44px outer scroll rails yield straight to native page scroll; 
+       inner surface locks touch-action: none for immediate pan & pinch */
     .preview-touch-surface {
-  position: absolute;
-  top: 28px;
-  bottom: 28px;
-  left: 28px;
-  right: 28px;
-  display: none;
-  z-index: 2;
-  touch-action: pan-y; /* Permits native browser momentum flings */
-  cursor: default;
-}
-
-.preview-box.is-dragging .preview-touch-surface {
-  touch-action: none; /* Locks axis only once horizontal pan is actively confirmed */
-}
+      position: absolute;
+      top: 44px;
+      bottom: 44px;
+      left: 44px;
+      right: 44px;
+      display: none;
+      z-index: 2;
+      touch-action: none;
+      cursor: default;
+    }
 
     .preview-box.has-image .preview-touch-surface {
       display: block !important;
@@ -373,6 +368,7 @@
     .palette-actions {
       display: flex;
       gap: 6px;
+      margin-left: auto;
     }
 
     .palette-strip {
@@ -433,6 +429,14 @@
       gap: 16px;
     }
 
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--blank-white);
+      padding-bottom: 10px;
+    }
+
     .modal-title {
       font-size: 1rem;
       font-weight: 700;
@@ -441,6 +445,41 @@
       margin: 0;
       border-bottom: 2px solid var(--blank-white);
       padding-bottom: 8px;
+    }
+
+    .modal-header .modal-title {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .modal-close-square {
+      width: 32px;
+      height: 32px;
+      background: var(--pure-void);
+      color: var(--blank-white);
+      border: 2px solid var(--blank-white);
+      box-shadow: 2px 2px 0px var(--blank-white);
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .modal-close-square:hover {
+      background: var(--emergency-accent);
+      color: var(--blank-white);
+    }
+
+    .modal-close-square:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
     }
 
     /* Custom Color Picker UI */
@@ -741,8 +780,8 @@
       </div>
 
       <div class="control-group dither-control">
-        <label for="paletteSelect">Palette</label>
         <div class="palette-header-row">
+          <label for="paletteSelect">Palette</label>
           <div class="palette-actions">
             <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">+</button>
             <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette" style="display: none;">✎</button>
@@ -758,7 +797,10 @@
   <!-- Custom Universal Color Picker Modal -->
   <div id="colorPickerModal" class="modal-backdrop">
     <div class="modal-dialog">
-      <div class="modal-title">Edit Shade</div>
+      <div class="modal-header">
+        <div class="modal-title">Edit Shade</div>
+        <button type="button" id="colorModalCloseX" class="modal-close-square" title="Close Color Picker" aria-label="Close Color Picker">&times;</button>
+      </div>
       <div id="colorSvBox" class="color-sv-box">
         <div id="colorSvCursor" class="color-sv-cursor"></div>
       </div>
@@ -1024,6 +1066,7 @@
 
     // Modal elements
     const colorPickerModal = document.getElementById('colorPickerModal');
+    const colorModalCloseX = document.getElementById('colorModalCloseX');
     const colorSvBox = document.getElementById('colorSvBox');
     const colorSvCursor = document.getElementById('colorSvCursor');
     const colorHueBar = document.getElementById('colorHueBar');
@@ -1081,14 +1124,13 @@
     const TOUCH_SLOP = 8;           // Native Chromium/Android deadband in CSS pixels
     const PINCH_THRESHOLD = 12;      // Multi-touch span intent gate in CSS pixels
 
-    let gestureMode = 'idle';        // 'idle' | 'pending' | 'pan' | 'scroll' | 'pinch'
+    let gestureMode = 'idle';        // 'idle' | 'pending' | 'pan' | 'pinch'
     let gestureStartX = 0;
     let gestureStartY = 0;
     let dragOriginX = 0;
     let dragOriginY = 0;
     let initialCropX = 0;
     let initialCropY = 0;
-    let lastScrollY = 0;
 
     const activeTouches = new Map();
     let initialPinchDistance = null;
@@ -1262,6 +1304,7 @@
     });
 
     colorModalCancel.addEventListener('click', closeColorPicker);
+    colorModalCloseX.addEventListener('click', closeColorPicker);
 
     colorModalApply.addEventListener('click', () => {
       if (activeEditingSwatchIndex === null) {
@@ -1631,7 +1674,7 @@
       }
     }
 
-    // --- TOUCH GESTURE ENGINE (SLOP, DIRECTION LOCKING & PINCH GATES) ---
+    // --- TOUCH GESTURE ENGINE (INNER SURFACE LOCKED TO PAN & PINCH; RAILS SCROLL PAGE) ---
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
@@ -1651,17 +1694,16 @@
         previewBox.classList.remove('is-dragging');
         initialPinchDistance = getTouchDistance(activeTouches);
         initialPinchZoom = activeItem.cropZoom || 1.0;
-        pinchIntentUnlocked = false; // Gate until threshold crossed
+        pinchIntentUnlocked = false;
         try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (_) {}
         return;
       }
 
       if (activeTouches.size > 2) return;
 
-      // Single pointer touch-slop setup
+      // Single pointer setup inside inner touch surface
       gestureStartX = e.clientX;
       gestureStartY = e.clientY;
-      lastScrollY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
 
@@ -1677,7 +1719,7 @@
           gestureMode = 'idle';
         }
       } else {
-        // Touch/pen digitizers enter pending deadband check
+        // Touch/pen digitizers enter pending deadband check (locks screen via touch-action: none)
         gestureMode = 'pending';
         try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (_) {}
       }
@@ -1717,24 +1759,15 @@
       const totalDx = e.clientX - gestureStartX;
       const totalDy = e.clientY - gestureStartY;
 
-      // 2. Slop Region Evaluation & Directional Intent Lock
+      // 2. Slop Region Evaluation -> Lock directly into 2D Pan
       if (gestureMode === 'pending') {
         const traveled = Math.hypot(totalDx, totalDy);
         if (traveled < TOUCH_SLOP) {
           return; // Suppress sub-pixel micro-jitter
         }
 
-        const absX = Math.abs(totalDx);
-        const absY = Math.abs(totalDy);
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const canPan = cropInfo.canPanX || cropInfo.canPanY;
-
-        // Explicit Axis Direction Locking: yield predominantly vertical gesture to viewport scroll
-        if (absY > 2 * absX) {
-          gestureMode = 'scroll';
-          lastScrollY = e.clientY;
-          return;
-        }
 
         if (canPan) {
           gestureMode = 'pan';
@@ -1747,17 +1780,7 @@
         return;
       }
 
-      // 3. Viewport Scroll Flow Passthrough
-      if (gestureMode === 'scroll') {
-        const scrollDelta = lastScrollY - e.clientY;
-        lastScrollY = e.clientY;
-        if (Math.abs(scrollDelta) > 0) {
-          window.scrollBy({ top: scrollDelta, left: 0, behavior: 'auto' });
-        }
-        return;
-      }
-
-      // 4. Confirmed Pan Execution
+      // 3. Confirmed Pan Execution (Full X & Y freedom while screen stays locked)
       if (gestureMode === 'pan') {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragOriginX;
