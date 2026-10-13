@@ -19,6 +19,7 @@
       --blank-white: #ffffff;
       --hazard-accent: #ffff00;
       --emergency-accent: #ff0000;
+      --border-gray: #444444;
     }
   </style>
 
@@ -47,10 +48,12 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
     button, select, input {
       touch-action: manipulation;
+      font-family: inherit;
     }
 
     /* Centered Unified Lockup Header */
@@ -64,6 +67,7 @@
       align-items: center;
       gap: 16px;
       border-bottom: 2px solid var(--blank-white);
+      box-sizing: border-box;
     }
 
     .brand-logo-link {
@@ -124,6 +128,7 @@
       max-width: 960px;
       width: 100%;
       padding: 0 16px;
+      box-sizing: border-box;
     }
 
     .preview-pane {
@@ -154,7 +159,6 @@
       box-sizing: border-box;
     }
 
-    /* Scroll rails on the outer margins yield straight to page scroll */
     .preview-touch-surface {
       position: absolute;
       top: 28px;
@@ -194,7 +198,6 @@
       pointer-events: none;
     }
 
-    /* Unobtrusive Utility Standard Badge */
     .crop-hint-badge {
       position: absolute;
       bottom: 12px;
@@ -212,14 +215,12 @@
       z-index: 3;
     }
 
-    /* Desktop: strictly reveals on cursor hover over pannable frame */
     @media (hover: hover) {
       .preview-box.is-pannable:not(.is-dragging):hover .crop-hint-badge {
         display: block;
       }
     }
 
-    /* Mobile: literal presence when pannable, snapping to display: none while actively dragged */
     @media (hover: none) {
       .preview-box.is-pannable:not(.is-dragging) .crop-hint-badge {
         display: block;
@@ -368,10 +369,11 @@
     .palette-strip {
       display: flex;
       width: 100%;
-      height: 32px;
+      height: 36px;
       border: 2px solid var(--blank-white);
       box-shadow: 3px 3px 0px var(--blank-white);
       margin-top: 6px;
+      box-sizing: border-box;
     }
 
     .palette-swatch {
@@ -389,6 +391,174 @@
       border-right: 2px solid var(--blank-white);
     }
 
+    .btn-brutal, .btn-brutal-cta, .btn-danger, .btn-utility, .icon-btn {
+      background: var(--pure-void);
+      color: var(--blank-white);
+      border: 2px solid var(--blank-white);
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 3px 3px 0px var(--blank-white);
+      padding: 10px 14px;
+      font-size: 0.85rem;
+    }
+
+    .btn-brutal:active, .btn-brutal-cta:active, .btn-danger:active, .btn-utility:active, .icon-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px var(--blank-white);
+    }
+
+    .btn-brutal-cta {
+      background: var(--blank-white);
+      color: var(--pure-void);
+    }
+
+    .btn-danger {
+      border-color: var(--emergency-accent);
+      color: var(--emergency-accent);
+      box-shadow: 3px 3px 0px var(--emergency-accent);
+    }
+
+    .icon-btn {
+      padding: 2px 8px;
+      font-size: 0.95rem;
+    }
+
+    .icon-btn-danger {
+      border-color: var(--emergency-accent);
+      color: var(--emergency-accent);
+      box-shadow: 2px 2px 0px var(--emergency-accent);
+    }
+
+    select, input[type="range"] {
+      background: var(--pure-void);
+      color: var(--blank-white);
+      border: 2px solid var(--blank-white);
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+
+    /* Modal Architecture */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      box-shadow: 8px 8px 0px var(--blank-white);
+      max-width: 420px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+      border-bottom: 2px solid var(--blank-white);
+      padding-bottom: 8px;
+    }
+
+    /* Custom Color Picker UI */
+    .color-sv-box {
+      width: 100%;
+      height: 180px;
+      position: relative;
+      cursor: crosshair;
+      border: 2px solid var(--blank-white);
+      user-select: none;
+      touch-action: none;
+      box-sizing: border-box;
+    }
+
+    .color-sv-cursor {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px #000000;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .color-hue-bar {
+      width: 100%;
+      height: 24px;
+      position: relative;
+      cursor: pointer;
+      border: 2px solid var(--blank-white);
+      background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+      user-select: none;
+      touch-action: none;
+      box-sizing: border-box;
+    }
+
+    .color-hue-cursor {
+      position: absolute;
+      top: -2px;
+      width: 8px;
+      height: calc(100% + 4px);
+      background: #ffffff;
+      border: 1px solid #000000;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .color-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-preview-swatch {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--blank-white);
+      flex-shrink: 0;
+    }
+
+    .color-hex-input {
+      flex: 1;
+      background: var(--pure-void);
+      color: var(--blank-white);
+      border: 2px solid var(--blank-white);
+      padding: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: monospace;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     /* Standard Structured Footer */
     footer {
       max-width: 960px;
@@ -403,6 +573,7 @@
       align-items: center;
       gap: 16px;
       text-align: center;
+      box-sizing: border-box;
     }
 
     .footer-section {
@@ -587,7 +758,44 @@
         </div>
         <select id="paletteSelect"></select>
         <div id="palettePreview" class="palette-strip" title="Click any shade to edit color"></div>
-        <input type="color" id="nativeColorPicker" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Universal Color Picker Modal -->
+  <div id="colorPickerModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-title">Edit Shade Color</div>
+      <div id="colorSvBox" class="color-sv-box">
+        <div id="colorSvCursor" class="color-sv-cursor"></div>
+      </div>
+      <div id="colorHueBar" class="color-hue-bar">
+        <div id="colorHueCursor" class="color-hue-cursor"></div>
+      </div>
+      <div class="color-preview-row">
+        <div id="colorModalPreview" class="color-preview-swatch"></div>
+        <input type="text" id="colorModalHex" class="color-hex-input" maxlength="7" spellcheck="false">
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="colorModalCancel" class="btn-brutal">Cancel</button>
+        <button type="button" id="colorModalApply" class="btn-brutal-cta">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS Save / Tap & Hold Modal -->
+  <div id="iosSaveModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-title">Save Image</div>
+      <div style="font-size: 0.85rem; line-height: 1.4;">
+        Tap and hold the image below, then choose <strong>"Save to Photos"</strong> or <strong>"Share"</strong>.
+      </div>
+      <div style="width: 100%; max-height: 260px; display: flex; justify-content: center; overflow: hidden; border: 2px solid var(--blank-white); background: var(--pure-void);">
+        <img id="iosSaveImg" style="max-width: 100%; max-height: 260px; object-fit: contain; image-rendering: pixelated; pointer-events: auto;" alt="Export output">
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="iosSaveOpenTab" class="btn-brutal">Open in Tab</button>
+        <button type="button" id="iosSaveClose" class="btn-brutal-cta">Done</button>
       </div>
     </div>
   </div>
@@ -831,10 +1039,25 @@
     const contrastVal = document.getElementById('contrastVal');
     const paletteSelect = document.getElementById('paletteSelect');
     const palettePreview = document.getElementById('palettePreview');
-    const nativeColorPicker = document.getElementById('nativeColorPicker');
     const clonePaletteBtn = document.getElementById('clonePaletteBtn');
     const renamePaletteBtn = document.getElementById('renamePaletteBtn');
     const deletePaletteBtn = document.getElementById('deletePaletteBtn');
+
+    // Modal elements
+    const colorPickerModal = document.getElementById('colorPickerModal');
+    const colorSvBox = document.getElementById('colorSvBox');
+    const colorSvCursor = document.getElementById('colorSvCursor');
+    const colorHueBar = document.getElementById('colorHueBar');
+    const colorHueCursor = document.getElementById('colorHueCursor');
+    const colorModalPreview = document.getElementById('colorModalPreview');
+    const colorModalHex = document.getElementById('colorModalHex');
+    const colorModalCancel = document.getElementById('colorModalCancel');
+    const colorModalApply = document.getElementById('colorModalApply');
+
+    const iosSaveModal = document.getElementById('iosSaveModal');
+    const iosSaveImg = document.getElementById('iosSaveImg');
+    const iosSaveOpenTab = document.getElementById('iosSaveOpenTab');
+    const iosSaveClose = document.getElementById('iosSaveClose');
 
     const CUSTOM_STORAGE_KEY = 'neverus_custom_palettes_v1';
     let customPalettes = [];
@@ -884,6 +1107,209 @@
     const activeTouches = new Map();
     let initialPinchDistance = null;
     let initialPinchZoom = 1.0;
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(n, max)); }
+
+    function chunkString(str, chunkSize) {
+      const numChunks = Math.ceil(str.length / chunkSize);
+      const chunks = new Array(numChunks);
+      for (let i = 0; i < numChunks; i++) {
+        chunks[i] = str.substring(i * chunkSize, i * chunkSize + chunkSize);
+      }
+      return chunks;
+    }
+
+    /* Color Math Helpers */
+    function hexToRgb(hex) {
+      let c = hex.replace('#', '').trim();
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(x => {
+        const h = clamp(Math.round(x), 0, 255).toString(16);
+        return h.length === 1 ? '0' + h : h;
+      }).join('');
+    }
+
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0;
+      const s = max === 0 ? 0 : d / max;
+      const v = max;
+
+      if (max !== min) {
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return { h: h * 360, s, v };
+    }
+
+    function hsvToRgb(h, s, v) {
+      h = (h % 360) / 60;
+      const i = Math.floor(h);
+      const f = h - i;
+      const p = v * (1 - s);
+      const q = v * (1 - s * f);
+      const t = v * (1 - s * (1 - f));
+      let r = 0, g = 0, b = 0;
+      switch (i % 6) {
+        case 0: r = v; g = t; b = p; break;
+        case 1: r = q; g = v; b = p; break;
+        case 2: r = p; g = v; b = t; break;
+        case 3: r = p; g = q; b = v; break;
+        case 4: r = t; g = p; b = v; break;
+        case 5: r = v; g = p; b = q; break;
+      }
+      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+    }
+
+    /* Universal In-App Color Picker State & Engine */
+    let pickerH = 0;
+    let pickerS = 1;
+    let pickerV = 1;
+
+    function renderColorPickerState() {
+      const pureHueRgb = hsvToRgb(pickerH, 1, 1);
+      const pureHueHex = rgbToHex(pureHueRgb.r, pureHueRgb.g, pureHueRgb.b);
+      colorSvBox.style.background = `linear-gradient(to top, #000000, transparent), linear-gradient(to right, #ffffff, ${pureHueHex})`;
+
+      const currRgb = hsvToRgb(pickerH, pickerS, pickerV);
+      const currHex = rgbToHex(currRgb.r, currRgb.g, currRgb.b);
+
+      colorModalPreview.style.backgroundColor = currHex;
+      if (document.activeElement !== colorModalHex) {
+        colorModalHex.value = currHex.toUpperCase();
+      }
+
+      colorSvCursor.style.left = `${pickerS * 100}%`;
+      colorSvCursor.style.top = `${(1 - pickerV) * 100}%`;
+      colorHueCursor.style.left = `${(pickerH / 360) * 100}%`;
+    }
+
+    function openColorPicker(initialHex) {
+      try {
+        const rgb = hexToRgb(initialHex);
+        const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+        pickerH = hsv.h;
+        pickerS = hsv.s;
+        pickerV = hsv.v;
+      } catch (err) {
+        pickerH = 0; pickerS = 1; pickerV = 1;
+      }
+      renderColorPickerState();
+      colorPickerModal.classList.add('active');
+    }
+
+    function closeColorPicker() {
+      colorPickerModal.classList.remove('active');
+      activeEditingSwatchIndex = null;
+    }
+
+    function updateSvFromPointer(e) {
+      const rect = colorSvBox.getBoundingClientRect();
+      const x = clamp(e.clientX - rect.left, 0, rect.width);
+      const y = clamp(e.clientY - rect.top, 0, rect.height);
+      pickerS = x / rect.width;
+      pickerV = 1 - (y / rect.height);
+      renderColorPickerState();
+    }
+
+    function updateHueFromPointer(e) {
+      const rect = colorHueBar.getBoundingClientRect();
+      const x = clamp(e.clientX - rect.left, 0, rect.width);
+      pickerH = (x / rect.width) * 360;
+      renderColorPickerState();
+    }
+
+    colorSvBox.addEventListener('pointerdown', (e) => {
+      colorSvBox.setPointerCapture(e.pointerId);
+      updateSvFromPointer(e);
+      const onMove = (ev) => updateSvFromPointer(ev);
+      const onUp = (ev) => {
+        try { colorSvBox.releasePointerCapture(ev.pointerId); } catch (_) {}
+        colorSvBox.removeEventListener('pointermove', onMove);
+        colorSvBox.removeEventListener('pointerup', onUp);
+        colorSvBox.removeEventListener('pointercancel', onUp);
+      };
+      colorSvBox.addEventListener('pointermove', onMove);
+      colorSvBox.addEventListener('pointerup', onUp);
+      colorSvBox.addEventListener('pointercancel', onUp);
+    });
+
+    colorHueBar.addEventListener('pointerdown', (e) => {
+      colorHueBar.setPointerCapture(e.pointerId);
+      updateHueFromPointer(e);
+      const onMove = (ev) => updateHueFromPointer(ev);
+      const onUp = (ev) => {
+        try { colorHueBar.releasePointerCapture(ev.pointerId); } catch (_) {}
+        colorHueBar.removeEventListener('pointermove', onMove);
+        colorHueBar.removeEventListener('pointerup', onUp);
+        colorHueBar.removeEventListener('pointercancel', onUp);
+      };
+      colorHueBar.addEventListener('pointermove', onMove);
+      colorHueBar.addEventListener('pointerup', onUp);
+      colorHueBar.addEventListener('pointercancel', onUp);
+    });
+
+    colorModalHex.addEventListener('input', (e) => {
+      let val = e.target.value.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        const rgb = hexToRgb(val);
+        const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+        pickerH = hsv.h;
+        pickerS = hsv.s;
+        pickerV = hsv.v;
+        renderColorPickerState();
+      }
+    });
+
+    colorModalCancel.addEventListener('click', closeColorPicker);
+
+    colorModalApply.addEventListener('click', () => {
+      if (activeEditingSwatchIndex === null) {
+        closeColorPicker();
+        return;
+      }
+      const rgb = hsvToRgb(pickerH, pickerS, pickerV);
+      const newHex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+      let currentIndex = parseInt(paletteSelect.value, 10);
+      const all = getAllPalettes();
+      let activePal = all[currentIndex];
+
+      if (!activePal.isCustom) {
+        const forkedColors = [...activePal.colours];
+        forkedColors[activeEditingSwatchIndex] = newHex;
+
+        const newCustom = {
+          name: `${activePal.name} (Copy)`,
+          colours: forkedColors
+        };
+        customPalettes.push(newCustom);
+        saveCustomPalettes();
+
+        const newIndex = BUILTIN_PALETTES.length + customPalettes.length - 1;
+        populatePaletteSelect(newIndex);
+      } else {
+        const customIdx = currentIndex - BUILTIN_PALETTES.length;
+        customPalettes[customIdx].colours[activeEditingSwatchIndex] = newHex;
+        saveCustomPalettes();
+        syncPaletteState();
+      }
+      generate();
+      closeColorPicker();
+    });
 
     function updateActionButtons() {
       if (loadedFiles.length > 1) {
@@ -938,17 +1364,6 @@
         if (String(factor) === String(currentVal)) opt.selected = true;
         scaleSelect.appendChild(opt);
       });
-    }
-
-    function clamp(n, min, max) { return Math.max(min, Math.min(n, max)); }
-
-    function chunkString(str, chunkSize) {
-      const numChunks = Math.ceil(str.length / chunkSize);
-      const chunks = new Array(numChunks);
-      for (let i = 0; i < numChunks; i++) {
-        chunks[i] = str.substring(i * chunkSize, i * chunkSize + chunkSize);
-      }
-      return chunks;
     }
 
     function getCropCoordinates(image, offsetX = 0, offsetY = 0, zoomLevel = 1.0) {
@@ -1196,7 +1611,6 @@
       }
     }
 
-    // no-touch margins
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
@@ -1210,7 +1624,6 @@
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
 
-      // pinch zoom
       if (activeTouches.size === 2) {
         isDraggingCrop = false;
         previewBox.classList.remove('is-dragging');
@@ -1251,7 +1664,6 @@
         return;
       }
 
-      // touch dragging
       if (isDraggingCrop) {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragStartX;
@@ -1293,7 +1705,6 @@
     previewTouchSurface.addEventListener('pointerup', endCropDrag);
     previewTouchSurface.addEventListener('pointercancel', endCropDrag);
 
-    // scroll wheel zoom
     previewTouchSurface.addEventListener('wheel', (e) => {
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       e.preventDefault();
@@ -1324,8 +1735,7 @@
 
         swatch.addEventListener('click', () => {
           activeEditingSwatchIndex = idx;
-          nativeColorPicker.value = color;
-          nativeColorPicker.click();
+          openColorPicker(color);
         });
 
         palettePreview.appendChild(swatch);
@@ -1387,35 +1797,6 @@
       populatePaletteSelect(0);
       updateModeControls();
     }
-
-    nativeColorPicker.addEventListener('input', (e) => {
-      if (activeEditingSwatchIndex === null) return;
-      const newHex = e.target.value;
-      let currentIndex = parseInt(paletteSelect.value, 10);
-      const all = getAllPalettes();
-      let activePal = all[currentIndex];
-
-      if (!activePal.isCustom) {
-        const forkedColors = [...activePal.colours];
-        forkedColors[activeEditingSwatchIndex] = newHex;
-
-        const newCustom = {
-          name: `${activePal.name} (Copy)`,
-          colours: forkedColors
-        };
-        customPalettes.push(newCustom);
-        saveCustomPalettes();
-
-        const newIndex = BUILTIN_PALETTES.length + customPalettes.length - 1;
-        populatePaletteSelect(newIndex);
-      } else {
-        const customIdx = currentIndex - BUILTIN_PALETTES.length;
-        customPalettes[customIdx].colours[activeEditingSwatchIndex] = newHex;
-        saveCustomPalettes();
-        syncPaletteState();
-      }
-      generate();
-    });
 
     clonePaletteBtn.addEventListener('click', () => {
       const current = getCurrentPalette();
@@ -1579,6 +1960,24 @@
       }, 'image/png');
     });
 
+    /* Resilient Cross-Device Download Strategy */
+    const isIOSDevice = (function detectIOS() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    })();
+
+    let currentIosDataUrl = null;
+
+    iosSaveClose.addEventListener('click', () => {
+      iosSaveModal.classList.remove('active');
+    });
+
+    iosSaveOpenTab.addEventListener('click', () => {
+      if (currentIosDataUrl) {
+        window.open(currentIosDataUrl, '_blank');
+      }
+    });
+
     downloadBtn.addEventListener('click', async () => {
       if (loadedFiles.length === 0) return;
       const activeItem = loadedFiles[currentFileIndex];
@@ -1588,10 +1987,9 @@
 
       const exportCanvas = processImage(activeItem, parseInt(scaleMultiplier, 10));
 
-      exportCanvas.toBlob(async (blob) => {
-        if (!blob) return;
-
-        if ('showSaveFilePicker' in window) {
+      if ('showSaveFilePicker' in window) {
+        exportCanvas.toBlob(async (blob) => {
+          if (!blob) return;
           try {
             const handle = await window.showSaveFilePicker({
               suggestedName: defaultFilename,
@@ -1603,17 +2001,36 @@
             return;
           } catch (err) {
             if (err.name === 'AbortError') return;
+            triggerFallbackDownload(exportCanvas, defaultFilename);
           }
-        }
+        }, 'image/png');
+      } else {
+        triggerFallbackDownload(exportCanvas, defaultFilename);
+      }
+    });
 
+    function triggerFallbackDownload(canvas, defaultFilename) {
+      if (isIOSDevice) {
+        currentIosDataUrl = canvas.toDataURL('image/png');
+        iosSaveImg.src = currentIosDataUrl;
+        iosSaveModal.classList.add('active');
+        return;
+      }
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = defaultFilename;
         link.href = url;
+        document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(url);
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 2000);
       }, 'image/png');
-    });
+    }
 
     function makeZip(fileArray) {
       const crcTable = new Uint32Array(256);
@@ -1737,8 +2154,12 @@
       const link = document.createElement('a');
       link.download = zipName;
       link.href = url;
+      document.body.appendChild(link);
       link.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 2000);
       downloadAllBtn.textContent = originalText;
     });
   </script>
