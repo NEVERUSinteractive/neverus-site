@@ -158,16 +158,20 @@
 
     /* Scroll rails on the outer margins yield straight to page scroll */
     .preview-touch-surface {
-      position: absolute;
-      top: 28px;
-      bottom: 28px;
-      left: 28px;
-      right: 28px;
-      display: none;
-      z-index: 2;
-      touch-action: pan-y; /* Static: allows natural browser momentum scrolling */
-      cursor: default;
-    }
+  position: absolute;
+  top: 28px;
+  bottom: 28px;
+  left: 28px;
+  right: 28px;
+  display: none;
+  z-index: 2;
+  touch-action: pan-y; /* Permits native browser momentum flings */
+  cursor: default;
+}
+
+.preview-box.is-dragging .preview-touch-surface {
+  touch-action: none; /* Locks axis only once horizontal pan is actively confirmed */
+}
 
     .preview-box.has-image .preview-touch-surface {
       display: block !important;
@@ -737,8 +741,8 @@
       </div>
 
       <div class="control-group dither-control">
+        <label for="paletteSelect">Palette</label>
         <div class="palette-header-row">
-          <label for="paletteSelect">Palette</label>
           <div class="palette-actions">
             <button type="button" id="clonePaletteBtn" class="icon-btn" title="Clone Current Palette">+</button>
             <button type="button" id="renamePaletteBtn" class="icon-btn" title="Rename Palette" style="display: none;">✎</button>
@@ -754,7 +758,7 @@
   <!-- Custom Universal Color Picker Modal -->
   <div id="colorPickerModal" class="modal-backdrop">
     <div class="modal-dialog">
-      <div class="modal-title">Edit Shade Color</div>
+      <div class="modal-title">Edit Shade</div>
       <div id="colorSvBox" class="color-sv-box">
         <div id="colorSvCursor" class="color-sv-cursor"></div>
       </div>
@@ -1084,6 +1088,7 @@
     let dragOriginY = 0;
     let initialCropX = 0;
     let initialCropY = 0;
+    let lastScrollY = 0;
 
     const activeTouches = new Map();
     let initialPinchDistance = null;
@@ -1656,6 +1661,7 @@
       // Single pointer touch-slop setup
       gestureStartX = e.clientX;
       gestureStartY = e.clientY;
+      lastScrollY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
       initialCropY = activeItem.cropOffsetY || 0;
 
@@ -1671,10 +1677,9 @@
           gestureMode = 'idle';
         }
       } else {
-        // Touch/pen digitizers enter pending deadband check.
-        // DO NOT setPointerCapture here; leaving it uncaptured allows the browser
-        // compositor to engage native vertical kinetic scroll if the stroke moves vertically.
+        // Touch/pen digitizers enter pending deadband check
         gestureMode = 'pending';
+        try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (_) {}
       }
     });
 
@@ -1724,19 +1729,18 @@
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const canPan = cropInfo.canPanX || cropInfo.canPanY;
 
-        // Predominantly vertical: lock out pan and let native touch-action: pan-y run freely
+        // Explicit Axis Direction Locking: yield predominantly vertical gesture to viewport scroll
         if (absY > 2 * absX) {
           gestureMode = 'scroll';
+          lastScrollY = e.clientY;
           return;
         }
 
-        // Horizontal pan verified: lock into pan mode and acquire pointer capture now
         if (canPan) {
           gestureMode = 'pan';
           dragOriginX = e.clientX;
           dragOriginY = e.clientY;
           previewBox.classList.add('is-dragging');
-          try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (_) {}
         } else {
           gestureMode = 'idle';
         }
@@ -1745,7 +1749,12 @@
 
       // 3. Viewport Scroll Flow Passthrough
       if (gestureMode === 'scroll') {
-        return; // Handled natively by browser kinetic engine
+        const scrollDelta = lastScrollY - e.clientY;
+        lastScrollY = e.clientY;
+        if (Math.abs(scrollDelta) > 0) {
+          window.scrollBy({ top: scrollDelta, left: 0, behavior: 'auto' });
+        }
+        return;
       }
 
       // 4. Confirmed Pan Execution
