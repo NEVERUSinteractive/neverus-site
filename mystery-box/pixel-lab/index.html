@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark">
   <title>NEVERUS Pixel Lab</title>
 
-  <!-- Instant Pre-paint Canvas Lock -->
+  <!-- lock canvas to black before paint -->
   <style>
     html, body {
       background-color: #000000 !important;
@@ -22,12 +22,12 @@
     }
   </style>
 
-  <!-- Atkinson Hyperlegible -->
+  <!-- atkinson hyperlegible font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-  <!-- Environment-Aware Stylesheet Loader -->
+  <!-- load local or root stylesheet -->
   <script>
     (function loadStylesheet() {
       const isDesktop = window.location.protocol === 'file:' || 
@@ -53,7 +53,7 @@
       touch-action: manipulation;
     }
 
-    /* Centered Unified Lockup Header */
+    /* header layout */
     header {
       max-width: 960px;
       width: 100%;
@@ -154,8 +154,7 @@
       box-sizing: border-box;
     }
 
-    /* Thicker 44px outer scroll rails yield straight to native page scroll; 
-       inner surface locks touch-action: none for immediate pan & pinch */
+    /* outer rails scroll the page, inner area locks touch for pan and zoom */
     .preview-touch-surface {
       position: absolute;
       top: 44px;
@@ -199,7 +198,7 @@
       pointer-events: none;
     }
 
-    /* Unobtrusive Utility Standard Badge */
+    /* crop hint badge */
     .crop-hint-badge {
       position: absolute;
       bottom: 12px;
@@ -217,14 +216,14 @@
       z-index: 3;
     }
 
-    /* Desktop: reveals on cursor hover over frame whenever image is loaded */
+    /* show hint on desktop hover */
     @media (hover: hover) {
       .preview-box.has-image:not(.is-dragging):hover .crop-hint-badge {
         display: block;
       }
     }
 
-    /* Mobile: visible presence when image is loaded, snaps to display: none while dragging */
+    /* show hint on mobile when not dragging */
     @media (hover: none) {
       .preview-box.has-image:not(.is-dragging) .crop-hint-badge {
         display: block;
@@ -396,7 +395,7 @@
       border-right: 2px solid var(--blank-white);
     }
 
-    /* Modal Architecture */
+    /* modals */
     .modal-backdrop {
       position: fixed;
       top: 0;
@@ -482,7 +481,7 @@
       box-shadow: none;
     }
 
-    /* Custom Color Picker UI */
+    /* color picker */
     .color-sv-box {
       width: 100%;
       height: 180px;
@@ -568,11 +567,14 @@
     .ios-modal-instruction {
       font-size: 0.85rem;
       line-height: 1.4;
+      text-align: center;
     }
 
     .ios-modal-preview-frame {
       width: 100%;
-      max-height: 260px;
+      max-width: 260px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -583,15 +585,15 @@
     }
 
     .ios-modal-img {
-      max-width: 100%;
-      max-height: 260px;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       pointer-events: auto;
     }
 
-    /* Standard Structured Footer */
+    /* footer */
     footer {
       max-width: 960px;
       width: 100%;
@@ -794,7 +796,7 @@
     </div>
   </div>
 
-  <!-- Custom Universal Color Picker Modal -->
+  <!-- color picker modal -->
   <div id="colorPickerModal" class="modal-backdrop">
     <div class="modal-dialog">
       <div class="modal-header">
@@ -818,18 +820,20 @@
     </div>
   </div>
 
-  <!-- iOS Save / Tap & Hold Modal -->
+  <!-- ios save modal -->
   <div id="iosSaveModal" class="modal-backdrop">
     <div class="modal-dialog">
-      <div class="modal-title">Save Image</div>
+      <div class="modal-header">
+        <div class="modal-title">Save Image</div>
+        <button type="button" id="iosSaveCloseX" class="modal-close-square" title="Close" aria-label="Close">&times;</button>
+      </div>
       <div class="ios-modal-instruction">
-        Tap and hold the image below, then choose <strong>"Save to Photos"</strong> or <strong>"Share"</strong>.
+        Hold image to save or share.
       </div>
       <div class="ios-modal-preview-frame">
         <img id="iosSaveImg" class="ios-modal-img" alt="Export output">
       </div>
       <div class="modal-actions">
-        <button type="button" id="iosSaveOpenTab" class="btn-brutal">Open in Tab</button>
         <button type="button" id="iosSaveClose" class="btn-brutal-cta">Done</button>
       </div>
     </div>
@@ -851,7 +855,7 @@
       </div>
     </div>
 
-    <!-- Web-only Standalone EXE Section -->
+    <!-- web-only exe download -->
     <div class="footer-section" id="exeDownloadSection" style="display: none;">
       <div class="footer-title">DOWNLOAD</div>
       <div>
@@ -861,7 +865,7 @@
   </footer>
 
   <script>
-    // --- 1. ENVIRONMENT DETECTION (LITERAL PRESENCE) ---
+    // hide exe download link in desktop app
     (function initDesktopAppDetection() {
       const downloadSec = document.getElementById('exeDownloadSection');
       const isDesktop = window.location.protocol === 'file:' || 
@@ -873,7 +877,7 @@
       }
     })();
 
-    // --- 2. PS1 LOGO WOBBLE ---
+    // ps1 logo wobble animation
     (function initPS1LogoWobble() {
       const logoSvg = document.getElementById('neverusLogo');
       if (!logoSvg) return;
@@ -1064,7 +1068,7 @@
     const renamePaletteBtn = document.getElementById('renamePaletteBtn');
     const deletePaletteBtn = document.getElementById('deletePaletteBtn');
 
-    // Modal elements
+    // modal elements
     const colorPickerModal = document.getElementById('colorPickerModal');
     const colorModalCloseX = document.getElementById('colorModalCloseX');
     const colorSvBox = document.getElementById('colorSvBox');
@@ -1078,8 +1082,8 @@
 
     const iosSaveModal = document.getElementById('iosSaveModal');
     const iosSaveImg = document.getElementById('iosSaveImg');
-    const iosSaveOpenTab = document.getElementById('iosSaveOpenTab');
     const iosSaveClose = document.getElementById('iosSaveClose');
+    const iosSaveCloseX = document.getElementById('iosSaveCloseX');
 
     const CUSTOM_STORAGE_KEY = 'neverus_custom_palettes_v1';
     let customPalettes = [];
@@ -1120,11 +1124,11 @@
     let loadedFiles = [];
     let currentFileIndex = 0;
 
-    // --- ACCIDENTAL INPUT PREVENTION & GESTURE SYSTEM ---
-    const TOUCH_SLOP = 8;           // Native Chromium/Android deadband in CSS pixels
-    const PINCH_THRESHOLD = 12;      // Multi-touch span intent gate in CSS pixels
+    // touch gesture state
+    const TOUCH_SLOP = 8;
+    const PINCH_THRESHOLD = 12;
 
-    let gestureMode = 'idle';        // 'idle' | 'pending' | 'pan' | 'pinch'
+    let gestureMode = 'idle'; // 'idle' | 'pending' | 'pan' | 'pinch'
     let gestureStartX = 0;
     let gestureStartY = 0;
     let dragOriginX = 0;
@@ -1148,7 +1152,7 @@
       return chunks;
     }
 
-    /* Color Math Helpers */
+    // color math helpers
     function hexToRgb(hex) {
       let c = hex.replace('#', '').trim();
       if (c.length === 3) c = c.split('').map(x => x + x).join('');
@@ -1202,7 +1206,7 @@
       return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
     }
 
-    /* Universal In-App Color Picker State & Engine */
+    // color picker state and controls
     let pickerH = 0;
     let pickerS = 1;
     let pickerV = 1;
@@ -1396,7 +1400,7 @@
       });
     }
 
-    // Decoupled Crop & Coordinate Calculation
+    // calculate crop box and pan limits
     function getCropCoordinates(image, offsetX = 0, offsetY = 0, zoomLevel = 1.0) {
       const w = image.naturalWidth || image.width;
       const h = image.naturalHeight || image.height;
@@ -1583,7 +1587,7 @@
       }
     }
 
-    // Decoupled Interactivity Sync: Zoom is available even on 1:1 square pictures
+    // update crop surface and reset button state
     function syncCropInteractivity() {
       if (loadedFiles.length === 0 || !cropToggle.checked) {
         previewBox.classList.remove('has-image', 'is-pannable', 'is-dragging');
@@ -1596,7 +1600,7 @@
       const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
       const canPan = cropInfo.canPanX || cropInfo.canPanY;
       
-      // Surface is present and interactable whenever an image is loaded and crop is checked
+      // enable touch surface whenever an image is loaded and crop is on
       previewBox.classList.add('has-image');
       previewBox.classList.toggle('is-pannable', canPan);
       previewTouchSurface.style.display = 'block';
@@ -1674,7 +1678,7 @@
       }
     }
 
-    // --- TOUCH GESTURE ENGINE (INNER SURFACE LOCKED TO PAN & PINCH; RAILS SCROLL PAGE) ---
+    // touch gestures: inner surface pans and zooms, outer rails scroll the page
     function getTouchDistance(touches) {
       const arr = Array.from(touches.values());
       const dx = arr[0].clientX - arr[1].clientX;
@@ -1688,7 +1692,7 @@
       activeTouches.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
       const activeItem = loadedFiles[currentFileIndex];
 
-      // Two-touch pinch zoom initiation
+      // start two-finger pinch zoom
       if (activeTouches.size === 2) {
         gestureMode = 'pinch';
         previewBox.classList.remove('is-dragging');
@@ -1701,7 +1705,7 @@
 
       if (activeTouches.size > 2) return;
 
-      // Single pointer setup inside inner touch surface
+      // single pointer start
       gestureStartX = e.clientX;
       gestureStartY = e.clientY;
       initialCropX = activeItem.cropOffsetX || 0;
@@ -1719,7 +1723,7 @@
           gestureMode = 'idle';
         }
       } else {
-        // Touch/pen digitizers enter pending deadband check (locks screen via touch-action: none)
+        // wait for touch movement past slop threshold
         gestureMode = 'pending';
         try { previewTouchSurface.setPointerCapture(e.pointerId); } catch (_) {}
       }
@@ -1733,7 +1737,7 @@
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       const activeItem = loadedFiles[currentFileIndex];
 
-      // 1. Pinch-to-zoom intent gate
+      // handle pinch zoom
       if (activeTouches.size === 2) {
         if (initialPinchDistance) {
           const currentDist = getTouchDistance(activeTouches);
@@ -1759,11 +1763,11 @@
       const totalDx = e.clientX - gestureStartX;
       const totalDy = e.clientY - gestureStartY;
 
-      // 2. Slop Region Evaluation -> Lock directly into 2D Pan
+      // check touch slop before locking into pan
       if (gestureMode === 'pending') {
         const traveled = Math.hypot(totalDx, totalDy);
         if (traveled < TOUCH_SLOP) {
-          return; // Suppress sub-pixel micro-jitter
+          return; // ignore tiny finger jitter
         }
 
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
@@ -1780,7 +1784,7 @@
         return;
       }
 
-      // 3. Confirmed Pan Execution (Full X & Y freedom while screen stays locked)
+      // pan image across x and y
       if (gestureMode === 'pan') {
         const cropInfo = getCropCoordinates(activeItem.img, activeItem.cropOffsetX || 0, activeItem.cropOffsetY || 0, activeItem.cropZoom || 1.0);
         const dx = e.clientX - dragOriginX;
@@ -1812,7 +1816,7 @@
       }
     });
 
-    // Pointer Cancel & Release Handling
+    // clean up pointer state on release
     function endCropDrag(e) {
       if (e) {
         activeTouches.delete(e.pointerId);
@@ -1836,7 +1840,7 @@
     previewTouchSurface.addEventListener('pointerup', endCropDrag);
     previewTouchSurface.addEventListener('pointercancel', endCropDrag);
 
-    // Desktop Scroll-Wheel to Zoom (Decoupled: functions freely on square images)
+    // mouse wheel zoom on desktop
     previewTouchSurface.addEventListener('wheel', (e) => {
       if (loadedFiles.length === 0 || !cropToggle.checked) return;
       e.preventDefault();
@@ -2092,23 +2096,18 @@
       }, 'image/png');
     });
 
-    /* Resilient Cross-Device Download Strategy */
+    // file download and ios save modal
     const isIOSDevice = (function detectIOS() {
       return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     })();
 
-    let currentIosDataUrl = null;
-
-    iosSaveClose.addEventListener('click', () => {
+    function closeIosSaveModal() {
       iosSaveModal.classList.remove('active');
-    });
+    }
 
-    iosSaveOpenTab.addEventListener('click', () => {
-      if (currentIosDataUrl) {
-        window.open(currentIosDataUrl, '_blank');
-      }
-    });
+    iosSaveClose.addEventListener('click', closeIosSaveModal);
+    iosSaveCloseX.addEventListener('click', closeIosSaveModal);
 
     downloadBtn.addEventListener('click', async () => {
       if (loadedFiles.length === 0) return;
@@ -2143,8 +2142,7 @@
 
     function triggerFallbackDownload(canvas, defaultFilename) {
       if (isIOSDevice) {
-        currentIosDataUrl = canvas.toDataURL('image/png');
-        iosSaveImg.src = currentIosDataUrl;
+        iosSaveImg.src = canvas.toDataURL('image/png');
         iosSaveModal.classList.add('active');
         return;
       }
