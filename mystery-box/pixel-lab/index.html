@@ -558,11 +558,27 @@
       border-color: var(--hazard-accent);
     }
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-header-centered {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--blank-white);
+  padding-bottom: 10px;
+}
+
+.modal-header-centered .modal-title {
+  border-bottom: none;
+  padding-bottom: 0;
+  flex: 1;
+  text-align: center;
+  margin-left: 32px; 
+}
 
     .ios-modal-instruction {
       font-size: 0.85rem;
@@ -821,24 +837,24 @@
   </div>
 
   <!-- ios save modal -->
-  <div id="iosSaveModal" class="modal-backdrop">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title">Save Image</div>
-        <button type="button" id="iosSaveCloseX" class="modal-close-square" title="Close" aria-label="Close">&times;</button>
-      </div>
-      <div class="ios-modal-instruction">
-        Hold image to save or share.
-      </div>
-      <div class="ios-modal-preview-frame">
-        <img id="iosSaveImg" class="ios-modal-img" alt="Export output">
-      </div>
-      <div class="modal-actions">
-        <button type="button" id="iosSaveClose" class="btn-brutal-cta">Done</button>
-      </div>
+<div id="iosSaveModal" class="modal-backdrop">
+  <div class="modal-dialog">
+    <div class="modal-header modal-header-centered">
+      <div class="modal-title">Save Image</div>
+      <button type="button" id="iosSaveCloseX" class="modal-close-square" title="Close" aria-label="Close">&times;</button>
+    </div>
+    <div class="ios-modal-instruction">
+      Hold image to save or share.
+    </div>
+    <div class="ios-modal-preview-frame">
+      <img id="iosSaveImg" class="ios-modal-img" alt="Export output">
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="iosSaveClose" class="btn-brutal-cta">Done</button>
     </div>
   </div>
-
+</div>
+  
   <footer>
     <div class="footer-section">
       <div class="footer-title">About</div>
