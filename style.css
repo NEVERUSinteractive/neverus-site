@@ -149,6 +149,21 @@ body {
   animation: none;
 }
 
+/* Hero CTA Button Stacking & Unified Width */
+.hero-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto;
+}
+
+.hero-cta-group .btn-cta {
+  width: 100%;
+  text-align: center;
+}
+
 /* --------------------------------------------------------------------------
    Tactile UI: Destructive Triggers (.btn-danger)
    -------------------------------------------------------------------------- */
