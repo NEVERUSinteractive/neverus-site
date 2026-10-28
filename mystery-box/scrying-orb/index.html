@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #000000; color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>NEVERUS Scrying Orb</title>
+
+  <!-- lock canvas to black before paint -->
+  <style>
+    html, body {
+      background-color: #000000 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+      font-family: 'Atkinson Hyperlegible', sans-serif;
+    }
+    :root {
+      --pure-void: #000000;
+      --blank-white: #ffffff;
+      --hazard-accent: #ffff00;
+      --emergency-accent: #ff0000;
+    }
+    @keyframes ps1-btn-jitter {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(-1px, 1px); }
+      100% { transform: translate(1px, -1px); }
+    }
+  </style>
+
+  <!-- atkinson hyperlegible font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <!-- load local or root stylesheet -->
+  <script>
+    (function loadStylesheet() {
+      const isDesktop = window.location.protocol === 'file:' || 
+                        Boolean(window.pywebview) || 
+                        document.documentElement.classList.contains('is-desktop-app');
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = isDesktop ? 'style.css' : '/style.css';
+      document.head.appendChild(link);
+    })();
+  </script>
+
+  <style>
+    /* --------------------------------------------------------------------------
+       Alignments to NEVERUS INTERACTIVE Design System v1.4
+       -------------------------------------------------------------------------- */
+    @keyframes ps1-btn-jitter {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(-1.5px, 1px); }
+      50%  { transform: translate(1px, -1.5px); }
+      75%  { transform: translate(-1px, -1px); }
+      100% { transform: translate(1.5px, 1px); }
+    }
+
+    body {
+      padding-bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      touch-action: manipulation;
+      font-family: inherit;
+    }
+
+    .card {
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      box-shadow: 6px 6px 0px var(--blank-white);
+      padding: 24px;
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    /* Standard Neo-Brutalist Button */
+    .btn-brutal {
+      background: var(--pure-void);
+      color: var(--blank-white);
+      border: 2px solid var(--blank-white);
+      box-shadow: 4px 4px 0px var(--blank-white);
+      padding: 8px 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: inline-block;
+      user-select: none;
+      transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+    }
+
+    .btn-brutal:hover:not(:disabled) {
+      background: var(--hazard-accent);
+      color: var(--pure-void);
+      border-color: var(--hazard-accent);
+      box-shadow: 4px 4px 0px var(--blank-white);
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
+    }
+
+    .btn-brutal:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--blank-white);
+      animation: none;
+    }
+
+    .btn-brutal:disabled {
+      opacity: 0.45;
+      cursor: wait;
+    }
+
+    /* Header Layout */
+    header {
+      max-width: 960px;
+      width: 100%;
+      margin: 14px auto 20px;
+      padding: 0 16px 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 2px solid var(--blank-white);
+      box-sizing: border-box;
+    }
+
+    .brand-logo-link {
+      display: inline-flex;
+      align-items: center;
+      line-height: 0;
+      text-decoration: none;
+      outline: none;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      height: 56px;
+      width: auto;
+      margin-bottom: 0;
+      fill: var(--blank-white);
+      user-select: none;
+      cursor: pointer;
+      transform-origin: center center;
+      transform: scale(1);
+    }
+
+    .header-titles {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--blank-white);
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .header-sub {
+      font-size: 0.75rem;
+      color: var(--blank-white);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 3px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    /* Main Scryer Container */
+    .scryer-wrapper {
+      max-width: 720px;
+      width: 100%;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      box-sizing: border-box;
+    }
+
+    /* 90s FMV Viewport */
+    .fmv-stage {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: var(--pure-void);
+      border: 2px solid var(--blank-white);
+      box-shadow: 6px 6px 0px var(--blank-white);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    #deskCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      z-index: 1;
+    }
+
+    /* Scrying Orb Mount */
+    .orb-mount {
+      position: relative;
+      z-index: 3;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-8px);
+    }
+
+    .scrying-orb-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      text-decoration: none;
+      color: var(--blank-white);
+      outline: none;
+      border: none;
+      cursor: default;
+    }
+
+    .scrying-orb-link.is-revealed {
+      cursor: pointer;
+    }
+
+    .scrying-orb-link.is-revealed:hover .scrying-orb,
+    .scrying-orb-link.is-revealed:focus-visible .scrying-orb {
+      box-shadow: 
+        0 14px 34px rgba(0, 0, 0, 0.95),
+        0 0 32px var(--hazard-accent),
+        inset 0 0 32px #000000 !important;
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
+    }
+
+    .scrying-orb {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: none;
+      outline: none;
+      background: radial-gradient(circle at 50% 50%, #050505 0%, #000000 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 14px 28px rgba(0, 0, 0, 0.9),
+        inset 0 0 32px #000000;
+      transition: box-shadow 0.25s ease;
+    }
+
+    .scrying-orb.is-communing {
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
+    }
+
+    #orbFogCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      z-index: 3;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .orb-revelation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease;
+    }
+
+    .orb-revelation.visible {
+      opacity: 1;
+    }
+
+    #orbArtCanvas {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .orb-specular {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      z-index: 4;
+      pointer-events: none;
+      background: 
+        radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.12) 16%, transparent 36%),
+        radial-gradient(circle at 72% 76%, rgba(255, 255, 255, 0.08) 0%, transparent 26%),
+        radial-gradient(circle at 50% 50%, transparent 54%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0.95) 100%);
+    }
+
+    /* Inquiry Panel */
+    .inquiry-card {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .inquiry-prompt {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      line-height: 1.4;
+      color: var(--blank-white);
+      min-height: 3.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 580px;
+    }
+
+    .response-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    .response-grid .btn-brutal {
+      width: 100%;
+      padding: 12px 4px;
+      text-align: center;
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+
+    /* Verdict Panel */
+    .verdict-card {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .verdict-card.active {
+      display: flex;
+    }
+
+    .verdict-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      width: 100%;
+      border-bottom: 2px solid var(--blank-white);
+      padding-bottom: 12px;
+    }
+
+    .verdict-kicker {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--hazard-accent);
+    }
+
+    .verdict-title-link {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--blank-white);
+      text-decoration: underline;
+      text-decoration-color: var(--blank-white);
+      text-underline-offset: 4px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .verdict-title-link:hover {
+      color: var(--hazard-accent);
+      text-decoration-color: var(--hazard-accent);
+      animation: ps1-btn-jitter 0.16s steps(2) infinite;
+    }
+
+    .verdict-meta {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--blank-white);
+    }
+
+    .verdict-summary {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      max-width: 560px;
+      color: var(--blank-white);
+    }
+
+    .verdict-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 6px;
+      width: 100%;
+    }
+
+    /* Equal width verdict buttons matching Design System metrics */
+    .verdict-actions .btn-brutal {
+      flex: 1 1 160px;
+      max-width: 200px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Debug Panel */
+    .debug-card {
+      display: none;
+      border-color: var(--hazard-accent);
+      box-shadow: 6px 6px 0px var(--hazard-accent);
+      font-family: monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--blank-white);
+      text-align: left;
+    }
+
+    .debug-card.active {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--hazard-accent);
+      padding-bottom: 6px;
+      color: var(--hazard-accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .debug-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .debug-box {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 10px;
+      background: #080808;
+      overflow-x: auto;
+    }
+
+    .debug-box-title {
+      color: var(--hazard-accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      font-size: 0.72rem;
+    }
+
+    .debug-pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.72rem;
+      color: #dddddd;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .debug-tag {
+      display: inline-block;
+      padding: 1px 5px;
+      margin: 2px 3px 2px 0;
+      border: 1px solid var(--blank-white);
+      font-size: 0.7rem;
+    }
+
+    .debug-tag.pos {
+      border-color: #00ff66;
+      color: #00ff66;
+    }
+
+    .debug-tag.neg {
+      border-color: #ff4444;
+      color: #ff4444;
+    }
+
+    /* Footer & Attribution */
+    footer {
+      max-width: 960px;
+      width: 100%;
+      margin: 48px auto 0;
+      padding: 24px 16px 0;
+      border-top: 2px solid var(--blank-white);
+      font-size: 0.85rem;
+      color: var(--blank-white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-title {
+      font-weight: 700;
+      color: var(--blank-white);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .footer-attribution {
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-width: 620px;
+    }
+
+    .footer-attribution a {
+      color: var(--hazard-accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .footer-attribution a:hover {
+      color: var(--blank-white);
+    }
+
+    /* Media Queries */
+    @media (max-width: 680px) {
+      .response-grid {
+        grid-template-columns: 1fr;
+      }
+      .debug-grid {
+        grid-template-columns: 1fr;
+      }
+      .orb-mount {
+        width: 180px;
+        height: 180px;
+      }
+      .inquiry-prompt {
+        font-size: 1.05rem;
+      }
+      .verdict-actions .btn-brutal {
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        margin: 10px auto 14px;
+        padding: 0 12px 10px;
+        gap: 12px;
+      }
+      .brand-logo {
+        height: 44px;
+      }
+      h1 {
+        font-size: 1.05rem;
+        letter-spacing: 1px;
+      }
+      .header-sub {
+        font-size: 0.68rem;
+        letter-spacing: 0.8px;
+        margin-top: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="https://www.neverus.net/" class="brand-logo-link" aria-label="NEVERUS Interactive Home">
+      <svg id="neverusLogo" class="brand-logo" viewBox="0 0 1640 1424" version="1.1" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <g>
+          <path d="M262.12,986.54L307.55,986.54L316.44,990.31L317.65,1012.68L333.42,1068.74C331.17,1091.47 337.28,1106.47 351.75,1113.75L350.13,1080.06L365.9,1001.49C367.34,995.74 370.66,990.75 375.87,986.53L414.41,987.07L418.18,998.26C409.29,1019.55 401.47,1043.23 394.73,1069.28L395.27,1080.6L389.34,1106.21L375.73,1177.23L326,1181L306.86,1124.94L296.21,1061.33C290.73,1064.83 285.2,1069.82 279.63,1076.29L279.5,1117.39L266.56,1184.77L257.67,1181L215.62,1181L217.37,1173.59L214.14,1173.59L222.9,1151.08L229.1,1124.94L241.5,1109.85L234.76,1102.44L241.23,1087.48C247.16,1082.36 247.52,1078.63 242.31,1076.29L243.39,1065.1L255.65,1027.64L262.12,986.54ZM269.01,1080.06L270.76,1072.51L267.53,1072.51L269.01,1080.06ZM279.38,1050.15C280.1,1054.64 282.79,1057.11 287.47,1057.56L279.38,1050.15ZM283.83,1031.41C282.84,1036.44 284.14,1040.17 287.74,1042.6C288.19,1037.66 286.89,1033.93 283.83,1031.41ZM325.47,952.85C327.9,953.3 329.47,955.81 330.19,960.4L325.47,952.85ZM344.74,1143.67C345.01,1140.35 343.44,1137.83 340.02,1136.12C340.2,1138.64 341.77,1141.15 344.74,1143.67ZM383.56,1091.79C379.16,1079.3 371.3,1070.05 359.98,1064.03L383.56,1091.79Z" style="fill-rule:nonzero;"/>
+          <path d="M468.38,998.4L521.88,1002.44L537.51,998.4L550.04,1006.49L546.4,1040.59L496.13,1036.55C489.03,1038.53 480.68,1039.88 471.06,1040.59L464.32,1037.63L461.76,1079.81C470.65,1086.46 485.43,1090.05 506.1,1090.59L531.3,1086.68L540.6,1090.59L541.27,1120.78L494.1,1128.87L484.67,1124.83L462.3,1125.91L463.78,1178.47L486.15,1173.35L495.58,1177.39L517.55,1173.35L539.52,1173.35L545.85,1177.39L550.03,1210.95L540.6,1214.99L512.43,1210.95L503,1214.99L477.8,1210.95L430.77,1214.99L424.44,1154.88L427.54,1114.72L427.54,1026.45L424.44,1010.41L427.54,1002.46L775.48,1002.46L468.37,1002.46L468.37,998.42L468.38,998.4ZM550.04,1088.15L553.27,1115.51L545.18,1112.14L550.03,1088.15L550.04,1088.15Z" style="fill-rule:nonzero;"/>
+          <path d="M566.38,1000.69L589.29,1006.08L599.4,1030.47L625.81,1122.92C629.67,1130.92 635.15,1138.64 642.25,1146.1L671.9,1043.68C676.84,1029.76 683.44,1015.43 691.71,1000.69L711.52,1004.06L655.46,1162.54L645.49,1179.12C637.58,1177.5 629.9,1174.18 622.45,1169.15L576.23,1037.08C571.29,1026.66 568.01,1014.53 566.39,1000.69L566.38,1000.69Z" style="fill-rule:nonzero;"/>
+          <path d="M775.49,998.4L828.99,1002.44L844.62,998.4L857.15,1006.49L853.51,1040.59L803.24,1036.55C796.14,1038.53 787.79,1039.88 778.17,1040.59L771.43,1037.63L768.87,1079.81C777.76,1086.46 792.54,1090.05 813.21,1090.59L838.41,1086.68L847.71,1090.59L848.38,1120.78L801.21,1128.87L791.78,1124.83L769.41,1125.91L770.89,1178.47L793.26,1173.35L802.69,1177.39L824.66,1173.35L846.63,1173.35L852.96,1177.39L857.14,1210.95L847.71,1214.99L819.54,1210.95L810.11,1214.99L784.91,1210.95L737.88,1214.99L731.55,1154.88L734.65,1114.72L734.65,1026.45L731.55,1010.41L734.65,1002.46L775.48,1002.46L775.48,998.42L775.49,998.4ZM857.16,1088.15L860.39,1115.51L852.3,1112.14L857.15,1088.15L857.16,1088.15Z" style="fill-rule:nonzero;"/>
+          <path d="M933.28,983.03L1003.36,986.26C1030.85,989.59 1045.63,997.22 1047.7,1009.17C1054.71,1022.11 1053.85,1040.75 1045.14,1065.1C1038.13,1082.62 1026.81,1095.02 1011.18,1102.3C1026.09,1116.77 1031.08,1138.15 1026.14,1166.45L1022.5,1223.73C1016.21,1226.96 1007.63,1227.28 996.76,1224.67C984.81,1225.03 980.5,1214.79 983.82,1193.94L988,1165.1C986.29,1128.71 980.5,1111.64 970.62,1113.89L941.65,1113.49C936.17,1117.08 932.22,1124.41 929.79,1135.46C928.44,1152.62 924.85,1171.44 919.01,1191.93L913.22,1219.69L893.01,1219.82L875.22,1218.74L882.5,1187.47L920.37,986.8L933.31,983.03L933.28,983.03ZM951.88,1014.97L937.46,1088.42L986.92,1086.4C1014.59,1071.94 1021.96,1050.15 1009.02,1021.04C997.52,1015.11 978.47,1013.09 951.88,1014.98L951.88,1014.97Z" style="fill-rule:nonzero;"/>
+          <path d="M1087.52,985.19L1108.54,989.23L1117.16,985.19L1125.25,985.19L1126.19,997.45L1117.3,1042.33L1117.7,1058.77L1110.42,1091.38L1111.9,1099.6L1108.53,1124.13C1112.66,1140.84 1121.2,1150.37 1134.14,1152.7C1146.27,1142.64 1154.85,1126.29 1159.88,1103.65L1164.73,1050.55L1169.04,1038.29L1173.22,989.24L1187.37,985.2L1194.78,989.24L1217.02,985.2L1216.21,1009.73C1212.62,1023.93 1209.43,1040.28 1206.64,1058.78L1195.86,1136.4L1191.41,1148.66L1160.82,1193.54L1113.79,1201.63C1101.3,1196.96 1088.77,1190.17 1076.19,1181.28C1071.43,1165.65 1068.51,1147.95 1067.43,1128.18L1072.82,1071.04L1077.13,1058.78L1083.06,997.46L1087.51,985.2L1087.52,985.19Z" style="fill-rule:nonzero;"/>
+          <path d="M1362.58,963.49C1382.08,968.52 1401.12,978.36 1419.72,993C1422.59,1002.52 1424.57,1013.75 1425.65,1026.69L1378.48,1030.87C1365.45,1017.66 1347.53,1009.22 1324.71,1005.53C1316.09,1011.46 1308.76,1019.91 1302.74,1030.87L1333.87,1043.4C1354.62,1049.24 1376.81,1057.69 1400.44,1068.74C1410.14,1086.08 1412.93,1107.1 1408.8,1131.81C1396.04,1150.41 1378.66,1167.25 1356.65,1182.35L1317.16,1190.71L1275.92,1186.53C1255.17,1182.13 1237.78,1170.9 1223.77,1152.84L1218.65,1114.97L1253.15,1110.79C1269.5,1121.12 1271.12,1127.14 1258,1128.85L1263.93,1143.27L1267.7,1138.96L1281.45,1128.85L1300.32,1148.66C1314.07,1147.67 1328.62,1144.89 1343.98,1140.3L1352.47,1119.14L1349.91,1110.78L1287.65,1085.58C1267.88,1077.76 1253.87,1063.7 1245.6,1043.4L1247.22,1014.02L1253.15,1005.53L1283.47,980.33C1306.38,973.23 1332.75,967.62 1362.58,963.48L1362.58,963.49ZM1270.26,1053.65L1273.49,1061.74L1277.8,1052.04L1259.61,1029.13L1270.26,1047.86L1262.31,1047.86L1270.26,1053.65Z" style="fill-rule:nonzero;"/>
+        </g>
+        <path d="M821.1,775.22C753.13,847.09 627.79,800.12 627.79,697.69C627.79,644.03 665.46,599.17 715.8,588.12L821.1,775.22Z" style="fill-rule:nonzero;"/>
+        <path d="M896.46,893.92C882.69,879.1 870.46,862.46 859.84,844.06L846.84,820.96C743.11,911.5 576.79,838.52 576.79,697.69C576.79,625.11 624.41,563.46 690.03,542.33C690.03,542.33 690.52,542.37 661.07,480.76C477.79,499.45 348.66,656.58 342.75,664.79L318.68,698.13L342.73,731.49C439.81,865.82 684.452,976.377 897.922,895.417L896.46,893.92ZM388.97,698.15C388.97,698.15 444.94,620.58 563.57,566.08C544.65,591.35 531.04,620.81 524.39,652.79C521.38,667.29 519.79,682.31 519.79,697.69C519.79,713.07 521.45,728.82 524.62,743.65C531.48,775.82 545.38,805.41 564.65,830.73C445.25,776.2 388.97,698.15 388.97,698.15Z" style="fill-rule:nonzero;"/>
+        <path d="M1319.04,743.54C1289.06,962.83 996.87,1021.45 885.82,829.06L695.6,491.07C684.65,471.62 692.02,446.97 711.84,436.71C730.75,426.93 754.01,433.92 764.39,452.51L860.97,625.93C863.81,631.03 870.37,632.67 875.27,629.49C879.73,626.6 881.19,620.75 878.6,616.1L729.53,348.56C719.15,329.93 725.89,306.41 744.57,296.11C763.13,285.87 786.48,292.56 796.79,311.08L943.99,576.59C946.52,581.15 952.26,582.83 956.84,580.34C961.49,577.82 963.19,571.98 960.61,567.35L798.36,275.99C787.57,256.7 794.71,232.31 814.2,221.88C833.18,211.72 856.8,218.64 867.31,237.43L1033.5,534.61C1035.71,538.57 1040.54,540.24 1044.73,538.5C1049.66,536.45 1051.71,530.55 1049.1,525.89L897.69,254.93C887.25,236.26 893.92,212.65 912.59,202.21C921.03,197.49 949.98,189.67 965.31,217.11L1172.96,588.26C1175.61,592.99 1181.59,594.68 1186.32,592.03C1191.07,589.37 1192.75,583.35 1190.06,578.61L1101.21,422.55C1090.25,403.3 1097.29,378.81 1116.79,368.31C1135.68,358.14 1159.24,364.94 1169.81,383.61L1289.86,595.76C1294.1,603.12 1330.06,662.84 1319.03,743.52L1319.04,743.54Z" style="fill-rule:nonzero;"/>
+      </svg>
+    </a>
+
+    <div class="header-titles">
+      <h1>NEVERUS Scrying Orb</h1>
+      <div class="header-sub">Videogame Suggestion Diviner</div>
+    </div>
+  </header>
+
+  <main class="scryer-wrapper">
+    <!-- 90s FMV Desk and Scrying Orb Stage -->
+    <div class="fmv-stage">
+      <canvas id="deskCanvas" width="320" height="200"></canvas>
+
+      <div class="orb-mount">
+        <a id="orbLink" class="scrying-orb-link" target="_blank" rel="noopener noreferrer" aria-label="Revealed Game">
+          <div class="scrying-orb" id="scryingOrb">
+            <canvas id="orbFogCanvas" width="96" height="96"></canvas>
+
+            <div class="orb-revelation" id="orbRevelation">
+              <canvas id="orbArtCanvas" width="220" height="220"></canvas>
+            </div>
+
+            <div class="orb-specular"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Active Question Card -->
+    <div class="card inquiry-card" id="inquiryCard">
+      <div class="inquiry-prompt" id="inquiryPrompt">
+        Loading the Scryer...
+      </div>
+
+      <div class="response-grid" id="responseGrid">
+        <button type="button" class="btn-brutal" data-weight="1.0">CERTAINLY SO</button>
+        <button type="button" class="btn-brutal" data-weight="0.5">MOST LIKELY</button>
+        <button type="button" class="btn-brutal" data-weight="0.0">INDIFFERENT</button>
+        <button type="button" class="btn-brutal" data-weight="-0.5">NOT LIKELY</button>
+        <button type="button" class="btn-brutal" data-weight="-1.0">CERTAINLY NOT</button>
+      </div>
+    </div>
+
+    <!-- Final Verdict Card -->
+    <div class="card verdict-card" id="verdictCard">
+      <div class="verdict-header">
+        <div class="verdict-kicker" id="verdictKicker">THE FOG WANTS YOU TO PLAY...</div>
+        <a id="verdictTitleLink" class="verdict-title-link" target="_blank" rel="noopener noreferrer"></a>
+        <div id="verdictMeta" class="verdict-meta"></div>
+      </div>
+
+      <div id="verdictSummary" class="verdict-summary"></div>
+
+      <div class="verdict-actions">
+        <button type="button" id="verdictActionBtn" class="btn-brutal">SCRY AGAIN</button>
+        <button type="button" id="resetScryBtn" class="btn-brutal">NEW VISION</button>
+      </div>
+    </div>
+
+    <!-- Under-The-Hood Debug Telemetry Card (Controlled by DEBUG_MODE flag) -->
+    <div class="card debug-card" id="debugCard">
+      <div class="debug-header">
+        <span>[DEBUG TELEMETRY: ACTIVE]</span>
+        <span id="debugSourceBadge">SOURCE: LOCAL VAULT</span>
+      </div>
+
+      <div class="debug-grid">
+        <div class="debug-box">
+          <div class="debug-box-title">Engine State &amp; Confidence</div>
+          <div id="debugStateInfo">Initializing...</div>
+        </div>
+        <div class="debug-box">
+          <div class="debug-box-title">Active Soul Profile Weights</div>
+          <div id="debugProfileWeights">None yet</div>
+        </div>
+      </div>
+
+      <div class="debug-box">
+        <div class="debug-box-title">Top 8 Ranked Candidates (Live Pool)</div>
+        <pre class="debug-pre" id="debugTopCandidates">Waiting for input...</pre>
+      </div>
+
+      <div class="debug-grid">
+        <div class="debug-box">
+          <div class="debug-box-title">Last IGDB APICalypse Query</div>
+          <pre class="debug-pre" id="debugQueryBox">Not dispatched yet (triggers at Q3)</pre>
+        </div>
+        <div class="debug-box">
+          <div class="debug-box-title">Telemetry Event Log</div>
+          <pre class="debug-pre" id="debugEventLog"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-section">
+      <div class="footer-title">About</div>
+      <div>NEVERUS Scryer divines video game recommendations from your current mood and appetite.</div>
+    </div>
+
+    <div class="footer-section">
+      <div class="footer-title">Attribution</div>
+      <div class="footer-attribution">
+        Background scene assets: <a href="https://skfb.ly/ptnGI" target="_blank" rel="noopener noreferrer">"Captain's Desk"</a> by Félicien Lebegge, 
+        <a href="https://skfb.ly/oSGxH" target="_blank" rel="noopener noreferrer">"Candles"</a> by Busy Bat, and 
+        <a href="https://skfb.ly/6WNEK" target="_blank" rel="noopener noreferrer">"Branches with Leaves"</a> by hui.an.michelle.li, 
+        licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    /* ==========================================================================
+       0. CONFIGURATION & EASY DEBUG TOGGLE
+       Set DEBUG_MODE = false to completely hide and disable debug telemetry
+       ========================================================================== */
+    const DEBUG_MODE = false;
+    const IGDB_PROXY_URL = "https://neverus-igdb-proxy.neverusinteractive.workers.dev";
+    const CONSOLE_PLATFORM_IDS = [7, 8, 9, 48, 167, 11, 12, 49, 169, 130, 21, 4, 23];
+
+    /* ==========================================================================
+       0.5 UNDER-THE-HOOD DEBUG TELEMETRY LOGGER
+       ========================================================================== */
+    const debugState = {
+      source: "LOCAL_VAULT (12)",
+      lastQuery: "Not dispatched yet (triggers after 3 answers)",
+      igdbRawCount: 0,
+      igdbFilteredOut: 0,
+      igdbKeptCount: 0,
+      logs: []
+    };
+
+    function logDebug(msg) {
+      if (!DEBUG_MODE) return;
+      const t = new Date().toLocaleTimeString();
+      debugState.logs.unshift(`[${t}] ${msg}`);
+      if (debugState.logs.length > 30) debugState.logs.pop();
+      console.log(`[SCRYER DEBUG] ${msg}`);
+      renderDebugPanel();
+    }
+
+    function renderDebugPanel() {
+      const card = document.getElementById('debugCard');
+      if (!card) return;
+      if (!DEBUG_MODE) {
+        card.classList.remove('active');
+        return;
+      }
+      card.classList.add('active');
+
+      const badge = document.getElementById('debugSourceBadge');
+      const stateInfo = document.getElementById('debugStateInfo');
+      const weightsBox = document.getElementById('debugProfileWeights');
+      const topBox = document.getElementById('debugTopCandidates');
+      const queryBox = document.getElementById('debugQueryBox');
+      const logBox = document.getElementById('debugEventLog');
+
+      badge.textContent = `POOL: ${debugState.source}`;
+
+      const scored = typeof getScoredCandidates === 'function' ? getScoredCandidates() : [];
+      const topScore = scored[0] ? scored[0].score : 0;
+      const runnerUpScore = scored[1] ? scored[1].score : 0.001;
+      const dominance = scored.length >= 2 ? (topScore / (runnerUpScore || 0.001)).toFixed(2) : "N/A";
+
+      stateInfo.innerHTML = [
+        `Questions Asked: <b>${askedIds ? askedIds.size : 0} / ${INQUIRIES.length}</b> (Min: ${MIN_QUESTIONS})`,
+        `Current Inquiry: <b>${currentInquiry ? currentInquiry.id : "None"}</b>`,
+        `Dominance Ratio: <b>${dominance}x</b> (Target >= ${CONFIDENCE_DOMINANCE_RATIO}x)`,
+        `IGDB Fetched: <b>${debugState.igdbRawCount}</b> | Scrubbed (Fan/Mod/Pack): <b>${debugState.igdbFilteredOut}</b> | Added: <b>${debugState.igdbKeptCount}</b>`
+      ].join('<br>');
+
+      const weightEntries = Object.entries(userSoulProfile || {});
+      if (weightEntries.length === 0) {
+        weightsBox.textContent = "No traits weighted yet.";
+      } else {
+        weightsBox.innerHTML = weightEntries.map(([k, v]) => {
+          const cls = v > 0 ? 'pos' : (v < 0 ? 'neg' : '');
+          return `<span class="debug-tag ${cls}">${k}: ${v > 0 ? '+' : ''}${v}</span>`;
+        }).join('');
+      }
+
+      if (scored.length > 0) {
+        topBox.textContent = scored.slice(0, 8).map((item, idx) => {
+          const srcTag = item.game.isIGDB ? "[IGDB]" : "[LOCAL]";
+          return `${idx + 1}. ${srcTag} ${item.game.title} (${item.game.year}) — Score: ${item.score.toFixed(3)} | URL: ${item.game.url || 'Steam Fallback'}`;
+        }).join('\n');
+      }
+
+      queryBox.textContent = debugState.lastQuery.trim();
+      logBox.textContent = debugState.logs.join('\n');
+    }
+
+    /* ==========================================================================
+       1. SMART 3-SENTENCE SUMMARY PARSER (ABBREVIATION & ACRONYM SAFE)
+       Handles A.I., U.S., Dr., Mr., Mrs., Ms., St., Jr., Sr., vs., etc., 
+       ellipses (...), and closing quotes/brackets (." !" ?") cleanly.
+       ========================================================================== */
+    function formatConciseSummary(rawText) {
+      if (!rawText) return "A revered entry recovered from the digital archives.";
+
+      const clean = rawText.replace(/\s+/g, ' ').trim();
+      if (!clean) return "A revered entry recovered from the digital archives.";
+
+      // 1. Primary path: Native Intl.Segmenter (handles acronyms like A.I. & abbreviations natively)
+      if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+        try {
+          const segmenter = new Intl.Segmenter('en', { granularity: 'sentence' });
+          const segments = Array.from(segmenter.segment(clean), s => s.segment.trim()).filter(Boolean);
+          if (segments.length > 0) {
+            return segments.slice(0, 3).join(' ');
+          }
+        } catch (e) {
+          // Fallback to regex splitter below if Segmenter fails
+        }
+      }
+
+      // 2. Fallback path: Protect dotted acronyms (A.I., U.S.A.) and common abbreviations
+      const DOT_TOKEN = "\u0000";
+      const protectedText = clean
+        // Protect multi-letter dotted acronyms like A.I. or U.S.A.
+        .replace(/\b([A-Za-z])\.([A-Za-z])\.(?:([A-Za-z])\.)?/g, (m) => m.replace(/\./g, DOT_TOKEN))
+        // Protect common titles and abbreviations
+        .replace(/\b(Mr|Mrs|Ms|Dr|Prof|St|Jr|Sr|vs|etc|Inc|Ltd|Co|Corp|Vol|No| Ch|Pt)\./gi, `$1${DOT_TOKEN}`);
+
+      // Split on sentence-ending punctuation (. ! ? …) optionally followed by closing quotes/parens, then whitespace
+      const parts = protectedText
+        .split(/(?<=[.!?…]['"”’)\]]*)\s+/)
+        .map(s => s.replaceAll(DOT_TOKEN, '.').trim())
+        .filter(Boolean);
+
+      if (parts.length === 0) return clean;
+      return parts.slice(0, 3).join(' ');
+    }
+
+    /* ==========================================================================
+       2. PLAYER INQUIRIES & ORTHOGONAL LATENT AXES
+       ========================================================================== */
+    const INQUIRIES = [
+      // Foundational Roots
+      {
+        id: "platform_pc",
+        prompt: "Do you prefer to play on PC rather than a console?",
+        isFoundation: true,
+        trait: "pc"
+      },
+      {
+        id: "curation_obscure",
+        prompt: "Do you seek an obscure gem rather than a well-known mainstream title?",
+        isFoundation: true,
+        trait: "obscure"
+      },
+      {
+        id: "social_mode",
+        prompt: "Would you like to play alone, joined by no others?",
+        isFoundation: true,
+        trait: "solitary"
+      },
+
+      // Camera Geometry & Perspectives
+      {
+        id: "perspective_first_person",
+        prompt: "Would you enjoy playing in a first person point of view?",
+        trait: "first_person"
+      },
+      {
+        id: "perspective_isometric",
+        prompt: "Would you enjoy playing in an isometric point of view?",
+        trait: "isometric"
+      },
+      {
+        id: "perspective_side_view",
+        prompt: "Would you enjoy playing a 2D side scroller?",
+        trait: "side_view"
+      },
+
+      // Cognitive Load & Mechanics
+      {
+        id: "mechanic_strategy_planning",
+        prompt: "Are you willing to think several steps ahead and manage resources?",
+        trait: "cerebral_strategy"
+      },
+      {
+        id: "mechanic_reflex_combat",
+        prompt: "Would you enjoy fast-paced motion that tests your motor skills?",
+        trait: "twitch_reflex"
+      },
+      {
+        id: "mechanic_turn_based",
+        prompt: "Would you enjoy a turn-based experience?",
+        trait: "turn_based"
+      },
+      {
+        id: "mechanic_simulation",
+        prompt: "Would you enjoy managing systems, vehicles, or simulated realities?",
+        trait: "simulation"
+      },
+      {
+        id: "mechanic_puzzle_investigation",
+        prompt: "Would you enjoy solving puzzles?",
+        trait: "puzzle_logic"
+      },
+
+      // Narrative Density & Format
+      {
+        id: "format_visual_novel",
+        prompt: "Are you prepared to read extensively?",
+        trait: "text_heavy"
+      },
+      {
+        id: "format_arcade_pure",
+        prompt: "Would you prefer to jump straight to the action, avoiding extensive dialogue and cutscenes?",
+        trait: "arcade_pure"
+      },
+      {
+        id: "systems_deep_rpg",
+        prompt: "Are you interested in managing character stats, inventory slots, and branching progression?",
+        trait: "rpg_depth"
+      },
+
+      // Mood & Setting
+      {
+        id: "mood_horror",
+        prompt: "Do you wish to know fear?",
+        trait: "horror"
+      },
+      {
+        id: "mood_comedy_whimsical",
+        prompt: "Do you prefer playful humor over heavy darkness?",
+        trait: "lighthearted"
+      },
+      {
+        id: "setting_scifi",
+        prompt: "Do you want to experience a sci-fi setting?",
+        trait: "scifi"
+      },
+      {
+        id: "setting_fantasy_historical",
+        prompt: "Do you want to experience the distant or fantastic past?",
+        trait: "fantasy_history"
+      },
+      {
+        id: "structure_open_world",
+        prompt: "Do you want to explore an open world?",
+        trait: "open_sandbox"
+      },
+      {
+        id: "tone_surreal",
+        prompt: "Do you want something dreamlike, surreal, or utterly bizarre?",
+        trait: "surreal"
+      },
+      {
+        id: "stealth_tactical",
+        prompt: "Do you want to hide?",
+        trait: "stealth"
+      },
+      {
+        id: "era_retro",
+        prompt: "Would you appreciate unearthing an older experience?",
+        trait: "retro"
+      }
+    ];
+
+    /* ==========================================================================
+       3. LOCAL FALLBACK VAULT
+       ========================================================================== */
+    const LOCAL_VAULT = [
+      {
+        title: "Silent Hill",
+        year: 1999,
+        genre: "Survival Horror",
+        studio: "Team Silent",
+        glyph: "eye",
+        palette: ["#1a0808", "#a82020", "#f0d090"],
+        summary: "A father searches for his missing daughter in a fog-shrouded resort town twisting into an industrial nightmare.",
+        traits: { pc: 0, obscure: 0.2, solitary: 1, first_person: 0, isometric: 0, side_view: 0, cerebral_strategy: 0, twitch_reflex: 0.2, turn_based: 0, simulation: 0, puzzle_logic: 0.9, text_heavy: 0.2, arcade_pure: 0, rpg_depth: 0, horror: 1, lighthearted: 0, scifi: 0, fantasy_history: 0.2, open_sandbox: 0.2, surreal: 1, stealth: 0, retro: 1 }
+      },
+      {
+        title: "Cruelty Squad",
+        year: 2021,
+        genre: "Tactical Immersive Sim",
+        studio: "Consumer Softproducts",
+        glyph: "skull",
+        palette: ["#4a0e3a", "#00ff44", "#ffff00"],
+        summary: "A sensory-overload tactical hitman immersive sim set in a grotesque gig-economy corporate hellscape.",
+        traits: { pc: 1, obscure: 0.9, solitary: 1, first_person: 1, isometric: 0, side_view: 0, cerebral_strategy: 0.6, twitch_reflex: 0.9, turn_based: 0, simulation: 0.4, puzzle_logic: 0.3, text_heavy: 0.3, arcade_pure: 0.2, rpg_depth: 0.4, horror: 0.5, lighthearted: 0.3, scifi: 1, fantasy_history: 0, open_sandbox: 0.5, surreal: 1, stealth: 0.8, retro: 0 }
+      },
+      {
+        title: "Deus Ex",
+        year: 2000,
+        genre: "Immersive Sim / RPG",
+        studio: "Ion Storm",
+        glyph: "eye",
+        palette: ["#06162e", "#1c6ea4", "#ffd040"],
+        summary: "Unravel a global cyberpunk conspiracy where every locked door, guard patrol, and dialogue tree bends to your build.",
+        traits: { pc: 1, obscure: 0.3, solitary: 1, first_person: 1, isometric: 0, side_view: 0, cerebral_strategy: 0.5, twitch_reflex: 0.5, turn_based: 0, simulation: 0.3, puzzle_logic: 0.6, text_heavy: 0.6, arcade_pure: 0, rpg_depth: 0.9, horror: 0, lighthearted: 0, scifi: 1, fantasy_history: 0, open_sandbox: 0.4, surreal: 0.1, stealth: 0.9, retro: 1 }
+      },
+      {
+        title: "Age of Empires II",
+        year: 1999,
+        genre: "Real Time Strategy (RTS)",
+        studio: "Ensemble Studios",
+        glyph: "sword",
+        palette: ["#140f08", "#8a2414", "#d9a536"],
+        summary: "Guide world civilizations through the Dark Age to imperial dominance with vast armies, fortified castles, and booming economies.",
+        traits: { pc: 1, obscure: 0.1, solitary: 0.5, first_person: 0, isometric: 1, side_view: 0, cerebral_strategy: 1, twitch_reflex: 0.6, turn_based: 0, simulation: 0.4, puzzle_logic: 0.3, text_heavy: 0.1, arcade_pure: 0, rpg_depth: 0.2, horror: 0, lighthearted: 0, scifi: 0, fantasy_history: 1, open_sandbox: 0.3, surreal: 0, stealth: 0, retro: 1 }
+      },
+      {
+        title: "Snatcher",
+        year: 1994,
+        genre: "Cyberpunk Visual Novel / Adventure",
+        studio: "Konami",
+        glyph: "book",
+        palette: ["#0a121c", "#145973", "#ff6b3d"],
+        summary: "Investigate artificial life forms murdering and replacing humans in Neo Kobe City through dense dialogue and neon crime scenes.",
+        traits: { pc: 0, obscure: 0.8, solitary: 1, first_person: 1, isometric: 0, side_view: 0, cerebral_strategy: 0.2, twitch_reflex: 0.2, turn_based: 0.4, simulation: 0, puzzle_logic: 0.8, text_heavy: 1, arcade_pure: 0, rpg_depth: 0.1, horror: 0.4, lighthearted: 0.2, scifi: 1, fantasy_history: 0, open_sandbox: 0, surreal: 0.4, stealth: 0, retro: 1 }
+      },
+      {
+        title: "Final Fantasy Tactics",
+        year: 1997,
+        genre: "Tactical Turn-Based RPG",
+        studio: "Square",
+        glyph: "sword",
+        palette: ["#1c1611", "#734320", "#d6b567"],
+        summary: "Navigate a brutal medieval war of succession across grid-based battlefields with deep job classes and treacherous court intrigue.",
+        traits: { pc: 0, obscure: 0.3, solitary: 1, first_person: 0, isometric: 1, side_view: 0, cerebral_strategy: 0.9, twitch_reflex: 0, turn_based: 1, simulation: 0.1, puzzle_logic: 0.5, text_heavy: 0.7, arcade_pure: 0, rpg_depth: 1, horror: 0, lighthearted: 0, scifi: 0, fantasy_history: 1, open_sandbox: 0, surreal: 0.1, stealth: 0, retro: 1 }
+      },
+      {
+        title: "Castlevania: Symphony of the Night",
+        year: 1997,
+        genre: "Side-Scrolling Action RPG",
+        studio: "Konami",
+        glyph: "dagger",
+        palette: ["#17070b", "#6b1426", "#e0b058"],
+        summary: "Explore Dracula's shifting castle as the dhampir Alucard, unlocking occult relics, secret rooms, and transformative abilities.",
+        traits: { pc: 0, obscure: 0.2, solitary: 1, first_person: 0, isometric: 0, side_view: 1, cerebral_strategy: 0.2, twitch_reflex: 0.8, turn_based: 0, simulation: 0, puzzle_logic: 0.5, text_heavy: 0.2, arcade_pure: 0.3, rpg_depth: 0.7, horror: 0.7, lighthearted: 0, scifi: 0, fantasy_history: 0.9, open_sandbox: 0.3, surreal: 0.4, stealth: 0, retro: 1 }
+      },
+      {
+        title: "SimCity 2000",
+        year: 1993,
+        genre: "City Building Simulation",
+        studio: "Maxis",
+        glyph: "eye",
+        palette: ["#0b1a14", "#26543b", "#e0c86e"],
+        summary: "Zone industrial power grids, manage municipal transport budgets, and deal with monster disasters from an isometric perspective.",
+        traits: { pc: 1, obscure: 0.3, solitary: 1, first_person: 0, isometric: 1, side_view: 0, cerebral_strategy: 0.9, twitch_reflex: 0, turn_based: 0, simulation: 1, puzzle_logic: 0.5, text_heavy: 0.2, arcade_pure: 0, rpg_depth: 0.3, horror: 0, lighthearted: 0.4, scifi: 0.3, fantasy_history: 0, open_sandbox: 1, surreal: 0, stealth: 0, retro: 1 }
+      },
+      {
+        title: "ULTRAKILL",
+        year: 2020,
+        genre: "Movement Shooter",
+        studio: "Arsi 'Hakita' Patala",
+        glyph: "skull",
+        palette: ["#290404", "#e61919", "#ffff00"],
+        summary: "Mankind is dead. Blood is fuel. Hell is full. Ricochet coins and chainsaw through demons at breakneck speed.",
+        traits: { pc: 1, obscure: 0.2, solitary: 1, first_person: 1, isometric: 0, side_view: 0, cerebral_strategy: 0.2, twitch_reflex: 1, turn_based: 0, simulation: 0, puzzle_logic: 0.1, text_heavy: 0.1, arcade_pure: 0.7, rpg_depth: 0.2, horror: 0.2, lighthearted: 0.3, scifi: 0.9, fantasy_history: 0.3, open_sandbox: 0, surreal: 0.6, stealth: 0, retro: 0 }
+      },
+      {
+        title: "Disco Elysium",
+        year: 2019,
+        genre: "Detective RPG",
+        studio: "ZA/UM",
+        glyph: "book",
+        palette: ["#1f1610", "#a65938", "#f2d6ae"],
+        summary: "Wake up on a hostel floor with amnesia and 24 fractured aspects of your psyche arguing in your head as you solve a murder.",
+        traits: { pc: 1, obscure: 0.2, solitary: 1, first_person: 0, isometric: 1, side_view: 0, cerebral_strategy: 0.5, twitch_reflex: 0, turn_based: 0, simulation: 0, puzzle_logic: 0.9, text_heavy: 1, arcade_pure: 0, rpg_depth: 0.9, horror: 0.2, lighthearted: 0.5, scifi: 0, fantasy_history: 0.2, open_sandbox: 0.4, surreal: 0.9, stealth: 0.3, retro: 0 }
+      },
+      {
+        title: "Thief II: The Metal Age",
+        year: 2000,
+        genre: "First-Person Stealth",
+        studio: "Looking Glass Studios",
+        glyph: "dagger",
+        palette: ["#0c0c18", "#3a3560", "#d4b850"],
+        summary: "Stick to the shadows, listen to footsteps on marble floors, and rob a steampunk metropolis blind.",
+        traits: { pc: 1, obscure: 0.4, solitary: 1, first_person: 1, isometric: 0, side_view: 0, cerebral_strategy: 0.5, twitch_reflex: 0.3, turn_based: 0, simulation: 0.4, puzzle_logic: 0.6, text_heavy: 0.3, arcade_pure: 0, rpg_depth: 0.3, horror: 0.4, lighthearted: 0, scifi: 0.3, fantasy_history: 0.9, open_sandbox: 0.3, surreal: 0.1, stealth: 1, retro: 1 }
+      },
+      {
+        title: "Ikaruga",
+        year: 2001,
+        genre: "Arcade Shoot 'Em Up",
+        studio: "Treasure",
+        glyph: "skull",
+        palette: ["#0a0f17", "#ffffff", "#ff4411"],
+        summary: "A polarity-switching vertical arcade shooter where absorbing matching enemy fire powers your homing lasers.",
+        traits: { pc: 1, obscure: 0.5, solitary: 0.6, first_person: 0, isometric: 0, side_view: 1, cerebral_strategy: 0.4, twitch_reflex: 1, turn_based: 0, simulation: 0, puzzle_logic: 0.7, text_heavy: 0, arcade_pure: 1, rpg_depth: 0, horror: 0, lighthearted: 0, scifi: 0.8, fantasy_history: 0, open_sandbox: 0, surreal: 0.3, stealth: 0, retro: 1 }
+      }
+    ];
+
+    /* ==========================================================================
+       4. PS1 LOGO WOBBLE ANIMATION
+       ========================================================================== */
+    (function initPS1LogoWobble() {
+      const logoSvg = document.getElementById('neverusLogo');
+      if (!logoSvg) return;
+
+      const CONFIG = {
+        fps: 24,
+        phaseSpeed: 0.022,
+        snapGrid: 11.0,
+        driftAmp: 10,
+        localWobbleAmp: 5,
+        baseScale: 1.0,
+        hoverScale: 1.10,
+        scaleTransition: 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)'
+      };
+
+      logoSvg.style.fill = '#ffffff';
+      logoSvg.style.transition = CONFIG.scaleTransition;
+      logoSvg.style.transformOrigin = 'center center';
+      logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
+
+      const pathElements = Array.from(logoSvg.querySelectorAll('path'));
+      const parsedPathData = pathElements.map(el => {
+        const rawD = el.getAttribute('d');
+        const tokens = rawD.match(/[a-df-z]|[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?/gi) || [];
+        const structured = [];
+        for (let i = 0; i < tokens.length; i++) {
+          const token = tokens[i];
+          if (/^[a-df-z]$/i.test(token)) {
+            structured.push({ type: 'cmd', val: token });
+          } else {
+            const x = parseFloat(token);
+            const nextToken = tokens[i + 1];
+            if (nextToken !== undefined && !/^[a-df-z]$/i.test(nextToken)) {
+              const y = parseFloat(nextToken);
+              structured.push({ type: 'point', x, y });
+              i++;
+            } else {
+              structured.push({ type: 'val', val: x });
+            }
+          }
+        }
+        return structured;
+      });
+
+      let isWobbling = false;
+      let animFrameId = null;
+      let lastStepTime = 0;
+
+      function renderWobbleFrame(currentTime) {
+        if (!isWobbling) return;
+        animFrameId = requestAnimationFrame(renderWobbleFrame);
+        if (currentTime - lastStepTime < 1000 / CONFIG.fps) return;
+        lastStepTime = currentTime;
+
+        const phase = currentTime * CONFIG.phaseSpeed;
+        const driftX = Math.sin(phase * 1.3) * CONFIG.driftAmp;
+        const driftY = Math.cos(phase * 1.1) * CONFIG.driftAmp;
+
+        pathElements.forEach((el, index) => {
+          const items = parsedPathData[index];
+          const out = [];
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type === 'cmd') out.push(item.val);
+            else if (item.type === 'point') {
+              const vertexPhase = (item.x * 0.008) + (item.y * 0.011) + phase;
+              const worldX = item.x + driftX + Math.sin(vertexPhase) * CONFIG.localWobbleAmp;
+              const worldY = item.y + driftY + Math.cos(vertexPhase * 1.4) * CONFIG.localWobbleAmp;
+              const snappedX = Math.round(worldX / CONFIG.snapGrid) * CONFIG.snapGrid;
+              const snappedY = Math.round(worldY / CONFIG.snapGrid) * CONFIG.snapGrid;
+              out.push(`${snappedX.toFixed(1)},${snappedY.toFixed(1)}`);
+            } else {
+              out.push(item.val);
+            }
+          }
+          el.setAttribute('d', out.join(' '));
+        });
+      }
+
+      function restoreOriginalPaths() {
+        pathElements.forEach((el, index) => {
+          const items = parsedPathData[index];
+          const out = [];
+          for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type === 'cmd') out.push(item.val);
+            else if (item.type === 'point') out.push(`${item.x},${item.y}`);
+            else out.push(item.val);
+          }
+          el.setAttribute('d', out.join(' '));
+        });
+      }
+
+      logoSvg.addEventListener('mouseenter', () => {
+        isWobbling = true;
+        logoSvg.style.transform = `scale(${CONFIG.hoverScale})`;
+        lastStepTime = 0;
+        cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(renderWobbleFrame);
+      });
+
+      logoSvg.addEventListener('mouseleave', () => {
+        isWobbling = false;
+        logoSvg.style.transform = `scale(${CONFIG.baseScale})`;
+        cancelAnimationFrame(animFrameId);
+        restoreOriginalPaths();
+      });
+    })();
+
+    /* ==========================================================================
+   5. 90s FMV DESK BACKDROP (INDEXED 16-COLOR EMBEDDED RENDER)
+   ========================================================================== */
+(function initFMVDeskBackdrop() {
+  const canvas = document.getElementById('deskCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Ensure canvas internal resolution matches target DOS resolution
+  canvas.width = 320;
+  canvas.height = 200;
+
+  // Turn off image smoothing for authentic crisp pixels
+  ctx.imageSmoothingEnabled = false;
+
+  const deskImg = new Image();
+  deskImg.onload = () => {
+    ctx.drawImage(deskImg, 0, 0, 320, 200);
+  };
+
+  // Paste your Base64 string here:
+  deskImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAADIBAMAAABrKiWYAAAEtGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMyMCIKICAgZXhpZjpQaXhlbFlEaW1lbnNpb249IjIwMCIKICAgZXhpZjpDb2xvclNwYWNlPSIxIgogICB0aWZmOkltYWdlV2lkdGg9IjMyMCIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMjAwIgogICB0aWZmOlJlc29sdXRpb25Vbml0PSIyIgogICB0aWZmOlhSZXNvbHV0aW9uPSI3Mi8xIgogICB0aWZmOllSZXNvbHV0aW9uPSI3Mi8xIgogICBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIgogICBwaG90b3Nob3A6SUNDUHJvZmlsZT0ic1JHQiBJRUM2MTk2Ni0yLjEiCiAgIHhtcDpNb2RpZnlEYXRlPSIyMDI2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";
+})();
+   
+   /* ==========================================================================
+       6. SPHERICAL PLASMA ROLLING FOG SHADER (NO PASSIVE GLOW)
+       ========================================================================== */
+    const scryingOrb = document.getElementById('scryingOrb');
+    const fogCanvas = document.getElementById('orbFogCanvas');
+    const fogCtx = fogCanvas.getContext('2d');
+    let fogTime = 0;
+    let fogSpeedMultiplier = 1.0;
+    let fogTint = [255, 255, 255];
+
+    const FOG_BAYER_4 = [
+      [ 0,  8,  2, 10],
+      [12,  4, 14,  6],
+      [ 3, 11,  1,  9],
+      [15,  7, 13,  5]
+    ];
+
+    function animateOrbFog() {
+      const w = fogCanvas.width;
+      const h = fogCanvas.height;
+      const imgData = fogCtx.createImageData(w, h);
+      const data = imgData.data;
+
+      fogTime += 0.028 * fogSpeedMultiplier;
+
+      for (let y = 0; y < h; y++) {
+        const ny = (y / h) * 2 - 1;
+        for (let x = 0; x < w; x++) {
+          const nx = (x / w) * 2 - 1;
+          const rSq = nx * nx + ny * ny;
+          const idx = (y * w + x) * 4;
+
+          if (rSq > 1.0) {
+            data[idx] = 0;
+            data[idx + 1] = 0;
+            data[idx + 2] = 0;
+            data[idx + 3] = 255;
+            continue;
+          }
+
+          const z = Math.sqrt(1.0 - rSq);
+          const u = nx / (z + 0.38);
+          const v = ny / (z + 0.38);
+
+          const n1 = Math.sin(u * 3.8 + fogTime * 1.1 + Math.cos(v * 3.1 - fogTime * 0.9));
+          const n2 = Math.cos(v * 4.5 - fogTime * 1.3 + Math.sin(u * 4.2 + fogTime * 0.7));
+          const n3 = Math.sin((u + v) * 3.2 - fogTime * 0.8);
+
+          const rawVal = (n1 + n2 + n3) / 3;
+          const normalized = (rawVal + 1) * 0.5;
+
+          const dither = (FOG_BAYER_4[y % 4][x % 4] / 16 - 0.5) * 0.18;
+          const lum = (normalized + dither) * Math.pow(z, 0.45);
+
+          let intensity = 0;
+          if (lum > 0.66) {
+            intensity = 1.0;
+          } else if (lum > 0.46) {
+            intensity = 0.74;
+          } else if (lum > 0.26) {
+            intensity = 0.32;
+          }
+
+          data[idx]     = Math.round(fogTint[0] * intensity);
+          data[idx + 1] = Math.round(fogTint[1] * intensity);
+          data[idx + 2] = Math.round(fogTint[2] * intensity);
+          data[idx + 3] = 255;
+        }
+      }
+
+      fogCtx.putImageData(imgData, 0, 0);
+      requestAnimationFrame(animateOrbFog);
+    }
+    requestAnimationFrame(animateOrbFog);
+
+    /* ==========================================================================
+       7. 3D SPHERICAL OPTICAL LENS SHADER FOR COVER ART
+       ========================================================================== */
+    function renderSphericalCoverArt(img) {
+      const canvas = document.getElementById('orbArtCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const offscreen = document.createElement('canvas');
+      offscreen.width = 200;
+      offscreen.height = 200;
+      const offCtx = offscreen.getContext('2d');
+
+      const iw = img.naturalWidth || img.width || 200;
+      const ih = img.naturalHeight || img.height || 200;
+      const scale = Math.max(200 / iw, 200 / ih);
+      const sw = iw * scale;
+      const sh = ih * scale;
+      offCtx.drawImage(img, (200 - sw) / 2, (200 - sh) / 2, sw, sh);
+
+      const srcData = offCtx.getImageData(0, 0, 200, 200);
+      const src = srcData.data;
+
+      const targetData = ctx.createImageData(W, H);
+      const dst = targetData.data;
+
+      const cx = W / 2;
+      const cy = H / 2;
+      const R = (W / 2) * 0.92;
+
+      for (let y = 0; y < H; y++) {
+        const dy = y - cy;
+        for (let x = 0; x < W; x++) {
+          const dx = x - cx;
+          const r = Math.sqrt(dx * dx + dy * dy);
+          const dstIdx = (y * W + x) * 4;
+
+          if (r >= R) {
+            dst[dstIdx + 3] = 0;
+            continue;
+          }
+
+          const normR = r / R;
+          const z = Math.sqrt(Math.max(0, 1.0 - normR * normR));
+
+          const phi = Math.atan2(dy, dx);
+          const mappedR = Math.sin(normR * Math.PI * 0.5);
+
+          const srcX = Math.round(100 + mappedR * 96 * Math.cos(phi));
+          const srcY = Math.round(100 + mappedR * 96 * Math.sin(phi));
+
+          if (srcX >= 0 && srcX < 200 && srcY >= 0 && srcY < 200) {
+            const srcIdx = (srcY * 200 + srcX) * 4;
+            const depthShade = Math.pow(z, 0.42);
+            const rimFeather = Math.min(1.0, (1.0 - normR) * 6.5);
+            const finalAlpha = Math.min(255, Math.max(0, Math.round(255 * rimFeather)));
+
+            dst[dstIdx]     = Math.round(src[srcIdx] * depthShade);
+            dst[dstIdx + 1] = Math.round(src[srcIdx + 1] * depthShade);
+            dst[dstIdx + 2] = Math.round(src[srcIdx + 2] * depthShade);
+            dst[dstIdx + 3] = finalAlpha;
+          }
+        }
+      }
+
+      ctx.putImageData(targetData, 0, 0);
+    }
+
+    const GLYPH_MATRICES = {
+      skull: ["00111100","01111110","11011011","11111111","01100110","00111100","00101000","00000000"],
+      eye:   ["00000000","00111100","01000010","10011001","10011001","01000010","00111100","00000000"],
+      sword: ["00000011","00000111","00001110","01011100","00111000","01110100","11000000","10000000"],
+      dagger:["00011000","00011000","00011000","01111110","00011000","00011000","00001000","00000000"],
+      book:  ["00000000","11100111","10011001","10100101","10011001","10011001","11100111","00000000"],
+      alien: ["00111100","01111110","11011011","11011011","01111110","00100100","00011000","00000000"]
+    };
+
+    function createFallbackCoverURL(game) {
+      const c = document.createElement('canvas');
+      c.width = 128;
+      c.height = 128;
+      const ctx = c.getContext('2d');
+
+      const [bg, mid, fg] = game.palette || ['#1a0926', '#8a1c5c', '#ffff00'];
+
+      const grad = ctx.createRadialGradient(64, 56, 10, 64, 64, 68);
+      grad.addColorStop(0, mid);
+      grad.addColorStop(1, bg);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+
+      ctx.strokeStyle = fg;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(64, 58, 44, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const matrix = GLYPH_MATRICES[game.glyph] || GLYPH_MATRICES.eye;
+      const cell = 5;
+      const startX = 64 - (8 * cell) / 2;
+      const startY = 56 - (8 * cell) / 2;
+
+      ctx.fillStyle = fg;
+      for (let r = 0; r < 8; r++) {
+        for (let col = 0; col < 8; col++) {
+          if (matrix[r][col] === '1') {
+            ctx.fillRect(startX + col * cell, startY + r * cell, cell, cell);
+          }
+        }
+      }
+
+      return c.toDataURL('image/png');
+    }
+
+    function getGameStoreUrl(game) {
+      if (game.url) return game.url;
+      return `https://store.steampowered.com/search/?term=${encodeURIComponent(game.title)}`;
+    }
+
+    /* ==========================================================================
+       8. COMPLETE IGDB ADAPTIVE ENGINE (WITH UNOFFICIAL / FANMADE / PACK FILTER)
+       ========================================================================== */
+    let userSoulProfile = {};
+    let candidatePool = [];
+
+    function isUnofficialOrFanMade(item) {
+      // Check IGDB game_type: 1=DLC, 2=Expansion, 3=Bundle, 5=Mod, 12=Fork, 13=Pack, 14=Update
+      const gType = item.game_type && typeof item.game_type === 'object' ? item.game_type.id : item.game_type;
+      if ([1, 2, 3, 5, 12, 13, 14].includes(gType)) return true;
+
+      const keywords = item.keywords || [];
+      const fanRegex = /\b(unofficial|fan[- ]?made|fangame|fan[- ]?game|rom[- ]?hack|fan[- ]?project|homebrew|mod|mugen|openbor)\b/i;
+      for (const kw of keywords) {
+        if (!kw) continue;
+        const kwName = kw.name || "";
+        const kwSlug = kw.slug || "";
+        if (fanRegex.test(kwName) || fanRegex.test(kwSlug)) {
+          return true;
+        }
+      }
+
+      const title = item.name || "";
+      if (/\b(unofficial|fan[- ]?made|fangame|fan[- ]?game|rom[- ]?hack)\b/i.test(title)) {
+        return true;
+      }
+
+      const desc = ((item.summary || "") + " " + (item.storyline || "")).toLowerCase();
+      if (/\b(fan[- ]?made|fangame|fan[- ]?game|unofficial|rom[- ]?hack)\b/i.test(desc)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    function mapIGDBTraits(igdbGame) {
+      const gIds = (igdbGame.genres || []).map(g => g.id || g);
+      const tIds = (igdbGame.themes || []).map(t => t.id || t);
+      const pIds = (igdbGame.player_perspectives || []).map(p => p.id || p);
+      const mIds = (igdbGame.game_modes || []).map(m => m.id || m);
+      const platIds = (igdbGame.platforms || []).map(p => p.id || p);
+
+      const kwText = (igdbGame.keywords || [])
+        .map(k => (k && (k.name || k.slug)) || "")
+        .join(" ");
+      const fullText = ((igdbGame.summary || "") + " " + (igdbGame.storyline || "") + " " + kwText).toLowerCase();
+
+      const releaseYear = igdbGame.first_release_date 
+        ? new Date(igdbGame.first_release_date * 1000).getFullYear() 
+        : 2010;
+
+      const ratingCount = igdbGame.total_rating_count || 0;
+      const hasMulti = mIds.some(id => [2, 3, 4, 5, 6].includes(id));
+
+      const hasPC = platIds.includes(6);
+      const hasConsole = platIds.some(id => CONSOLE_PLATFORM_IDS.includes(id));
+
+      return {
+        pc: hasPC ? 1.0 : 0.0,
+        console: hasConsole ? 1.0 : (hasPC ? 0.0 : 1.0),
+        obscure: ratingCount < 45 ? 1.0 : (ratingCount < 150 ? 0.5 : 0.0),
+        retro: releaseYear <= 2005 ? 1.0 : (releaseYear <= 2012 ? 0.45 : 0.0),
+        
+        // Social Modes: pure single-player = 1.0, hybrid = 0.35 (avoids penalizing multiplayer seekers), multiplayer-only = 0.0
+        solitary: (mIds.includes(1) && !hasMulti) ? 1.0 : (mIds.includes(1) && hasMulti ? 0.35 : 0.0),
+        
+        // Camera Perspectives
+        first_person: pIds.includes(1) ? 1.0 : 0.0,
+        isometric: pIds.includes(3) ? 1.0 : 0.0,
+        side_view: pIds.includes(4)
+          ? ((!pIds.includes(2) || /2d|side[- ]scroll|metroidvania/.test(fullText)) ? 1.0 : 0.2)
+          : 0.0,
+        
+        // Mechanics & Cognitive Load
+        cerebral_strategy: (gIds.includes(15) || gIds.includes(11) || gIds.includes(24) || tIds.includes(41)) ? 1.0 : ((gIds.includes(16) || gIds.includes(35)) ? 0.5 : 0.0),
+        twitch_reflex: (gIds.includes(5) || gIds.includes(4) || gIds.includes(25) || (tIds.includes(1) && (gIds.includes(33) || gIds.includes(8)))) ? 1.0 : 0.0,
+        turn_based: (gIds.includes(16) || gIds.includes(35) || /turn[- ]based|tactical rpg|grid[- ]based|active time|atb|jrpg|party[- ]based|command[- ]based|menu[- ]based|press[- ]turn/.test(fullText)) ? 1.0 : 0.0,
+        simulation: (gIds.includes(13) || tIds.includes(28) || /immersive sim|simulation|simulator|management|tycoon/.test(fullText)) ? 1.0 : 0.0,
+        puzzle_logic: (gIds.includes(9) || gIds.includes(2) || gIds.includes(26) || tIds.includes(43)) ? 1.0 : 0.0,
+        
+        // Narrative & Format
+        text_heavy: (gIds.includes(34) || pIds.includes(5) || /visual[- ]novel|text[- ]heavy|interactive[- ]fiction|dialogue[- ]driven|text[- ]adventure/.test(fullText)) ? 1.0 : ((gIds.includes(12) || gIds.includes(2)) ? 0.5 : 0.0),
+        arcade_pure: (gIds.includes(33) || gIds.includes(30) || gIds.includes(7) || gIds.includes(8) || gIds.includes(10) || gIds.includes(14)) ? 1.0 : 0.0,
+        rpg_depth: gIds.includes(12) ? 1.0 : 0.0,
+        
+        // Themes & Moods
+        horror: (tIds.includes(19) || tIds.includes(21) || /survival[- ]horror|psychological[- ]horror/.test(fullText)) ? 1.0 : 0.0,
+        lighthearted: (tIds.includes(27) || tIds.includes(40) || tIds.includes(35)) ? 1.0 : 0.0,
+        scifi: (tIds.includes(18) || /cyberpunk|space|starship|sci[- ]fi|science[- ]fiction|mecha/.test(fullText)) ? 1.0 : 0.0,
+        fantasy_history: (tIds.includes(17) || tIds.includes(22) || tIds.includes(39)) ? 1.0 : 0.0,
+        open_sandbox: (tIds.includes(38) || tIds.includes(33)) ? 1.0 : 0.0,
+        surreal: (/surreal|dreamlike|psychological|bizarre|weird|abstract|psychedelic/.test(fullText) || (tIds.includes(43) && tIds.includes(20))) ? 1.0 : 0.0,
+        stealth: (tIds.includes(23) || /stealth/.test(fullText)) ? 1.0 : 0.0
+      };
+    }
+
+    function calculateGameScore(game) {
+      let score = 1.0;
+      for (const [trait, weight] of Object.entries(userSoulProfile)) {
+        if (weight === 0) continue;
+
+        // Multi-platform support: when player prefers console (pc < 0), evaluate console availability
+        // so multi-platform games available on console are rewarded rather than penalized for having a PC port.
+        if (trait === 'pc' && weight < 0) {
+          const consoleVal = game.traits.console ?? (1.0 - (game.traits.pc ?? 0.0));
+          const absWeight = Math.abs(weight);
+          const alignment = (consoleVal * 2 - 1) * absWeight;
+          const factor = alignment >= 0 ? (1 + alignment * 0.75) : (1 + alignment * 0.60);
+          score *= Math.max(0.15, factor);
+          continue;
+        }
+
+        const val = game.traits[trait] ?? 0.0;
+        const alignment = (val * 2 - 1) * weight;
+
+        if (weight > 0) {
+          // Strong reward for possessing a requested trait; strong penalty for lacking it
+          const factor = alignment >= 0 ? (1 + alignment * 0.75) : (1 + alignment * 0.60);
+          score *= Math.max(0.15, factor);
+        } else {
+          // Strong penalty if game possesses a rejected trait; modest bonus for lacking it
+          const factor = alignment < 0 ? (1 + alignment * 0.75) : (1 + alignment * 0.18);
+          score *= Math.max(0.10, factor);
+        }
+      }
+      return score;
+    }
+
+    function buildApicalypseQuery(strictMode) {
+      const whereClauses = [
+        "cover != null",
+        "version_parent = null",
+        "parent_game = null",
+        "game_type != (1,2,3,5,12,13,14)",
+        "themes != (42)"
+      ];
+
+      // Platform selection
+      if ((userSoulProfile.pc || 0) >= 0.5) {
+        whereClauses.push("platforms = (6)");
+      } else if ((userSoulProfile.pc || 0) <= -0.5) {
+        whereClauses.push(`platforms = (${CONSOLE_PLATFORM_IDS.join(",")})`);
+      }
+
+      // Perspectives (supports multiple positive or negative exclusions)
+      if (strictMode) {
+        const posPersp = [];
+        const negPersp = [];
+        const perspMap = { first_person: 1, isometric: 3, side_view: 4 };
+        for (const [trait, id] of Object.entries(perspMap)) {
+          const w = userSoulProfile[trait] || 0;
+          if (w >= 0.5) posPersp.push(id);
+          else if (w <= -0.5) negPersp.push(id);
+        }
+        // When user specifically wants a 2D side-scroller, exclude 3D Third-Person (2) hybrids
+        if ((userSoulProfile.side_view || 0) >= 0.5 && !posPersp.includes(1) && !posPersp.includes(3)) {
+          negPersp.push(2);
+        }
+        if (posPersp.length > 0) {
+          whereClauses.push(`player_perspectives = (${posPersp.join(",")})`);
+        }
+        if (negPersp.length > 0) {
+          whereClauses.push(`player_perspectives != (${[...new Set(negPersp)].join(",")})`);
+        }
+      }
+
+      // Social Modes
+      if (strictMode) {
+        if ((userSoulProfile.solitary || 0) >= 0.5) {
+          whereClauses.push("game_modes = (1)");
+        } else if ((userSoulProfile.solitary || 0) <= -0.5) {
+          whereClauses.push("game_modes = (2,3,4,5,6)");
+        }
+      }
+
+      // Curation and Obscurity (calibrated to IGDB rating count distribution)
+      if ((userSoulProfile.obscure || 0) >= 0.5) {
+        whereClauses.push("total_rating >= 68");
+        whereClauses.push(strictMode ? "total_rating_count >= 5 & total_rating_count <= 85" : "total_rating_count >= 3 & total_rating_count <= 220");
+      } else if ((userSoulProfile.obscure || 0) <= -0.5) {
+        whereClauses.push("total_rating >= 75");
+        whereClauses.push(strictMode ? "total_rating_count >= 120" : "total_rating_count >= 50");
+      } else {
+        whereClauses.push("total_rating >= 70");
+        whereClauses.push("total_rating_count >= 8");
+      }
+
+      // Era
+      if (strictMode) {
+        if ((userSoulProfile.retro || 0) >= 0.5) {
+          whereClauses.push("first_release_date != null & first_release_date <= 1136073600");
+        } else if ((userSoulProfile.retro || 0) <= -0.5) {
+          whereClauses.push("first_release_date > 1136073600");
+        }
+      }
+
+      // Thematic and Genre Filters in Strict Mode
+      if (strictMode) {
+        const themeMap = {
+          horror: [19, 21],
+          scifi: [18],
+          fantasy_history: [17, 22, 39],
+          stealth: [23],
+          surreal: [43, 20],
+          lighthearted: [27, 40, 35],
+          open_sandbox: [38, 33]
+        };
+
+        const hasStrongTheme = Object.keys(themeMap).some(k => (userSoulProfile[k] || 0) >= 1.0);
+        const themeThreshold = hasStrongTheme ? 1.0 : 0.5;
+        const desiredThemes = [];
+        const excludedThemes = [];
+
+        for (const [trait, ids] of Object.entries(themeMap)) {
+          const w = userSoulProfile[trait] || 0;
+          if (w >= themeThreshold) desiredThemes.push(...ids);
+          else if (w <= -1.0) excludedThemes.push(...ids);
+        }
+
+        if (desiredThemes.length > 0) {
+          whereClauses.push(`themes = (${[...new Set(desiredThemes)].join(",")})`);
+        }
+        if (excludedThemes.length > 0) {
+          whereClauses.push(`themes != (${[...new Set(excludedThemes)].join(",")})`);
+        }
+
+        const genreMap = {
+          cerebral_strategy: [15, 16, 11, 24, 35],
+          turn_based: [16, 35, 12, 24],
+          twitch_reflex: [5, 4, 25],
+          simulation: [13],
+          puzzle_logic: [9, 2, 26],
+          text_heavy: [34, 2, 12],
+          arcade_pure: [33, 30, 7, 8],
+          rpg_depth: [12]
+        };
+
+        const hasStrongGenre = Object.keys(genreMap).some(k => (userSoulProfile[k] || 0) >= 1.0);
+        const genreThreshold = hasStrongGenre ? 1.0 : 0.5;
+        const desiredGenres = [];
+
+        for (const [trait, ids] of Object.entries(genreMap)) {
+          const w = userSoulProfile[trait] || 0;
+          if (w >= genreThreshold) desiredGenres.push(...ids);
+        }
+
+        if (desiredGenres.length > 0) {
+          whereClauses.push(`genres = (${[...new Set(desiredGenres)].join(",")})`);
+        }
+      }
+
+      return `
+        fields name, summary, storyline, url, game_type, cover.image_id, genres.id, genres.name, themes.id, themes.name, keywords.name, keywords.slug, game_modes.id, game_modes.name, player_perspectives.id, platforms, involved_companies.company.name, involved_companies.developer, first_release_date, total_rating, total_rating_count;
+        where ${whereClauses.join(" & ")};
+        sort total_rating desc;
+        limit 80;
+      `;
+    }
+
+    async function fetchIGDBCandidates(replaceOldIGDB = false) {
+      if (!IGDB_PROXY_URL) return false;
+
+      try {
+        const query = buildApicalypseQuery(true);
+        debugState.lastQuery = query;
+        logDebug("Dispatching strict IGDB APICalypse query...");
+
+        const res = await fetch(IGDB_PROXY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: query
+        });
+
+        if (!res.ok) throw new Error(`IGDB Proxy HTTP ${res.status}`);
+        let data = await res.json();
+
+        if (!Array.isArray(data) || data.length < 3) {
+          logDebug(`Strict query returned ${Array.isArray(data) ? data.length : 0} results. Retrying with relaxed query...`);
+          const relaxed = buildApicalypseQuery(false);
+          debugState.lastQuery = relaxed;
+          const res2 = await fetch(IGDB_PROXY_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: relaxed
+          });
+          if (res2.ok) {
+            const data2 = await res2.json();
+            if (Array.isArray(data2)) data = data2;
+          }
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          debugState.igdbRawCount = data.length;
+          const filteredData = data.filter(item => !isUnofficialOrFanMade(item));
+          debugState.igdbFilteredOut = data.length - filteredData.length;
+
+          const sourceList = filteredData.length > 0 ? filteredData : data;
+          debugState.igdbKeptCount = sourceList.length;
+
+          const igdbGames = sourceList.map(item => {
+            const releaseYear = item.first_release_date 
+              ? new Date(item.first_release_date * 1000).getFullYear() 
+              : "Unknown";
+
+            const genreList = (item.genres || []).map(g => g.name).filter(Boolean);
+            const primaryGenre = genreList.length > 0 ? genreList.slice(0, 2).join(" / ") : "Cult Anomaly";
+
+            const devEntry = (item.involved_companies || []).find(ic => ic.developer && ic.company && ic.company.name) 
+                          || (item.involved_companies || []).find(ic => ic.company && ic.company.name);
+            const studioName = devEntry ? devEntry.company.name : null;
+
+            const coverUrl = item.cover && item.cover.image_id
+              ? `https://images.igdb.com/igdb/image/upload/t_cover_big_2x/${item.cover.image_id}.jpg`
+              : null;
+
+            return {
+              title: item.name,
+              year: releaseYear,
+              genre: primaryGenre,
+              studio: studioName,
+              summary: item.summary || item.storyline || "A revered entry recovered from the digital archives.",
+              coverUrl: coverUrl,
+              url: item.url || null,
+              glyph: "eye",
+              isIGDB: true,
+              traits: mapIGDBTraits(item)
+            };
+          });
+
+          // Replace stale early-stage IGDB candidates when refining with deeper traits
+          const basePool = replaceOldIGDB ? LOCAL_VAULT : [...candidatePool, ...LOCAL_VAULT];
+          const seenTitles = new Set();
+          const merged = [];
+          for (const g of [...igdbGames, ...basePool]) {
+            const key = (g.title || "").toLowerCase();
+            if (!seenTitles.has(key)) {
+              seenTitles.add(key);
+              merged.push(g);
+            }
+          }
+
+          candidatePool = merged;
+          lastSyncedCount = askedIds.size;
+          const igdbTotal = candidatePool.filter(g => g.isIGDB).length;
+          debugState.source = `IGDB LIVE (${igdbTotal}) + LOCAL (${LOCAL_VAULT.length})`;
+          logDebug(`IGDB sync complete: ${igdbGames.length} official games loaded (${debugState.igdbFilteredOut} unofficial/fanmade/bundles scrubbed).`);
+          return true;
+        }
+      } catch (err) {
+        logDebug(`IGDB fetch error: ${err.message}. Falling back to Local Vault.`);
+        console.warn("IGDB connection unavailable, using local vault:", err);
+      }
+      return false;
+    }
+
+    /* ==========================================================================
+       9. AKINATOR-STYLE CONFIDENCE ENGINE
+       ========================================================================== */
+    const MIN_QUESTIONS = 5;
+    const CONFIDENCE_DOMINANCE_RATIO = 2.2;
+
+    let askedIds = new Set();
+    let currentInquiry = null;
+    let currentRevealRank = 0;
+    let sortedCandidatesCache = [];
+    let isProcessingAnswer = false;
+    let igdbDispatched = false;
+    let lastSyncedCount = 0;
+
+    const orbLink = document.getElementById('orbLink');
+    const orbFogCanvas = document.getElementById('orbFogCanvas');
+    const orbRevelation = document.getElementById('orbRevelation');
+
+    const inquiryCard = document.getElementById('inquiryCard');
+    const inquiryPrompt = document.getElementById('inquiryPrompt');
+    const responseButtons = Array.from(document.querySelectorAll('#responseGrid .btn-brutal'));
+
+    const verdictCard = document.getElementById('verdictCard');
+    const verdictKicker = document.getElementById('verdictKicker');
+    const verdictTitleLink = document.getElementById('verdictTitleLink');
+    const verdictMeta = document.getElementById('verdictMeta');
+    const verdictSummary = document.getElementById('verdictSummary');
+    const verdictActionBtn = document.getElementById('verdictActionBtn');
+    const resetScryBtn = document.getElementById('resetScryBtn');
+
+    function setButtonsDisabled(disabled) {
+      responseButtons.forEach(btn => {
+        btn.disabled = disabled;
+      });
+    }
+
+    function startScryingSession() {
+      askedIds.clear();
+      userSoulProfile = {};
+      currentRevealRank = 0;
+      sortedCandidatesCache = [];
+      isProcessingAnswer = false;
+      igdbDispatched = false;
+      lastSyncedCount = 0;
+      fogTint = [255, 255, 255];
+
+      candidatePool = [...LOCAL_VAULT];
+      debugState.source = `LOCAL VAULT (${LOCAL_VAULT.length})`;
+      debugState.lastQuery = "Not dispatched yet (triggers after 3 answers)";
+      debugState.igdbRawCount = 0;
+      debugState.igdbFilteredOut = 0;
+      debugState.igdbKeptCount = 0;
+
+      orbLink.removeAttribute('href');
+      orbLink.removeAttribute('title');
+      orbLink.classList.remove('is-revealed');
+      orbFogCanvas.style.opacity = '1';
+      orbRevelation.classList.remove('visible');
+
+      verdictCard.classList.remove('active');
+      inquiryCard.style.display = 'flex';
+      setButtonsDisabled(false);
+
+      logDebug("New scrying session started.");
+      presentNextInquiry();
+    }
+
+    function getScoredCandidates() {
+      return candidatePool.map(game => ({
+        game,
+        score: calculateGameScore(game)
+      })).sort((a, b) => b.score - a.score);
+    }
+
+    function isScryerConfident(scoredList) {
+      if (askedIds.size < MIN_QUESTIONS) return false;
+      if (scoredList.length < 2) return true;
+
+      const top = scoredList[0];
+      const runnerUp = scoredList[1];
+
+      const dominance = top.score / (runnerUp.score || 0.001);
+      if (dominance >= CONFIDENCE_DOMINANCE_RATIO) return true;
+
+      if (askedIds.size >= INQUIRIES.length) return true;
+
+      return false;
+    }
+
+    function selectBestNextInquiry() {
+      const remaining = INQUIRIES.filter(q => !askedIds.has(q.id));
+      if (remaining.length === 0) return null;
+
+      const nextFoundation = remaining.find(q => q.isFoundation);
+      if (nextFoundation) return nextFoundation;
+
+      const scored = getScoredCandidates();
+      const topPool = scored.slice(0, Math.max(4, Math.ceil(scored.length * 0.4)));
+
+      let bestQuestion = remaining[0];
+      let bestEntropyDist = Infinity;
+
+      for (const q of remaining) {
+        let posScore = 0;
+        let totalScore = 0;
+        for (const item of topPool) {
+          const val = item.game.traits[q.trait] ?? 0.0;
+          posScore += val * item.score;
+          totalScore += item.score;
+        }
+        const ratio = totalScore > 0 ? posScore / totalScore : 0.5;
+        const distFromHalf = Math.abs(0.5 - ratio);
+
+        if (distFromHalf < bestEntropyDist) {
+          bestEntropyDist = distFromHalf;
+          bestQuestion = q;
+        }
+      }
+
+      return bestQuestion;
+    }
+
+    async function presentNextInquiry() {
+      let scored = getScoredCandidates();
+
+      if (isScryerConfident(scored)) {
+        if (lastSyncedCount !== askedIds.size) {
+          await fetchIGDBCandidates(true);
+          scored = getScoredCandidates();
+        }
+        if (isScryerConfident(scored) || askedIds.size >= INQUIRIES.length) {
+          await finalizeAndReveal(scored);
+          return;
+        }
+      }
+
+      currentInquiry = selectBestNextInquiry();
+      if (!currentInquiry) {
+        await finalizeAndReveal(scored);
+        return;
+      }
+
+      inquiryPrompt.textContent = currentInquiry.prompt;
+      renderDebugPanel();
+    }
+
+    async function handleAnswer(weight) {
+      if (!currentInquiry || isProcessingAnswer) return;
+      isProcessingAnswer = true;
+      setButtonsDisabled(true);
+
+      scryingOrb.classList.add('is-communing');
+      fogSpeedMultiplier = 4.5;
+      fogTint = weight > 0 ? [255, 255, 160] : (weight < 0 ? [255, 170, 170] : [255, 255, 255]);
+
+      userSoulProfile[currentInquiry.trait] = weight;
+      askedIds.add(currentInquiry.id);
+      logDebug(`Answered '${currentInquiry.trait}' with weight ${weight}`);
+
+      if (!igdbDispatched && askedIds.size >= 3) {
+        igdbDispatched = true;
+        await fetchIGDBCandidates(false);
+      } else if (askedIds.size === 7 || askedIds.size === 11) {
+        await fetchIGDBCandidates(true);
+      }
+
+      setTimeout(async () => {
+        scryingOrb.classList.remove('is-communing');
+        fogSpeedMultiplier = 1.0;
+        fogTint = [255, 255, 255];
+
+        await presentNextInquiry();
+        isProcessingAnswer = false;
+        setButtonsDisabled(false);
+      }, 230);
+    }
+
+    async function finalizeAndReveal(precalculatedScored) {
+      inquiryPrompt.textContent = "The fog is parting...";
+      scryingOrb.classList.add('is-communing');
+      fogSpeedMultiplier = 5.5;
+      fogTint = [255, 255, 255];
+
+      // Perform a final targeted IGDB query with the full Soul Profile if not already synced on this step
+      if (lastSyncedCount !== askedIds.size) {
+        await fetchIGDBCandidates(true);
+      }
+
+      sortedCandidatesCache = getScoredCandidates();
+      currentRevealRank = 0;
+      const winner = sortedCandidatesCache[0].game;
+      logDebug(`Revealing #1 match: ${winner.title} (${winner.isIGDB ? 'IGDB' : 'LOCAL'})`);
+      displayVerdictForCandidate(winner);
+      renderDebugPanel();
+    }
+
+    function displayVerdictForCandidate(winner) {
+      const targetUrl = getGameStoreUrl(winner);
+
+      inquiryCard.style.display = 'none';
+      verdictKicker.textContent = "THE FOG WANTS YOU TO PLAY...";
+      verdictTitleLink.textContent = winner.title;
+      verdictTitleLink.href = targetUrl;
+
+      const metaParts = [winner.year, winner.genre];
+      if (winner.studio) metaParts.push(winner.studio);
+      verdictMeta.textContent = metaParts.join(" • ");
+
+      verdictSummary.textContent = formatConciseSummary(winner.summary);
+      verdictCard.classList.add('active');
+
+      orbLink.href = targetUrl;
+      orbLink.classList.add('is-revealed');
+      orbLink.title = `Inspect ${winner.title}`;
+
+      const nextSrc = winner.coverUrl || createFallbackCoverURL(winner);
+      const loader = new Image();
+      loader.crossOrigin = "anonymous";
+
+      const revealImage = (imgObj) => {
+        renderSphericalCoverArt(imgObj);
+        scryingOrb.classList.remove('is-communing');
+        fogSpeedMultiplier = 1.0;
+        fogTint = [255, 255, 255];
+        
+        orbFogCanvas.style.opacity = '0.22';
+        orbRevelation.classList.add('visible');
+      };
+
+      loader.onload = () => revealImage(loader);
+      loader.onerror = () => {
+        logDebug(`Cover image failed/CORS blocked for ${winner.title}, rendering fallback glyph.`);
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => revealImage(fallbackImg);
+        fallbackImg.src = createFallbackCoverURL(winner);
+      };
+      loader.src = nextSrc;
+    }
+
+    function cycleAnotherVision() {
+      if (!sortedCandidatesCache || sortedCandidatesCache.length === 0) {
+        startScryingSession();
+        return;
+      }
+
+      scryingOrb.classList.add('is-communing');
+      fogSpeedMultiplier = 4.5;
+      fogTint = [255, 255, 255];
+      orbRevelation.classList.remove('visible');
+      orbFogCanvas.style.opacity = '1';
+
+      setTimeout(() => {
+        currentRevealRank = (currentRevealRank + 1) % sortedCandidatesCache.length;
+        const nextWinner = sortedCandidatesCache[currentRevealRank].game;
+        logDebug(`Cycling vision to rank #${currentRevealRank + 1}: ${nextWinner.title}`);
+        displayVerdictForCandidate(nextWinner);
+        renderDebugPanel();
+      }, 420);
+    }
+
+    responseButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const w = parseFloat(btn.getAttribute('data-weight'));
+        handleAnswer(w);
+      });
+    });
+
+    verdictActionBtn.addEventListener('click', startScryingSession);
+    resetScryBtn.addEventListener('click', cycleAnotherVision);
+
+    // Initialize session immediately
+    startScryingSession();
+  </script>
+</body>
+</html>
