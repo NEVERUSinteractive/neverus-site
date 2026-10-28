@@ -250,28 +250,30 @@
     }
 
     .scrying-orb-link.is-revealed:hover .scrying-orb,
-    .scrying-orb-link.is-revealed:focus-visible .scrying-orb {
-      box-shadow: 
-        0 14px 34px rgba(0, 0, 0, 0.95),
-        0 0 32px var(--hazard-accent),
-        inset 0 0 32px #000000 !important;
-      animation: ps1-btn-jitter 0.16s steps(2) infinite;
-    }
+.scrying-orb-link.is-revealed:focus-visible .scrying-orb {
+  box-shadow: 
+    0 14px 34px #000000,
+    0 0 28px #ffd066,
+    inset 0 0 32px #000000 !important;
+  animation: ps1-btn-jitter 0.16s steps(2) infinite;
+}
 
     .scrying-orb {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: none;
-      outline: none;
-      background: radial-gradient(circle at 50% 50%, #050505 0%, #000000 100%);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 
-        0 14px 28px rgba(0, 0, 0, 0.9),
-        inset 0 0 32px #000000;
-      transition: box-shadow 0.25s ease;
-    }
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  /* Shift inner gradient core toward the light source (top-left) */
+  background: radial-gradient(circle at 35% 35%, #050505 0%, #000000 100%);
+  position: relative;
+  overflow: hidden;
+  /* Cast shadow slightly offset down and right */
+  box-shadow: 
+    6px 16px 30px rgba(0, 0, 0, 0.92),
+    inset 0 0 32px #000000;
+  transition: box-shadow 0.25s ease;
+}
 
     .scrying-orb.is-communing {
       animation: ps1-btn-jitter 0.16s steps(2) infinite;
@@ -735,18 +737,20 @@
   </main>
 
   <footer>
-    <div class="footer-section">
+      <div class="footer-section">
       <div class="footer-title">About</div>
-      <div>NEVERUS Scrying Orb divines video game suggestions from your current appetites.</div>
+      <div>NEVERUS Scrying Orb divines video game suggestions from your current appetites and tolerances.</div>
     </div>
-
-    <div class="footer-section">
+	
+   <div class="footer-section">
       <div class="footer-title">Attribution</div>
       <div class="footer-attribution">
         Background scene assets: <a href="https://skfb.ly/ptnGI" target="_blank" rel="noopener noreferrer">"Captain's Desk"</a> by Félicien Lebegge, 
-        <a href="https://skfb.ly/oSGxH" target="_blank" rel="noopener noreferrer">"Candles"</a> by Busy Bat, and 
-        <a href="https://skfb.ly/6WNEK" target="_blank" rel="noopener noreferrer">"Branches with Leaves"</a> by hui.an.michelle.li, 
+        <a href="https://skfb.ly/oSGxH" target="_blank" rel="noopener noreferrer">"Candles"</a> by Busy Bat, 
+        <a href="https://skfb.ly/6WNEK" target="_blank" rel="noopener noreferrer">"Branches with Leaves"</a> by hui.an.michelle.li, and 
+        <a href="https://skfb.ly/oULHZ" target="_blank" rel="noopener noreferrer">"Alchemist's Tome"</a> by Jacobic, 
         licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
+		Powered by <a href="https://www.igdb.com/" target="_blank" rel="noopener noreferrer">IGDB</a>.
       </div>
     </div>
   </footer>
@@ -962,7 +966,7 @@
       // Mood & Setting
       {
         id: "mood_horror",
-        prompt: "Do you wish to know fear?",
+        prompt: "Are you willing to face your fears?",
         trait: "horror"
       },
       {
@@ -987,7 +991,7 @@
       },
       {
         id: "tone_surreal",
-        prompt: "Do you want something dreamlike, surreal, or utterly bizarre?",
+        prompt: "Do you appreciate the dreamlike, surreal, and utterly bizarre?",
         trait: "surreal"
       },
       {
