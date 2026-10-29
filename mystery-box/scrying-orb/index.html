@@ -935,27 +935,29 @@
       { id: "platform_pc", prompt: "Do you prefer to play on PC rather than a console?", isFoundation: true, trait: "pc" },
       { id: "curation_obscure", prompt: "Do you seek an obscure gem rather than a well-known mainstream title?", isFoundation: true, trait: "obscure" },
       { id: "social_mode", prompt: "Do you wish to play alone, joined by no others?", isFoundation: true, trait: "solitary" },
-      { id: "perspective_first_person", prompt: "Would you enjoy playing in a first person point of view?", trait: "first_person" },
-      { id: "perspective_isometric", prompt: "Do you prefer an elevated point of view?", trait: "isometric" },
-      { id: "perspective_side_view", prompt: "Would you enjoy playing a 2D side scroller?", trait: "side_view" },
-      { id: "mechanic_strategy_planning", prompt: "Are you willing to think several steps ahead and manage resources?", trait: "cerebral_strategy" },
-      { id: "mechanic_reflex_combat", prompt: "Would you enjoy fast-paced motion that tests your motor skills?", trait: "twitch_reflex" },
-      { id: "mechanic_turn_based", prompt: "Would you enjoy a turn-based experience?", trait: "turn_based" },
-      { id: "mechanic_simulation", prompt: "Would you enjoy managing systems, vehicles, or simulated realities?", trait: "simulation" },
-      { id: "mechanic_puzzle_investigation", prompt: "Would you enjoy solving puzzles?", trait: "puzzle_logic" },
+      { id: "perspective_first_person", prompt: "Do you wish to play through the eyes of your character?", pillarGroup: "form", trait: "first_person" },
+      { id: "perspective_isometric", prompt: "Do you seek an elevated perspective?", pillarGroup: "form", trait: "isometric" },
+      { id: "perspective_side_view", prompt: "Would you enjoy playing a 2D side scroller?", pillarGroup: "form", trait: "side_view" },
+      { id: "mechanic_strategy_planning", prompt: "Are you willing to think several steps ahead and manage resources?", pillarGroup: "mechanics", trait: "cerebral_strategy" },
+      { id: "mechanic_reflex_combat", prompt: "Would you enjoy fast-paced motion that tests your motor skills?", pillarGroup: "mechanics", trait: "twitch_reflex" },
+      { id: "mechanic_turn_based", prompt: "Would you enjoy a turn-based experience?", pillarGroup: "mechanics", trait: "turn_based" },
+      { id: "mechanic_simulation", prompt: "Would you enjoy managing complex systems, colonies, or simulated realities?", pillarGroup: "mechanics", trait: "simulation" },
+      { id: "mechanic_kinetic_sport", prompt: "Do you seek physical competition and athletic displays?", pillarGroup: "mechanics", trait: "kinetic_competition" },
+      { id: "mechanic_puzzle_investigation", prompt: "Would you enjoy solving puzzles?", pillarGroup: "mechanics", trait: "puzzle_logic" },
+      { id: "structure_iterative", prompt: "Do you thrive on repetition and iteration?", pillarGroup: "mechanics", trait: "iterative_runs" },
       { id: "format_visual_novel", prompt: "Are you prepared to read through a deep narrative?", trait: "text_heavy" },
-      { id: "format_arcade_pure", prompt: "Are you driven by scoring points and clearing stages?", trait: "arcade_pure" },
-      { id: "systems_deep_rpg", prompt: "Are you interested in managing character stats, inventory slots, and branching progression?", trait: "rpg_depth" },
-      { id: "mood_horror", prompt: "Are you willing to face your fears?", trait: "horror" },
+      { id: "format_arcade_pure", prompt: "Are you driven by scoring points and clearing obstacles?", trait: "arcade_pure" },
+      { id: "systems_deep_rpg", prompt: "Are you interested in managing character stats, inventory slots, and branching progression?", pillarGroup: "mechanics", trait: "rpg_depth" },
+      { id: "mood_horror", prompt: "Are you willing to face your fears?", pillarGroup: "world", trait: "horror" },
       { id: "mood_comedy_whimsical", prompt: "Do you prefer playful humor over heavy darkness?", trait: "lighthearted" },
-      { id: "setting_scifi", prompt: "Do you wish to experience a sci-fi setting?", trait: "scifi" },
-      { id: "setting_fantasy_historical", prompt: "Do you wish to experience the distant or mythic past?", trait: "fantasy_history" },
+      { id: "setting_scifi", prompt: "Do you wish to experience futuristic worlds and alien technologies?", pillarGroup: "world", trait: "scifi" },
+      { id: "setting_fantasy_historical", prompt: "Do you wish to experience the distant or mythic past?", pillarGroup: "world", trait: "fantasy_history" },
       { id: "setting_warfare", prompt: "Do you wish to wage war?", trait: "warfare" },
-      { id: "structure_open_world", prompt: "Do you wish to explore an open world?", trait: "open_sandbox" },
-      { id: "tone_surreal", prompt: "Do you appreciate the dreamlike, surreal, and utterly bizarre?", trait: "surreal" },
+      { id: "structure_open_world", prompt: "Do you desire vast worlds and exploration?", pillarGroup: "world", trait: "open_sandbox" },
       { id: "tone_thriller", prompt: "Do you wish to solve a mystery, following threads from beginning to end?", trait: "thriller" },
       { id: "stealth_tactical", prompt: "Do you wish to hide?", trait: "stealth" },
-      { id: "era_retro", prompt: "Would you appreciate unearthing an older experience?", trait: "retro" }
+      { id: "era_retro", prompt: "Would you appreciate unearthing an older experience?", trait: "retro" },
+      { id: "tone_surreal", prompt: "Do you appreciate the dreamlike, surreal, and utterly bizarre?", trait: "surreal" }
     ];
 
     /* ==========================================================================
@@ -1353,6 +1355,13 @@
       const hasPC = platIds.includes(6);
       const hasConsole = platIds.some(id => CONSOLE_PLATFORM_IDS.includes(id));
       const isImmersiveSim = /immersive[- ]?sim/.test(fullText);
+      const isIterative = /roguelike|roguelite|rogue[- ]like|rogue[- ]lite|permadeath|procedural[- ]generation|run[- ]based|deck[- ]?builder|deck[- ]?building|die[- ]and[- ]retry|bullet[- ]heaven/.test(fullText);
+      const isTurnBased = (
+        gIds.includes(16) || 
+        gIds.includes(35) || 
+        /turn[- ]based|tactical rpg|grid[- ]based|active time|atb|jrpg|party[- ]based|command[- ]based|menu[- ]based|press[- ]turn|deck[- ]?builder/.test(fullText)
+      );
+      const isActionKeyword = /hack[- ]and[- ]slash|beat[- ]'em[- ]up|character action|spectacle fighter|bullet[- ]hell|twin[- ]stick|fast[- ]paced|soulslike|metroidvania/.test(fullText);
 
       return {
         pc: hasPC ? 1.0 : 0.0,
@@ -1365,20 +1374,25 @@
         side_view: pIds.includes(4)
           ? ((!pIds.includes(2) || /2d|side[- ]scroll|metroidvania/.test(fullText)) ? 1.0 : 0.2)
           : 0.0,
-        cerebral_strategy: (gIds.includes(15) || gIds.includes(11) || gIds.includes(24) || tIds.includes(41)) ? 1.0 : ((gIds.includes(16) || gIds.includes(35) || isImmersiveSim) ? 0.6 : 0.0),
-        twitch_reflex: (gIds.includes(5) || gIds.includes(4) || gIds.includes(25) || (tIds.includes(1) && (gIds.includes(33) || gIds.includes(8)))) ? 1.0 : 0.0,
-        turn_based: (gIds.includes(16) || gIds.includes(35) || /turn[- ]based|tactical rpg|grid[- ]based|active time|atb|jrpg|party[- ]based|command[- ]based|menu[- ]based|press[- ]turn/.test(fullText)) ? 1.0 : 0.0,
-        simulation: (gIds.includes(13) || tIds.includes(28) || /\b(simulation|simulator|management|tycoon)\b/.test(fullText)) ? 1.0 : 0.0,
+        cerebral_strategy: (gIds.includes(15) || gIds.includes(11) || gIds.includes(24) || gIds.includes(35) || tIds.includes(41)) ? 1.0 : ((gIds.includes(16) || isImmersiveSim || tIds.includes(21)) ? 0.65 : 0.0),
+        twitch_reflex: (
+          gIds.includes(5) || gIds.includes(4) || gIds.includes(25) || isActionKeyword ||
+          (tIds.includes(1) && !isTurnBased && !gIds.includes(34) && (gIds.includes(33) || gIds.includes(8) || gIds.includes(31) || gIds.includes(12)))
+        ) ? 1.0 : ((tIds.includes(1) && !isTurnBased && !gIds.includes(34)) || gIds.includes(10) || gIds.includes(14) ? 0.75 : 0.0),
+        turn_based: isTurnBased ? 1.0 : 0.0,
+        simulation: (gIds.includes(13) || tIds.includes(28) || tIds.includes(21) || /\b(simulation|simulator|management|tycoon|colony[- ]?sim|city[- ]?builder|automation|crafting)\b/.test(fullText)) ? 1.0 : 0.0,
+        kinetic_competition: (gIds.includes(10) || gIds.includes(14) || /\b(racing|motorsport|vehicular[- ]combat|skateboarding|snowboarding|sports|arcade[- ]racer|flight[- ]sim)\b/.test(fullText)) ? 1.0 : 0.0,
         puzzle_logic: (gIds.includes(9) || gIds.includes(2) || gIds.includes(26)) ? 1.0 : 0.0,
-        text_heavy: (gIds.includes(34) || pIds.includes(5) || /visual[- ]novel|text[- ]heavy|interactive[- ]fiction|dialogue[- ]driven|text[- ]adventure/.test(fullText)) ? 1.0 : ((gIds.includes(12) || gIds.includes(2)) ? 0.5 : 0.0),
-        arcade_pure: (gIds.includes(33) || gIds.includes(30) || gIds.includes(7) || gIds.includes(8)) ? 1.0 : 0.0,
-        rpg_depth: (gIds.includes(12) || isImmersiveSim) ? 1.0 : 0.0,
-        horror: (tIds.includes(19) || tIds.includes(21) || /survival[- ]horror|psychological[- ]horror/.test(fullText)) ? 1.0 : 0.0,
-        lighthearted: (tIds.includes(27) || tIds.includes(40) || tIds.includes(35)) ? 1.0 : 0.0,
+        iterative_runs: isIterative ? 1.0 : 0.0,
+        text_heavy: (gIds.includes(34) || pIds.includes(5) || /visual[- ]novel|text[- ]heavy|interactive[- ]fiction|dialogue[- ]driven|text[- ]adventure/.test(fullText)) ? 1.0 : ((gIds.includes(12) || gIds.includes(2)) ? 0.55 : 0.0),
+        arcade_pure: (gIds.includes(33) || gIds.includes(30) || gIds.includes(7) || gIds.includes(8)) ? 1.0 : ((gIds.includes(10) || gIds.includes(14) || gIds.includes(25) || isIterative) ? 0.6 : 0.0),
+        rpg_depth: (gIds.includes(12) || isImmersiveSim) ? 1.0 : ((gIds.includes(31) && /skill[- ]tree|level[- ]up|character progression|metroidvania|soulslike|action[- ]adventure/.test(fullText)) ? 0.65 : 0.0),
+        horror: (tIds.includes(19) || /survival[- ]horror|psychological[- ]horror|cosmic[- ]horror/.test(fullText)) ? 1.0 : 0.0,
+        lighthearted: (tIds.includes(27) || tIds.includes(40) || tIds.includes(35) || /\b(cozy|wholesome|relaxing|feel[- ]good|life[- ]?sim)\b/.test(fullText)) ? 1.0 : 0.0,
         scifi: (tIds.includes(18) || /cyberpunk|space|starship|sci[- ]fi|science[- ]fiction|mecha/.test(fullText)) ? 1.0 : 0.0,
         fantasy_history: (tIds.includes(17) || tIds.includes(22)) ? 1.0 : 0.0,
         warfare: (tIds.includes(39) || /\b(warfare|military|battlefield|wargame|war)\b/.test(fullText)) ? 1.0 : 0.0,
-        open_sandbox: (tIds.includes(38) || tIds.includes(33)) ? 1.0 : 0.0,
+        open_sandbox: (tIds.includes(38) || tIds.includes(33) || tIds.includes(21)) ? 1.0 : 0.0,
         surreal: (/surreal|dreamlike|psychological|bizarre|weird|abstract|psychedelic/.test(fullText)) ? 1.0 : 0.0,
         thriller: (tIds.includes(43) || tIds.includes(20) || isImmersiveSim || /mystery|detective|investigation|thriller|conspiracy/.test(fullText)) ? 1.0 : 0.0,
         stealth: (tIds.includes(23) || /stealth/.test(fullText)) ? 1.0 : 0.0
@@ -1392,15 +1406,18 @@
 
         if (trait === 'pc' && weight < 0) {
           const consoleVal = game.traits.console ?? (1.0 - (game.traits.pc ?? 0.0));
+          const mappedConsole = consoleVal > 0 ? (0.35 + 0.65 * consoleVal) : -1.0;
           const absWeight = Math.abs(weight);
-          const alignment = (consoleVal * 2 - 1) * absWeight;
+          const alignment = mappedConsole * absWeight;
           const factor = alignment >= 0 ? (1 + alignment * 0.75) : (1 + alignment * 0.60);
           score *= Math.max(0.15, factor);
           continue;
         }
 
         const val = game.traits[trait] ?? 0.0;
-        const alignment = (val * 2 - 1) * weight;
+        // Maps val=0.0 to -1.0, val=0.5 to +0.675, and val=1.0 to +1.0 to eliminate the 0.5 dead zone
+        const mappedVal = val > 0 ? (0.35 + 0.65 * val) : -1.0;
+        const alignment = mappedVal * weight;
 
         if (weight > 0) {
           const factor = alignment >= 0 ? (1 + alignment * 0.75) : (1 + alignment * 0.60);
@@ -1437,10 +1454,11 @@
         const perspMap = { first_person: 1, isometric: 3, side_view: 4 };
         for (const [trait, id] of Object.entries(perspMap)) {
           const w = userSoulProfile[trait] || 0;
-          if (w >= (isStrict ? 0.5 : 1.0)) posPersp.push(id);
+          // Only lock positive perspective at 1.0 ("CERTAINLY SO") so 0.5 answers do not ban Third-Person (2)
+          if (w >= 1.0) posPersp.push(id);
           else if (w <= -0.5) negPersp.push(id);
         }
-        if (isStrict && (userSoulProfile.side_view || 0) >= 0.5 && !posPersp.includes(1) && !posPersp.includes(3)) {
+        if (isStrict && (userSoulProfile.side_view || 0) >= 1.0 && !posPersp.includes(1) && !posPersp.includes(3)) {
           negPersp.push(2);
         }
         if (posPersp.length > 0) {
@@ -1479,91 +1497,134 @@
       }
 
       const themeMap = {
-        horror: [19, 21],
+        horror: [19],
         scifi: [18],
         fantasy_history: [17, 22],
         warfare: [39],
         stealth: [23],
         thriller: [43, 20],
         lighthearted: [27, 40, 35],
-        open_sandbox: [38, 33]
+        open_sandbox: [38, 33, 21]
       };
 
-      const hasStrongTheme = Object.keys(themeMap).some(k => (userSoulProfile[k] || 0) >= 1.0);
-      const themeThreshold = hasStrongTheme ? 1.0 : 0.5;
-      const desiredThemeGroups = [];
+      const strongThemeGroups = [];
+      const allDesiredThemeIds = [];
       const excludedThemeIds = [];
 
       for (const [trait, ids] of Object.entries(themeMap)) {
         const w = userSoulProfile[trait] || 0;
-        if (w >= themeThreshold) {
-          desiredThemeGroups.push(ids);
+        if (w >= 1.0) {
+          strongThemeGroups.push(ids);
+          allDesiredThemeIds.push(...ids);
+        } else if (w >= 0.5) {
+          allDesiredThemeIds.push(...ids);
         } else if (w <= -1.0) {
-          for (let i = 0; i < ids.length; i++) excludedThemeIds.push(ids[i]);
+          excludedThemeIds.push(...ids);
         }
       }
 
-      const uniqueExcludedThemes = [...new Set(excludedThemeIds)];
-      if (uniqueExcludedThemes.length > 0) {
-        whereClauses.push(`themes != (${uniqueExcludedThemes.join(",")})`);
+      const uniqueDesiredThemes = [...new Set(allDesiredThemeIds)];
+      const safeExcludedThemes = [...new Set(excludedThemeIds)].filter(id => !uniqueDesiredThemes.includes(id));
+      if (safeExcludedThemes.length > 0) {
+        whereClauses.push(`themes != (${safeExcludedThemes.join(",")})`);
       }
 
-      const genreMap = {
+      // Broad genre mapping for positive inclusion
+      const genreIncludeMap = {
         cerebral_strategy: [15, 16, 11, 24, 35],
         turn_based: [16, 35, 12, 24],
-        twitch_reflex: [5, 4, 25],
+        twitch_reflex: [5, 4, 25, 8, 33],
         simulation: [13],
+        kinetic_competition: [10, 14],
         puzzle_logic: [9, 2, 26],
         text_heavy: [34, 2, 12],
         arcade_pure: [33, 30, 7, 8],
+        rpg_depth: [12, 31]
+      };
+
+      // Narrow genre mapping for -1.0 exclusion so rejecting one trait never bans hybrid RPGs/Adventures
+      const genreExcludeMap = {
+        cerebral_strategy: [15, 11, 35],
+        turn_based: [16, 35],
+        twitch_reflex: [5, 4, 25],
+        simulation: [13],
+        kinetic_competition: [10, 14],
+        puzzle_logic: [9, 26],
+        text_heavy: [34],
+        arcade_pure: [30, 7],
         rpg_depth: [12]
       };
 
-      const hasStrongGenre = Object.keys(genreMap).some(k => (userSoulProfile[k] || 0) >= 1.0);
-      const genreThreshold = hasStrongGenre ? 1.0 : 0.5;
-      const desiredGenreIds = [];
+      const strongGenreClauses = [];
+      const allDesiredGenreIds = [];
       const excludedGenreIds = [];
 
-      for (const [trait, ids] of Object.entries(genreMap)) {
+      for (const [trait, ids] of Object.entries(genreIncludeMap)) {
         const w = userSoulProfile[trait] || 0;
-        if (w >= genreThreshold) {
-          for (let i = 0; i < ids.length; i++) {
-            if (!desiredGenreIds.includes(ids[i])) desiredGenreIds.push(ids[i]);
+        if (w >= 1.0) {
+          if (trait === 'twitch_reflex') {
+            strongGenreClauses.push(`(genres = (${ids.join(",")}) | themes = (1))`);
+          } else if (trait === 'simulation') {
+            strongGenreClauses.push(`(genres = (${ids.join(",")}) | themes = (28,21))`);
+          } else {
+            strongGenreClauses.push(`genres = (${ids.join(",")})`);
           }
-        } else if (w <= -1.0) {
-          for (let i = 0; i < ids.length; i++) excludedGenreIds.push(ids[i]);
+          allDesiredGenreIds.push(...ids);
+        } else if (w >= 0.5) {
+          allDesiredGenreIds.push(...ids);
+        } else if (w <= -1.0 && genreExcludeMap[trait]) {
+          excludedGenreIds.push(...genreExcludeMap[trait]);
         }
       }
 
-      const safeExcludedGenres = excludedGenreIds.filter((id, idx, arr) => !desiredGenreIds.includes(id) && arr.indexOf(id) === idx);
+      const uniqueDesiredGenres = [...new Set(allDesiredGenreIds)];
+      const safeExcludedGenres = [...new Set(excludedGenreIds)].filter(id => !uniqueDesiredGenres.includes(id));
       if (safeExcludedGenres.length > 0) {
         whereClauses.push(`genres != (${safeExcludedGenres.join(",")})`);
       }
 
+      const twitchLiked = (userSoulProfile.twitch_reflex || 0) >= 0.5;
+      const simLiked = (userSoulProfile.simulation || 0) >= 0.5;
+
       if (isStrict) {
-        if (desiredThemeGroups.length > 0) {
-          if (hasStrongTheme && desiredThemeGroups.length <= 2) {
-            for (let i = 0; i < desiredThemeGroups.length; i++) {
-              whereClauses.push(`themes = (${desiredThemeGroups[i].join(",")})`);
-            }
+        if (strongThemeGroups.length > 0 && strongThemeGroups.length <= 2) {
+          for (let i = 0; i < strongThemeGroups.length; i++) {
+            whereClauses.push(`themes = (${strongThemeGroups[i].join(",")})`);
+          }
+        } else if (uniqueDesiredThemes.length > 0) {
+          whereClauses.push(`themes = (${uniqueDesiredThemes.join(",")})`);
+        }
+
+        if (strongGenreClauses.length > 0 && strongGenreClauses.length <= 2) {
+          for (let i = 0; i < strongGenreClauses.length; i++) {
+            whereClauses.push(strongGenreClauses[i]);
+          }
+        } else if (uniqueDesiredGenres.length > 0) {
+          const extraThemes = [];
+          if (twitchLiked) extraThemes.push(1);
+          if (simLiked) extraThemes.push(28, 21);
+          if (extraThemes.length > 0) {
+            whereClauses.push(`(genres = (${uniqueDesiredGenres.join(",")}) | themes = (${[...new Set(extraThemes)].join(",")}))`);
           } else {
-            const pooledThemes = [...new Set(desiredThemeGroups.flat())];
-            if (pooledThemes.length > 0) {
-              whereClauses.push(`themes = (${pooledThemes.join(",")})`);
-            }
+            whereClauses.push(`genres = (${uniqueDesiredGenres.join(",")})`);
           }
         }
-        if (desiredGenreIds.length > 0) {
-          whereClauses.push(`genres = (${desiredGenreIds.join(",")})`);
-        }
       } else if (isModerate) {
-        const pooledThemes = [...new Set(desiredThemeGroups.flat())];
-        if (pooledThemes.length > 0 && desiredGenreIds.length > 0) {
-          whereClauses.push(`(themes = (${pooledThemes.join(",")}) | genres = (${desiredGenreIds.join(",")}))`);
-        } else if (pooledThemes.length > 0) {
-          whereClauses.push(`themes = (${pooledThemes.join(",")})`);
-        } else if (desiredGenreIds.length > 0) {
-          whereClauses.push(`genres = (${desiredGenreIds.join(",")})`);
+        const modParts = [];
+        if (uniqueDesiredThemes.length > 0) {
+          modParts.push(`themes = (${uniqueDesiredThemes.join(",")})`);
+        }
+        if (uniqueDesiredGenres.length > 0) {
+          modParts.push(`genres = (${uniqueDesiredGenres.join(",")})`);
+        }
+        if (twitchLiked && !uniqueDesiredThemes.includes(1)) {
+          modParts.push(`themes = (1)`);
+        }
+        if (simLiked && !uniqueDesiredThemes.includes(28)) {
+          modParts.push(`themes = (28,21)`);
+        }
+        if (modParts.length > 0) {
+          whereClauses.push(`(${modParts.join(" | ")})`);
         }
       }
 
@@ -1704,7 +1765,7 @@
     /* ==========================================================================
        9. AKINATOR-STYLE CONFIDENCE ENGINE
        ========================================================================== */
-    const MIN_QUESTIONS = 5;
+    const MIN_QUESTIONS = 8;
     const CONFIDENCE_DOMINANCE_RATIO = 2.2;
 
     let askedIds = new Set();
@@ -1803,6 +1864,26 @@
       })).sort((a, b) => b.score - a.score);
     }
 
+    function rankRemainingInquiries(scoredList) {
+      const remaining = INQUIRIES.filter(q => !askedIds.has(q.id));
+      if (remaining.length === 0 || scoredList.length === 0) return [];
+
+      const topPool = scoredList.slice(0, Math.max(4, Math.ceil(scoredList.length * 0.4)));
+
+      return remaining.map(q => {
+        let posScore = 0;
+        let totalScore = 0;
+        for (const item of topPool) {
+          const val = item.game.traits[q.trait] ?? 0.0;
+          posScore += val * item.score;
+          totalScore += item.score;
+        }
+        const ratio = totalScore > 0 ? posScore / totalScore : 0.5;
+        const dist = Math.abs(0.5 - ratio);
+        return { question: q, dist };
+      }).sort((a, b) => a.dist - b.dist);
+    }
+
     function isScryerConfident(scoredList) {
       if (askedIds.size < MIN_QUESTIONS) return false;
       if (scoredList.length === 0) return false;
@@ -1816,6 +1897,15 @@
 
       const dominance = top.score / (runnerUp.score || 0.001);
       if (dominance >= CONFIDENCE_DOMINANCE_RATIO) return true;
+
+      // Entropy floor: if 10+ questions asked and no remaining question can meaningfully split the top candidates
+      if (askedIds.size >= 10) {
+        const rankedQuestions = rankRemainingInquiries(scoredList);
+        if (rankedQuestions.length === 0 || rankedQuestions[0].dist >= 0.42) {
+          logDebug("Entropy floor reached: remaining questions cannot split top cluster further.");
+          return true;
+        }
+      }
 
       if (askedIds.size >= INQUIRIES.length) return true;
 
@@ -1833,35 +1923,35 @@
         return remainingFoundations[randIdx];
       }
 
-      // 2. Before Q5 sync populates candidatePool, pick a random non-foundation question (Q4 - Q5)
+      // 2. Before Q5 sync populates candidatePool, draw Q4 and Q5 from Core Pillars so the Q5 query is well-anchored
       const scored = getScoredCandidates();
       if (scored.length === 0) {
-        const randIdx = Math.floor(Math.random() * remaining.length);
-        return remaining[randIdx];
+        const targetGroups = askedIds.size === 3 ? ["form", "mechanics"] : ["mechanics", "world"];
+        const pillarPool = remaining.filter(q => targetGroups.includes(q.pillarGroup));
+        const activePool = pillarPool.length > 0 ? pillarPool : remaining;
+        const randIdx = Math.floor(Math.random() * activePool.length);
+        return activePool[randIdx];
       }
 
       // 3. Score remaining questions by how evenly they split the top candidates (50/50 = 0.0 dist)
-      const topPool = scored.slice(0, Math.max(4, Math.ceil(scored.length * 0.4)));
+      const ranked = rankRemainingInquiries(scored);
+      if (ranked.length === 0) return null;
 
-      const ranked = remaining.map(q => {
-        let posScore = 0;
-        let totalScore = 0;
-        for (const item of topPool) {
-          const val = item.game.traits[q.trait] ?? 0.0;
-          posScore += val * item.score;
-          totalScore += item.score;
-        }
-        const ratio = totalScore > 0 ? posScore / totalScore : 0.5;
-        const dist = Math.abs(0.5 - ratio);
-        return { question: q, dist };
-      }).sort((a, b) => a.dist - b.dist);
-
-      // 4. Only randomize among top questions that are close in quality (within 0.12 of the best split)
+      // 4. Randomize only within a tight 0.06 split-quality window, weighted toward the best splitter
       const bestDist = ranked[0].dist;
-      const viableTies = ranked.filter(item => (item.dist - bestDist) <= 0.12).slice(0, 3);
-      const chosen = viableTies[Math.floor(Math.random() * viableTies.length)];
+      const viableTies = ranked.filter(item => (item.dist - bestDist) <= 0.06).slice(0, 3);
 
-      return chosen.question;
+      if (viableTies.length === 1) return viableTies[0].question;
+
+      const weights = viableTies.length === 2 ? [0.65, 0.35] : [0.55, 0.30, 0.15];
+      const roll = Math.random();
+      let cumulative = 0;
+      for (let i = 0; i < viableTies.length; i++) {
+        cumulative += weights[i];
+        if (roll <= cumulative) return viableTies[i].question;
+      }
+
+      return viableTies[0].question;
     }
 
     async function presentNextInquiry() {
@@ -1914,7 +2004,7 @@
           showScryingError();
           return;
         }
-      } else if (askedIds.size === 9 || askedIds.size === 14) {
+      } else if (askedIds.size === 8 || askedIds.size === 12 || askedIds.size === 16) {
         inquiryPrompt.textContent = "The fog churns...";
         const ok = await fetchIGDBCandidates(true);
         if (!ok && candidatePool.length === 0) {
@@ -1954,9 +2044,23 @@
         return;
       }
 
+      // Top-Band Randomness: pick randomly among top candidates within 5% of the #1 score (up to 4)
+      const topScore = sortedCandidatesCache[0].score;
+      const topBandCount = sortedCandidatesCache
+        .slice(0, 4)
+        .filter(item => item.score >= topScore * 0.95).length;
+
+      if (topBandCount > 1) {
+        const chosenIdx = Math.floor(Math.random() * topBandCount);
+        if (chosenIdx > 0) {
+          const [chosenItem] = sortedCandidatesCache.splice(chosenIdx, 1);
+          sortedCandidatesCache.unshift(chosenItem);
+        }
+      }
+
       currentRevealRank = 0;
       const winner = sortedCandidatesCache[0].game;
-      logDebug(`Revealing #1 match: ${winner.title} [IGDB]`);
+      logDebug(`Revealing #1 match: ${winner.title} [IGDB] (Top-band pool size: ${topBandCount})`);
       displayVerdictForCandidate(winner);
       renderDebugPanel();
     }
